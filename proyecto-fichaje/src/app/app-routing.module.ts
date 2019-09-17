@@ -3,7 +3,8 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)},
+  { path: 'home', loadChildren: './home/home.module#HomePageModule', pathMatch: 'full'},
+  { path: 'second-page', loadChildren: './second-page/second-page.module#SecondPagePageModule', pathMatch: 'full' },
 ];
 
 @NgModule({
