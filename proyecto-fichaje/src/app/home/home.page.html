@@ -19,9 +19,16 @@
           <form #f="ngForm" (ngSubmit)="onSubmit(f)">
             <ion-item>
               <ion-label position="floating">Username</ion-label>
-              <ion-input ngModel name="user" #userCtrl="ngModel"></ion-input>
+              <!--Requerimiento formato email-->
+              <ion-input type="email" email required ngModel name="user" #userCtrl="ngModel"></ion-input>
             </ion-item>
-            <ion-button type="submit">Submit</ion-button>
+            <ion-item>
+              <ion-label position="floating">Password</ion-label>
+              <!--Requerimiento formato contraseña-->
+              <ion-input ngModel name="password" #passCtrl="ngModel" type="password" password required></ion-input>
+            </ion-item>
+            <!--Boton desactivado si la form no es valida-->
+            <ion-button type="submit" [disabled]="!f.valid">Submit</ion-button>
           </form>
         </ion-list>
       </ion-col>
