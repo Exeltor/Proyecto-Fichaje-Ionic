@@ -39,7 +39,7 @@ export class SecondPagePage implements OnInit {
       },{
         text:'Doramion'
       },{
-        text:'Mis huevos mágicos'
+        text:'Mis huevos mágicos grandes'
       },{
         text:'Cancelame esta',
         role:'cancel'
