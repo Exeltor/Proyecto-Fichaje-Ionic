@@ -1,5 +1,7 @@
 {
   "name": "Proyecto Fichaje",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
