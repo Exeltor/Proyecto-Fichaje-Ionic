@@ -1,15 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { UserServiceService } from '../user-service.service';
 import { LoadingController } from '@ionic/angular';
+import { Plugins } from '@capacitor/core'
+
+
+const { Device } = Plugins;
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+  async ngOnInit(){
+    const info = await Device.getInfo();
+    console.log(info);
+  }
 
   constructor(private router: Router, private userService: UserServiceService, private loadingController: LoadingController) {}
 
