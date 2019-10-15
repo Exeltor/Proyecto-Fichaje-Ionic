@@ -5,7 +5,5 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-    <app-login *ngIf="isLogin"></app-login>
-    <app-signup *ngIf="!isLogin"></app-signup>
-    <ion-button color="primary" expand="block" (click)="switchLogin()">{{ this.isLogin ? "¿No tienes cuenta? ¡Registrate!" : "¿Ya estas registrado? Inicia sesion" }}</ion-button>
+    <app-login></app-login>
 </ion-content>

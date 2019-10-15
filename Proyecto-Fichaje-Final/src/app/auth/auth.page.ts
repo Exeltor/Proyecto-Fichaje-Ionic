@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-auth',
@@ -6,14 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./auth.page.scss'],
 })
 export class AuthPage implements OnInit {
-  isLogin = true;
-
-  constructor() { }
+  constructor(private alertController: AlertController) { }
 
   ngOnInit() {
-  }
-
-  switchLogin() {
-    this.isLogin = !this.isLogin;
   }
 }

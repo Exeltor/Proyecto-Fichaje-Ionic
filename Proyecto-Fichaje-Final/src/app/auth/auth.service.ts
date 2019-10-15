@@ -45,4 +45,13 @@ export class AuthService {
   signUp(email: string, password: string){
     
   }
+
+  logout() {
+    this.afAuth.auth.signOut().then(val => {
+      console.log('Logged out');
+      this.router.navigateByUrl('auth');
+    }).catch(err => {
+      console.log('Cannot log out');
+    });
+  }
 }
