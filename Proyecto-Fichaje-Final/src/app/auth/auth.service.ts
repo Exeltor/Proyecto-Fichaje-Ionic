@@ -9,6 +9,7 @@ import { switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { User } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private http: HttpClient
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -34,11 +36,8 @@ export class AuthService {
   }
 
   registerUser(email: string, password: string) {
-    this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(res => {
-      // this.setUserDoc(res.user);
-      console.log('Usuario registrado', res.user);
-    }).catch(err => {
-      console.log('Ha ocurrido un error', err);
+    this.http.post('https://us-central1-fichaje-uni.cloudfunctions.net/register', {email, password}).subscribe(response => {
+      console.log(response);
     });
   }
 
@@ -47,7 +46,6 @@ export class AuthService {
 
     const data: User = {
       uid: user.uid,
-      email: user.email,
       nombre: 'titan',
       DNI: '',
       admin: false,

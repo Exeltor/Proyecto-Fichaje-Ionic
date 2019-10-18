@@ -19,7 +19,7 @@ export class ProfilePage implements OnInit {
   }
 
   registerUser() {
-    this.authService.registerUser('titan@titan.com', '123456');
+    this.authService.registerUser('titan@titan.es', 'erik');
   }
 
 }

@@ -15,6 +15,7 @@ import { firebaseConfig } from 'src/environments/environment';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +28,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
     AngularFireAuthGuardModule,
     AngularFirestoreModule,
     AngularFireStorageModule,
+    HttpClientModule
   ],
   providers: [
     StatusBar,
