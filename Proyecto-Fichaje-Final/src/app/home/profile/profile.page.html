@@ -5,10 +5,44 @@
                 <ion-icon name="exit"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>profile</ion-title>
+        <ion-title>Perfil</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <ion-item>
+                    <ion-avatar slot="start" style="width: 5em; height: 5em;">
+                        <img src="../../../assets/res/avatar.svg" />
+                    </ion-avatar>
+                    <ion-label>{{ (authService.user | async)?.nombre }}</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-item-group>
+                    <ion-item-divider>
+                        <ion-label>Datos Personales</ion-label>
+                    </ion-item-divider>
+                    <ion-item>
+                        <ion-icon name="document" slot="start"></ion-icon>
+                        <ion-label>{{ (authService.user | async)?.DNI }}</ion-label>
+                    </ion-item>
+                    <ion-item>
+                        <ion-icon name="call" slot="start"></ion-icon>
+                        <ion-label>{{ (authService.user | async)?.telefono }}</ion-label>
+                    </ion-item>
+                </ion-item-group>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="(authService.user | async)?.admin">
+        <ion-fab-button (click)="registerUser()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>

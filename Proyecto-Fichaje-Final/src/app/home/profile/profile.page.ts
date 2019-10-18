@@ -7,14 +7,19 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
+  admin = true;
 
-  constructor(private authService: AuthService) { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit() {
   }
 
   logout() {
     this.authService.logout();
+  }
+
+  registerUser() {
+    this.authService.registerUser('titan@titan.com', '123456');
   }
 
 }

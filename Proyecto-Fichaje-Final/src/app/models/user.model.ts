@@ -1,9 +1,9 @@
 export interface User {
+    uid: string;
     nombre: string;
-    apellidos: string;
-    dni: string;
+    DNI: string;
     fechaNacimiento: Date;
-    empresa: string;
+    Nombre_Empresa: string;
     admin: boolean;
 }
 // un usuario no necesita mas campos pero hay que relacionarle un horario
