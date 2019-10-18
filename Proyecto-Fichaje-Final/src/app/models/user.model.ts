@@ -2,7 +2,6 @@ export interface User {
     uid: string;
     nombre: string;
     DNI: string;
-    fechaNacimiento: Date;
     Nombre_Empresa: string;
     admin: boolean;
     telefono: string;

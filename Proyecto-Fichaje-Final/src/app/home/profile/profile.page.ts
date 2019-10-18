@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
+import { ModalController } from '@ionic/angular';
+import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
 
 @Component({
   selector: 'app-profile',
@@ -9,7 +11,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class ProfilePage implements OnInit {
   admin = true;
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService, private modalController: ModalController) { }
 
   ngOnInit() {
   }
@@ -18,8 +20,13 @@ export class ProfilePage implements OnInit {
     this.authService.logout();
   }
 
+  // Apertura modal para introduccion de datos de la persona a registrar
   registerUser() {
-    this.authService.registerUser('titan@titan.es', 'erik');
+    this.modalController.create({
+      component: RegisterUserModalComponent,
+    }).then(modalEl => {
+      modalEl.present();
+    });
   }
 
 }

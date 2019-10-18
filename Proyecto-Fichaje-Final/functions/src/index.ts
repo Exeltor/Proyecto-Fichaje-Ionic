@@ -12,14 +12,16 @@ exports.register = functions.https.onRequest((request, response) => {
     }
 
     const email = request.body.email;
-    const pass = request.body.pass;
+    const pass = request.body.password;
+    const tel = request.body.tel;
 
     admin
       .auth()
       .createUser({
         email: email,
         emailVerified: true,
-        password: pass
+        password: pass,
+        phoneNumber: tel
       })
       .then(function(userRecord) {
         // See the UserRecord reference doc for the contents of userRecord.

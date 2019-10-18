@@ -1,28 +1,30 @@
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Injectable } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
   AngularFirestoreDocument
-} from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
-import { User } from '../models/user.model';
-import { HttpClient } from '@angular/common/http';
+} from "@angular/fire/firestore";
+import { Observable, of } from "rxjs";
+import { switchMap, take } from "rxjs/operators";
+import { Router } from "@angular/router";
+import { AlertController, LoadingController } from "@ionic/angular";
+import { User } from "../models/user.model";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class AuthService {
   user: Observable<User>;
+  Nombre_Empresa: string;
 
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router,
     private alertController: AlertController,
-    private http: HttpClient
+    private http: HttpClient,
+    private loadingController: LoadingController
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -35,58 +37,94 @@ export class AuthService {
     );
   }
 
-  registerUser(email: string, password: string) {
-    this.http.post('https://us-central1-fichaje-uni.cloudfunctions.net/register', {email, password}).subscribe(response => {
-      console.log(response);
+  registerUser(email: string, password: string, nameSurname, dni, tel) {
+    this.loadingController.create({
+      keyboardClose: true,
+      message: 'Creando usuario'
+    }).then(loadingEl => {
+      loadingEl.present();
+      this.http
+      .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
+        email,
+        password,
+        tel
+      })
+      .subscribe(response => {
+        console.log(JSON.stringify(response));
+        const jsonResponse = JSON.parse(JSON.stringify(response));
+        this.setUserDoc(jsonResponse.uid, nameSurname, dni, tel);
+        console.log("usuario y documento creados");
+        loadingEl.dismiss();
+      });
     });
   }
 
-  private setUserDoc(user) {
-    const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
+  private setUserDoc(uid, nameSurname, dni, tel) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+      `users/${uid}`
+    );
 
-    const data: User = {
-      uid: user.uid,
-      nombre: 'titan',
-      DNI: '',
-      admin: false,
-      telefono: ''
-    }
-    return userRef.set(data);
+    // TODO: Datos se rellenan por el administrador
+    this.user.pipe(take(1)).subscribe(data => {
+      const userDoc: User = {
+        uid,
+        nombre: nameSurname,
+        DNI: dni,
+        admin: false,
+        telefono: tel,
+        Nombre_Empresa: data.Nombre_Empresa
+      };
+
+      userRef.set(userDoc);
+    });
   }
 
   login(email: string, password: string) {
-    this.afAuth.auth
-      .signInWithEmailAndPassword(email, password)
-      .then(val => {
-        console.log(val, 'Funciona');
-        this.router.navigateByUrl('/home');
+    this.loadingController
+      .create({
+        keyboardClose: true,
+        message: "Iniciando Sesion..."
       })
-      .catch(err => {
-        console.log(err.code, 'No funciona');
-        let error;
+      .then(loadingEl => {
+        loadingEl.present();
+        this.afAuth.auth
+          .signInWithEmailAndPassword(email, password)
+          .then(val => {
+            console.log(val, "Funciona");
+            loadingEl.dismiss();
+            this.router.navigateByUrl("/home");
+          })
+          .catch(err => {
+            console.log(err.code, "No funciona");
+            let error;
 
-        if (
-          err.code === 'auth/invalid-email' ||
-          err.code === 'auth/wrong-password' ||
-          err.code === 'auth/user-not-found'
-        ) {
-          error = 'Usuario o contraseña no validos';
-        } else {
-          error = err.code;
-        }
-
-        this.alertController.create({
-          header: 'No se pudo iniciar sesion',
-          message: error,
-          buttons: [
-            {
-              text: 'Aceptar',
-              role: 'cancel'
+            if (
+              err.code === "auth/invalid-email" ||
+              err.code === "auth/wrong-password" ||
+              err.code === "auth/user-not-found"
+            ) {
+              error = "Usuario o contraseña no validos";
+            } else {
+              error = err.code;
             }
-          ]
-        }).then(alertEl => {
-          alertEl.present();
-        });
+
+            loadingEl.dismiss();
+
+            this.alertController
+              .create({
+                header: "No se pudo iniciar sesion",
+                message: error,
+                buttons: [
+                  {
+                    text: "Aceptar",
+                    role: "cancel"
+                  }
+                ]
+              })
+              .then(alertEl => {
+                alertEl.present();
+              });
+          });
       });
   }
 
@@ -94,11 +132,11 @@ export class AuthService {
     this.afAuth.auth
       .signOut()
       .then(val => {
-        console.log('Logged out');
-        this.router.navigateByUrl('auth');
+        console.log("Logged out");
+        this.router.navigateByUrl("auth");
       })
       .catch(err => {
-        console.log('Cannot log out');
+        console.log("Cannot log out");
       });
   }
 }
