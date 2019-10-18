@@ -38,25 +38,60 @@ export class AuthService {
   }
 
   registerUser(email: string, password: string, nameSurname, dni, tel) {
-    this.loadingController.create({
-      keyboardClose: true,
-      message: 'Creando usuario'
-    }).then(loadingEl => {
-      loadingEl.present();
-      this.http
-      .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
-        email,
-        password,
-        tel
+    this.loadingController
+      .create({
+        keyboardClose: true,
+        message: "Creando usuario"
       })
-      .subscribe(response => {
-        console.log(JSON.stringify(response));
-        const jsonResponse = JSON.parse(JSON.stringify(response));
-        this.setUserDoc(jsonResponse.uid, nameSurname, dni, tel);
-        console.log("usuario y documento creados");
-        loadingEl.dismiss();
+      .then(loadingEl => {
+        loadingEl.present();
+        this.http
+          .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
+            email,
+            password,
+            tel
+          })
+          .subscribe(
+            response => {
+              const jsonResponse = JSON.parse(JSON.stringify(response));
+              this.setUserDoc(jsonResponse.uid, nameSurname, dni, tel);
+              console.log("usuario y documento creados");
+              loadingEl.dismiss();
+            },
+            err => {
+              const jsonError = JSON.parse(JSON.stringify(err));
+              const error = jsonError.error.text;
+              let errorMessage;
+              if (
+                error ===
+                "Error: Error: The email address is already in use by another account."
+              ) {
+                errorMessage = "Email en uso";
+              } else if (
+                error ===
+                "Error: Error: The user with the provided phone number already exists."
+              ) {
+                errorMessage = "Telefono en uso";
+              } else {
+                errorMessage = "Intentelo de nuevo";
+              }
+
+              loadingEl.dismiss();
+              this.alertController.create({
+                header: "No se ha podido crear la cuenta",
+                message: errorMessage,
+                buttons: [
+                  {
+                    role: "cancel",
+                    text: "Aceptar"
+                  }
+                ]
+              }).then(alertEl => {
+                alertEl.present();
+              });
+            }
+          );
       });
-    });
   }
 
   private setUserDoc(uid, nameSurname, dni, tel) {
