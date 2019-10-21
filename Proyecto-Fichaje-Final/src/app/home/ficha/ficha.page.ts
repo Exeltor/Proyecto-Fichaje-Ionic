@@ -13,8 +13,4 @@ export class FichaPage implements OnInit {
   ngOnInit() {
   }
 
-  logout() {
-    this.authService.logout();
-  }
-
 }

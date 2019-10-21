@@ -16,10 +16,6 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
   }
 
-  logout() {
-    this.authService.logout();
-  }
-
   // Apertura modal para introduccion de datos de la persona a registrar
   registerUser() {
     this.modalController.create({

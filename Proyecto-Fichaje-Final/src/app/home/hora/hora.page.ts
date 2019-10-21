@@ -12,9 +12,4 @@ export class HoraPage implements OnInit {
 
   ngOnInit() {
   }
-
-  logout() {
-    this.authService.logout();
-  }
-
 }
