@@ -30,7 +30,8 @@ export class RegisterUserModalComponent implements OnInit {
       formData.password,
       formData.nameSurname,
       formData.dni,
-      formData.tel
+      formData.tel,
+      formData.hours
     );
 
     this.modalController.dismiss();

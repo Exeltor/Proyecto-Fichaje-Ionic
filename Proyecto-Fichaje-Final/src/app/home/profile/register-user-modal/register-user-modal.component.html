@@ -47,6 +47,13 @@
             </ion-label>
             <ion-input type="tel" ngModel name="tel" required #telCtrl="ngModel"></ion-input>
           </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="alarm"></ion-icon>
+              Horas de trabajo diarias
+            </ion-label>
+            <ion-input type="number" min="0" ngModel name="hours" required #hoursCtrl="ngModel"></ion-input>
+          </ion-item>
         </ion-col>
       </ion-row>
       <ion-row>

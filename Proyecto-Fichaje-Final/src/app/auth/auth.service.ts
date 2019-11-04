@@ -37,7 +37,7 @@ export class AuthService {
     );
   }
 
-  registerUser(email: string, password: string, nameSurname, dni, tel) {
+  registerUser(email: string, password: string, nameSurname, dni, tel, hours) {
     this.loadingController
       .create({
         keyboardClose: true,
@@ -54,13 +54,14 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setUserDoc(jsonResponse.uid, nameSurname, dni, tel);
+              this.setUserDoc(jsonResponse.uid, nameSurname, dni, tel, hours);
               console.log("usuario y documento creados");
               loadingEl.dismiss();
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
               const error = jsonError.error.text;
+              console.log(err);
               let errorMessage;
               if (
                 error ===
@@ -94,7 +95,7 @@ export class AuthService {
       });
   }
 
-  private setUserDoc(uid, nameSurname, dni, tel) {
+  private setUserDoc(uid, nameSurname, dni, tel, hours) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -107,7 +108,8 @@ export class AuthService {
         DNI: dni,
         admin: false,
         telefono: tel,
-        Nombre_Empresa: data.Nombre_Empresa
+        Nombre_Empresa: data.Nombre_Empresa,
+        horasDiarias: hours,
       };
 
       userRef.set(userDoc);
