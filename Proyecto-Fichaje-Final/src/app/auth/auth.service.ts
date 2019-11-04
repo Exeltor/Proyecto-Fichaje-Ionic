@@ -17,6 +17,7 @@ import { HttpClient } from "@angular/common/http";
 export class AuthService {
   user: Observable<User>;
   Nombre_Empresa: string;
+  useruid: string;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -29,6 +30,7 @@ export class AuthService {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
         if (user) {
+          this.useruid = user.uid;
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
         } else {
           return of(null);
