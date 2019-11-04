@@ -7,11 +7,23 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <ion-grid class="ion-text-center">
+<ion-content class="ion-text-center">
+    <ion-grid>
         <ion-row>
             <ion-col>
-                <ion-text>{{ time | date : "HH:mm:ss"}}</ion-text>
+                <ion-text style="font-size: 35pt">{{ time | date : "HH:mm:ss"}}</ion-text>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button>
+                    <ion-icon name="play"></ion-icon>
+                </ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button>
+                    <ion-icon name="pause"></ion-icon>
+                </ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>
