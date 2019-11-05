@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-hora',
@@ -7,8 +9,12 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./hora.page.scss'],
 })
 export class HoraPage implements OnInit {
+  // Observable con la coleccion de usuarios de la base de datos
+  fireList: Observable<any> = this.afs.collection(
+    `users`
+  ).valueChanges();
 
-  constructor(private authService: AuthService) { }
+  constructor(public authService: AuthService, public afs: AngularFirestore) { }
 
   ngOnInit() {
   }
