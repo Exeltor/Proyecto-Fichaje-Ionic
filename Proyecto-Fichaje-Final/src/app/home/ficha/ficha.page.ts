@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/auth/auth.service';
 import { FichajeService } from './fichaje.service';
+import { ToastController, AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-ficha',
@@ -8,38 +8,68 @@ import { FichajeService } from './fichaje.service';
   styleUrls: ['./ficha.page.scss'],
 })
 export class FichaPage implements OnInit {
-  time: Date = new Date();
-  timeInterval;
+  comenzado = false;
+  enPausa = false;
 
-  constructor(private authService: AuthService, private fichajeService: FichajeService) { }
+  constructor(private toastController: ToastController, private alertController: AlertController, private fichajeService: FichajeService) { }
 
   ngOnInit() {
-    
   }
 
-  // Closing time interval after leaving the page to save resources
-  ionViewWillLeave() {
-    if (this.timeInterval) {
-      this.timeInterval = null;
-    }
-    console.log('paused interval');
-  }
-
-  // Initializing time interval when entering the page
-  ionViewDidEnter() {
-    this.time = new Date();
-    if (!this.timeInterval) {
-      this.timeInterval = setInterval(() => {
-        this.time.setSeconds(this.time.getSeconds() + 1);
-      }, 1000);
-      console.log('Interval started');
+  flipPausa() {
+    this.enPausa = !this.enPausa;
+    if (this.enPausa) {
+      this.toastPausaResume('Acabas de pausar');
+      this.fichajeService.pauseWorkDay();
+    } else {
+      this.toastPausaResume('Acabas de resumir');
+      this.fichajeService.resumeWorkDay();
     }
   }
 
-  startWorkDay() {
-    this.fichajeService.startWorkDay();
+  toastPausaResume(message: string) {
+    this.toastController.create({
+      color: 'dark',
+      message,
+      duration: 2000,
+      position: 'top'
+    }).then(toastEl => {
+      toastEl.present();
+    });
   }
 
+  comenzarDia() {
+    if(!this.comenzado) {
+      this.comenzado = !this.comenzado;
+      this.fichajeService.startWorkDay();
+    }
+  }
 
-
+  finalizarDia() {
+    if (this.comenzado) {
+      this.alertController.create({
+        header: 'Confirmacion',
+        message: '¿Estas seguro que quieres finalizar el dia?',
+        buttons: [
+          {
+            text: 'Si',
+            handler: () => {
+              console.log('Dia finalizado');
+              this.comenzado = !this.comenzado;
+              this.fichajeService.endWorkDay();
+            }
+          },
+          {
+            text: 'No',
+            role: 'cancel',
+            handler: () => {
+              console.log('cancelado');
+            }
+          }
+        ]
+      }).then(alertEl => {
+        alertEl.present();
+      });
+    }
+  }
 }

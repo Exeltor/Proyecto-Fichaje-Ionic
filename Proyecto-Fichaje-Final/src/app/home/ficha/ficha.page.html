@@ -11,19 +11,39 @@
     <ion-grid>
         <ion-row>
             <ion-col>
-                <ion-text style="font-size: 35pt">{{ time | date : "HH:mm:ss"}}</ion-text>
+                <ion-card color="primary" *ngIf="!comenzado" (click)="comenzarDia()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Accion única por día</ion-card-subtitle>
+                        <ion-card-title>Comenzar dia de trabajo</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
+                </ion-card>
+                <ion-card color="warning" *ngIf="comenzado&&!enPausa" (click)="flipPausa()">
+                    <ion-card-header>
+                        <ion-card-title>Descanso</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+                <ion-card color="success" *ngIf="comenzado&&enPausa" (click)="flipPausa()">
+                    <ion-card-header>
+                        <ion-card-title>Volver al trabajo</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
             </ion-col>
         </ion-row>
+
         <ion-row>
             <ion-col>
-                <ion-button (click)="startWorkDay()">
-                    <ion-icon name="play"></ion-icon>
-                </ion-button>
-            </ion-col>
-            <ion-col>
-                <ion-button>
-                    <ion-icon name="pause"></ion-icon>
-                </ion-button>
+                <ion-card color="danger" *ngIf="comenzado" (click)="finalizarDia()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Accion única por día</ion-card-subtitle>
+                        <ion-card-title>Finalizar dia de trabajo</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
+                </ion-card>
             </ion-col>
         </ion-row>
     </ion-grid>
