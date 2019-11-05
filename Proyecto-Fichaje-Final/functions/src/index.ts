@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as cors from 'cors';
+import { Timestamp } from '@google-cloud/firestore';
 const corsHandler = cors({ origin: '*' });
 admin.initializeApp(functions.config().firebase);
 
@@ -41,45 +42,54 @@ exports.register = functions.https.onRequest((request, response) => {
 exports.calculateHours = functions.firestore
   .document('users/{userid}/asistenciaTrabajo/{fecha}')
   .onWrite((change, context) => {
-    const horaInicio = change.after.get('horaInicio');
-    const horasPause = change.after.get('horasPausa');
-    const horasResume = change.after.get('horasResume');
-    const horaFin = change.after.get('horaFin');
+    const horaInicio: Timestamp = change.after.get('horaInicio');
+    const horasPause: Array<Timestamp> = change.after.get('horasPausa');
+    const horasResume: Array<Timestamp> = change.after.get('horasResume');
+    const horaFin: Timestamp = change.after.get('horaFin');
     let horaTotal = 0;
-    console.log(horasPause);
-    console.log(horasResume);
-    if (!horasResume) {
-      if (!horasPause) {
+    console.log('hora inicio', horaInicio);
+    console.log('hora fin', horaFin);
+    console.log('horas pause',horasPause);
+    console.log('horas resume',horasResume);
+    if (horasResume.length === 0) {
+      if (horasPause.length === 0) {
         if (horaFin) {
-          horaTotal += horaFin - horaInicio;
+          horaTotal += horaFin.seconds - horaInicio.seconds;
+          console.log('Diferencia total:', horaTotal);
         }
       } else {
-        horaTotal += horasPause[0] - horaInicio;
+        horaTotal += horasPause[0].seconds - horaInicio.seconds;
       }
     } else {
       if (horasPause.length > horasResume.length) {
         for (let i = 0; i < horasPause.length; i++) {
+          console.log('Hora pausa',horasPause[i]);
           switch (i) {
-            case 0:
-              horaTotal += horasPause[i] - horaInicio;
+            case 0: {
+              horaTotal += horasPause[i].seconds - horaInicio.seconds;
               break;
-            default:
-              horaTotal += horasPause[i] - horasResume[i - 1];
+            }
+            default: {
+              horaTotal += horasPause[i].seconds - horasResume[i - 1].seconds;
               break;
+            }
           }
         }
       } else {
         for (let i = 0; i < horasPause.length; i++) {
           switch (i) {
-            case 0:
-              horaTotal += horasPause[i] - horaInicio;
+            case 0: {
+              horaTotal += horasPause[i].seconds - horaInicio.seconds;
               break;
-            case horasPause.length - 1:
-              horaTotal += horaFin - horasResume[i];
+            }
+            case horasPause.length - 1: {
+              horaTotal += horaFin.seconds - horasResume[i].seconds;
               break;
-            default:
-              horaTotal += horasPause[i] - horasResume[i - 1];
+            }
+            default: {
+              horaTotal += horasPause[i].seconds - horasResume[i - 1].seconds;
               break;
+            }
           }
         }
       }
@@ -96,9 +106,13 @@ exports.calculateHours = functions.firestore
       }
     }
 
+    const horaTotalDate = new Date('1970-01-01 00:00:00');
+    horaTotalDate.setSeconds(horaTotalDate.getSeconds() + horaTotal);
     const data = {
-      horaTotal : new Date(horaTotal)
+      horaTotal : horaTotalDate
     };
+
+    console.log('Horas totales', data.horaTotal);
 
     change.after.ref
       .update(data)
