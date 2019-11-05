@@ -38,7 +38,16 @@
                 </ion-card>
             </ion-col>
         </ion-row>
-
+        <ion-row>
+            <ion-col>
+                <ion-card>
+                    <ion-card-header>
+                        <ion-card-subtitle>El tiempo se actualizara con cada descanso</ion-card-subtitle>
+                        <ion-card-title>{{ ((fichajeService.currentWorkingData | async)?.horaTotal)?.toDate() | date:"HH:mm:ss":"+0000" }}</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
         <ion-row>
             <ion-col>
                 <ion-card color="danger" *ngIf="comenzado&&!terminado" (click)="finalizarDia()">

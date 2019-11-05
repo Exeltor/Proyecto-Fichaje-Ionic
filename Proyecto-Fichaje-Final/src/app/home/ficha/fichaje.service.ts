@@ -4,19 +4,31 @@ import {
   AngularFirestoreDocument
 } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/auth/auth.service';
-import { take } from 'rxjs/operators';
+import { take, switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FichajeService {
   currentTimestamp: Date = new Date();
+  currentWorkingData: Observable<any>;
 
   constructor(
     private afs: AngularFirestore,
     private authService: AuthService
-  ) {}
+  ) {
+    this.currentWorkingData = this.authService.user.pipe(switchMap(userdata => {
+      if (userdata){
+        return this.afs.doc(`users/${
+          userdata.uid
+        }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`).valueChanges();
+      } else {
+        return of(null);
+      }
+    }));
+  }
 
   startWorkDay() {
     // Comprobamos si el documento existe
