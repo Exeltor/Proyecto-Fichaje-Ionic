@@ -15,6 +15,9 @@
                     <ion-list *ngIf="(authService.user | async)?.admin">
                         <ion-list-header>{{ (authService.user | async)?.Nombre_Empresa }}</ion-list-header>
                         <ion-item *ngFor="let user of fireList | async">
+                            <ion-avatar slot="start">
+                                <img src="../../../assets/res/avatar.svg" />
+                            </ion-avatar>
                             <ion-label *ngIf="user.Nombre_Empresa == (authService.user | async)?.Nombre_Empresa">{{ user.nombre }}</ion-label>
                         </ion-item>
                     </ion-list>
