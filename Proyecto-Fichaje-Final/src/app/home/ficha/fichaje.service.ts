@@ -37,7 +37,9 @@ export class FichajeService {
               }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
             );
             const data = {
-              horaInicio: new Date()
+              horaInicio: new Date(),
+              horasPausa: [],
+              horasResume: [],
             };
             entryRef.set(data);
           }

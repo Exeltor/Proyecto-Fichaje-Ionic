@@ -8,10 +8,10 @@
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <ion-grid>
+    <ion-grid *ngIf="!isLoading">
         <ion-row>
             <ion-col>
-                <ion-card color="primary" *ngIf="!comenzado" (click)="comenzarDia()">
+                <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
                     <ion-card-header>
                         <ion-card-subtitle>Accion única por día</ion-card-subtitle>
                         <ion-card-title>Comenzar dia de trabajo</ion-card-title>
@@ -20,14 +20,20 @@
                         Asegurate de estar en el trabajo para poder realizar esta accion
                     </ion-card-content>
                 </ion-card>
-                <ion-card color="warning" *ngIf="comenzado&&!enPausa" (click)="flipPausa()">
+                <ion-card color="warning" *ngIf="comenzado&&!enPausa&&!masPauses&&!terminado" (click)="flipPausa()">
                     <ion-card-header>
                         <ion-card-title>Descanso</ion-card-title>
                     </ion-card-header>
                 </ion-card>
-                <ion-card color="success" *ngIf="comenzado&&enPausa" (click)="flipPausa()">
+                <ion-card color="success" *ngIf="comenzado&&enPausa&&masPauses&&!terminado" (click)="flipPausa()">
                     <ion-card-header>
                         <ion-card-title>Volver al trabajo</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+
+                <ion-card color="success" *ngIf="terminado">
+                    <ion-card-header>
+                        <ion-card-title>Ya has hecho todo hoy</ion-card-title>
                     </ion-card-header>
                 </ion-card>
             </ion-col>
@@ -35,7 +41,7 @@
 
         <ion-row>
             <ion-col>
-                <ion-card color="danger" *ngIf="comenzado" (click)="finalizarDia()">
+                <ion-card color="danger" *ngIf="comenzado&&!terminado" (click)="finalizarDia()">
                     <ion-card-header>
                         <ion-card-subtitle>Accion única por día</ion-card-subtitle>
                         <ion-card-title>Finalizar dia de trabajo</ion-card-title>
@@ -44,6 +50,13 @@
                         Asegurate de estar en el trabajo para poder realizar esta accion
                     </ion-card-content>
                 </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="isLoading">
+        <ion-row>
+            <ion-col>
+                <ion-spinner></ion-spinner>
             </ion-col>
         </ion-row>
     </ion-grid>

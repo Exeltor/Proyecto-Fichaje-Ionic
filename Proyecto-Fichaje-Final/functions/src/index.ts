@@ -37,3 +37,7 @@ exports.register = functions.https.onRequest((request, response) => {
     return 1;
   });
 });
+
+exports.calculateHours = functions.firestore.document('users/{userid}/asistenciaTrabajo/{fecha}').onWrite((change, context) => {
+  
+});
