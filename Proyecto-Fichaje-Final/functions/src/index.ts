@@ -97,7 +97,7 @@ exports.calculateHours = functions.firestore
     }
 
     const data = {
-      horaTotal
+      horaTotal : new Date(horaTotal)
     };
 
     change.after.ref
