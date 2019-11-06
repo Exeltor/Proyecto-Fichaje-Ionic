@@ -23,7 +23,7 @@ export class FichaPage implements OnInit {
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
-    private fichajeService: FichajeService,
+    public fichajeService: FichajeService,
     private authService: AuthService,
     private afs: AngularFirestore
   ) {}
