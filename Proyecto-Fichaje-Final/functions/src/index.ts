@@ -47,8 +47,8 @@ exports.calculateHours = functions.firestore
     const horasResume: Array<Timestamp> = change.after.get('horasResume');
     const horaFin: Timestamp = change.after.get('horaFin');
     let horaTotal = 0;
-    console.log('hora inicio', horaInicio);
-    console.log('hora fin', horaFin);
+    console.log('hora inicio', horaInicio.toDate());
+    console.log('hora fin', horaFin.toDate());
     console.log('horas pause',horasPause);
     console.log('horas resume',horasResume);
     if (horasResume.length === 0) {
@@ -95,16 +95,7 @@ exports.calculateHours = functions.firestore
       }
     }
 
-    for (let i = 0; i < horasPause.length; i++) {
-      switch (i) {
-        case 0:
-          break;
-        case horasPause.length - 1:
-          break;
-        default:
-          break;
-      }
-    }
+    
 
     const horaTotalDate = new Date('1970-01-01 00:00:00');
     horaTotalDate.setSeconds(horaTotalDate.getSeconds() + horaTotal);

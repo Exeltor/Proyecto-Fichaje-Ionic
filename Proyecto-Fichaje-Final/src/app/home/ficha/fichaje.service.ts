@@ -91,7 +91,7 @@ export class FichajeService {
     });
   }
 
-  endWorkDay(){
+  endWorkDay() {
     this.authService.user.pipe(take(1)).subscribe(userData => {
     const entryRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${
