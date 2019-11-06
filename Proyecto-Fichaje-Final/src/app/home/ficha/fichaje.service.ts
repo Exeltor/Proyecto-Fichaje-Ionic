@@ -19,6 +19,8 @@ export class FichajeService {
     private afs: AngularFirestore,
     private authService: AuthService
   ) {
+    // Asignacion de la variable como observable para poder monitorizar el estado de la coleccion respectiva a medida que se vayan modificando los datos
+    // Permite mostrar los ultimos datos de la BD en tiempo real en la aplicacion
     this.currentWorkingData = this.authService.user.pipe(switchMap(userdata => {
       if (userdata){
         return this.afs.doc(`users/${
@@ -30,6 +32,7 @@ export class FichajeService {
     }));
   }
 
+  // Creacion del documento del respectivo dia de trabajo y marcado de la hora en la que se comenzo el dia de trabajo
   startWorkDay() {
     // Comprobamos si el documento existe
     this.authService.user.pipe(take(1)).subscribe(userData => {
@@ -59,6 +62,7 @@ export class FichajeService {
     });
   }
 
+  // Añadido de la timestamp acual en el array de pausas para fijar el tiempo en el que se inicio el descanso
   pauseWorkDay() {
     // Comprobamos si el documento existe
     this.authService.user.pipe(take(1)).subscribe(userData => {
@@ -75,6 +79,7 @@ export class FichajeService {
     });
   }
 
+  // Añadido de la timestamp acual en el array de resumir para fijar el tiempo en el que se termino el descanso
   resumeWorkDay() {
     // Comprobamos si el documento existe
     this.authService.user.pipe(take(1)).subscribe(userData => {
@@ -91,6 +96,7 @@ export class FichajeService {
     });
   }
 
+  // Creacion del campo 'horaFin' que contiene la timestamp en la que el dia de trabajo ha sido finalizado
   endWorkDay() {
     this.authService.user.pipe(take(1)).subscribe(userData => {
     const entryRef: AngularFirestoreDocument<any> = this.afs.doc(

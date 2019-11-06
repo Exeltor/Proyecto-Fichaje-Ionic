@@ -38,6 +38,10 @@ export class FichaPage implements OnInit {
     console.log(diff.getHours(), diff.getMinutes(), diff.getSeconds());
   }
 
+  /*
+    Flipper del estado de pausa (descanso)
+    Realiza llamada a fichajeService para comunicacion con backend
+  */
   flipPausa() {
     this.enPausa = !this.enPausa;
     this.masPauses = !this.masPauses;
@@ -50,6 +54,7 @@ export class FichaPage implements OnInit {
     }
   }
 
+  // Toast informativo sobre el correcto cambio de estado del descanso y continuacion de trabajo
   toastPausaResume(message: string) {
     this.toastController
       .create({
@@ -63,6 +68,10 @@ export class FichaPage implements OnInit {
       });
   }
 
+  /*
+    Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
+    Realiza llamada a fichajeService para comunicacion con backend
+  */
   comenzarDia() {
     if (!this.comenzado) {
       this.comenzado = !this.comenzado;
@@ -70,6 +79,9 @@ export class FichaPage implements OnInit {
     }
   }
 
+  /*
+    Alerta de confirmacion de finalizacion del dia de trabajo, en el caso de que la persona haya presionado el boton erroneamente
+  */
   finalizarDia() {
     if (this.comenzado) {
       this.alertController
@@ -101,6 +113,10 @@ export class FichaPage implements OnInit {
     }
   }
 
+  /*
+    Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
+    Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
+  */
   getIfComenzado() {
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
@@ -125,6 +141,10 @@ export class FichaPage implements OnInit {
     });
   }
 
+  /*
+    Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
+    Comprueba si el dia de trabajo ya ha sido terminado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
+  */
   getIfTerminado() {
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {
@@ -147,6 +167,10 @@ export class FichaPage implements OnInit {
     });
   }
 
+  /*
+    Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
+    Calcula las horas de pausa y resumir para mostrar los botones de descanso y resumir de forma correcta en la interfaz
+  */
   getMenosPauses() {
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {
