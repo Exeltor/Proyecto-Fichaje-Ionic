@@ -47,10 +47,6 @@ exports.calculateHours = functions.firestore
     const horasResume: Array<Timestamp> = change.after.get("horasResume");
     const horaFin: Timestamp = change.after.get("horaFin");
     let horaTotal = 0;
-    console.log("hora inicio", horaInicio.toDate());
-    console.log("hora fin", horaFin.toDate());
-    console.log("horas pause", horasPause);
-    console.log("horas resume", horasResume);
     if (horasResume.length === 0) {
       if (horasPause.length === 0) {
         if (horaFin) {
@@ -64,19 +60,26 @@ exports.calculateHours = functions.firestore
         for (let i = 0; i < horasPause.length; i++) {
           if (i === 0) {
             horaTotal += horasPause[i].seconds - horaInicio.seconds;
-            break;
           } else {
             horaTotal += horasPause[i].seconds - horasResume[i - 1].seconds;
-            break;
           }
         }
       }
-      if (horasPause.length === horasResume.length) {
+      if ((horasPause.length === horasResume.length) && horaFin) {
         for (let i = 0; i <= horasPause.length; i++) {
           if (i === 0) {
             horaTotal += horasPause[i].seconds - horaInicio.seconds;
           } else if (i === horasPause.length) {
             horaTotal += horaFin.seconds - horasResume[i - 1].seconds;
+          } else {
+            horaTotal += horasPause[i].seconds - horasResume[i - 1].seconds;
+          }
+        }
+      }
+      if((horasPause.length === horasResume.length) && !horaFin){
+        for (let i = 0; i < horasPause.length; i++) {
+          if (i === 0) {
+            horaTotal += horasPause[i].seconds - horaInicio.seconds;
           } else {
             horaTotal += horasPause[i].seconds - horasResume[i - 1].seconds;
           }
