@@ -1,0 +1,11 @@
+.floatingBadge {
+    z-index: 1;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    overflow: visible !important;
+}
+
+ion-list {
+    border-radius: 0.5em;
+}
