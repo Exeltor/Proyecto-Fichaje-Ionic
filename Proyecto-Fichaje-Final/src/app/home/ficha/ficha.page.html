@@ -7,11 +7,65 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <ion-grid class="ion-text-center">
+<ion-content class="ion-text-center">
+    <ion-grid *ngIf="!isLoading">
         <ion-row>
             <ion-col>
-                <ion-text>{{ time | date : "HH:mm:ss"}}</ion-text>
+                <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Accion única por día</ion-card-subtitle>
+                        <ion-card-title>Comenzar dia de trabajo</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
+                </ion-card>
+                <ion-card color="warning" *ngIf="comenzado&&!enPausa&&!masPauses&&!terminado" (click)="flipPausa()">
+                    <ion-card-header>
+                        <ion-card-title>Descanso</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+                <ion-card color="success" *ngIf="comenzado&&enPausa&&masPauses&&!terminado" (click)="flipPausa()">
+                    <ion-card-header>
+                        <ion-card-title>Volver al trabajo</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+
+                <ion-card color="success" *ngIf="terminado">
+                    <ion-card-header>
+                        <ion-card-title>Ya has hecho todo hoy</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-card>
+                    <ion-card-header>
+                        <ion-card-subtitle>El tiempo se actualizara con cada descanso</ion-card-subtitle>
+                        <ion-card-title>{{ ((fichajeService.currentWorkingData | async)?.horaTotal)?.toDate() | date:"HH:mm:ss":"+0000" }}</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-card color="danger" *ngIf="comenzado&&!terminado" (click)="finalizarDia()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Accion única por día</ion-card-subtitle>
+                        <ion-card-title>Finalizar dia de trabajo</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="isLoading">
+        <ion-row>
+            <ion-col>
+                <ion-spinner></ion-spinner>
             </ion-col>
         </ion-row>
     </ion-grid>
