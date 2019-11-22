@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Perfil</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button fill="clear" (click)="modalDismiss()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #editForm="ngForm" (ngSubmit)="onSubmit(editForm)">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="mail"></ion-icon>
+              Email
+            </ion-label>
+            <ion-input type="email" [(ngModel)]="email" name="email" required email #emailCtrl="ngModel"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon name="person"></ion-icon>
+              Nombre y Apellidos
+            </ion-label>
+            <ion-input type="text" [(ngModel)]="nombre" name="nameSurname" required #nameSurnameCtrl="ngModel">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="clipboard"></ion-icon>
+              DNI
+            </ion-label>
+            <ion-input type="text" [(ngModel)]="DNI" name="dni" required #dniCtrl="ngModel"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="call"></ion-icon>
+              Telefono
+            </ion-label>
+            <ion-input type="tel" [(ngModel)]="telefono" name="tel" required #telCtrl="ngModel"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Cambia tu contraseña</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="key"></ion-icon>
+                  Nueva Contraseña
+                </ion-label>
+                <ion-input type="password" ngModel name="password" minlength="6" #passwordCtrl="ngModel"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="key"></ion-icon>
+                  Repite tu contraseña
+                </ion-label>
+                <ion-input type="password" ngModel name="password" minlength="6" #passwordCtrl="ngModel"></ion-input>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <!-- fab placed to the bottom end -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button type="submit">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </form>
+</ion-content>

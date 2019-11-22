@@ -37,6 +37,10 @@ export class AuthService {
     );
   }
 
+  getUserEmail() {
+    return this.afAuth.auth.currentUser.email;
+  }
+
   registerUser(email: string, password: string, nameSurname, dni, tel, hours) {
     this.loadingController
       .create({

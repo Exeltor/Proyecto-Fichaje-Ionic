@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
+import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
 
 const routes: Routes = [
   {
@@ -16,13 +17,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  entryComponents: [RegisterUserModalComponent],
+  entryComponents: [RegisterUserModalComponent, EditUserModalComponent],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ProfilePage, RegisterUserModalComponent]
+  declarations: [ProfilePage, RegisterUserModalComponent, EditUserModalComponent]
 })
 export class ProfilePageModule {}
