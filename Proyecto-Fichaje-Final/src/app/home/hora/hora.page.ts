@@ -20,4 +20,10 @@ export class HoraPage implements OnInit {
 
   ngOnInit() {
   }
+
+  // Metodo al que se le entrega como parametro el usuario a borrar de la coleccion
+  borrarUsuario(user) {
+    //this.afs.collection('users').doc(user).delete();
+    this.afs.doc('users/' + user).delete(); // Hace falta especificar??¿¿
+  }
 }
