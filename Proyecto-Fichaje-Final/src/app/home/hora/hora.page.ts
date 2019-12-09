@@ -18,8 +18,6 @@ export class HoraPage implements OnInit {
   ).valueChanges();
 
   constructor(public authService: AuthService, public afs: AngularFirestore) { }
-  
-
 
   loadData(event) {
     setTimeout(() => {
