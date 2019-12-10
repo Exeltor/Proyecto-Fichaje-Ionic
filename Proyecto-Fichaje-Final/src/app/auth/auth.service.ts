@@ -16,6 +16,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class AuthService {
   user: Observable<User>;
+  userUid: string;
   Nombre_Empresa: string;
 
   constructor(
@@ -29,6 +30,7 @@ export class AuthService {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
         if (user) {
+          this.userUid = user.uid;
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
         } else {
           return of(null);
@@ -167,6 +169,32 @@ export class AuthService {
               });
           });
       });
+  }
+
+  updateProfile(newData) {
+    this.afs.doc(`users/${this.userUid}`).update({
+      DNI: newData.DNI,
+      nombre: newData.nombre,
+      telefono: newData.telefono
+    })
+
+    this.changePhone(newData.telefono);
+    this.changeEmail(newData.email);
+    if(newData.password) {
+      this.changePassword(newData.password);
+    }
+  }
+
+  private changePassword(newPassword: string) {
+    this.afAuth.auth.currentUser.updatePassword(newPassword);
+  }
+
+  private changeEmail(newEmail: string) {
+    this.afAuth.auth.currentUser.updateEmail(newEmail);
+  }
+
+  private changePhone(newPhone) {
+    this.afAuth.auth.currentUser.updatePhoneNumber(newPhone);
   }
 
   logout() {

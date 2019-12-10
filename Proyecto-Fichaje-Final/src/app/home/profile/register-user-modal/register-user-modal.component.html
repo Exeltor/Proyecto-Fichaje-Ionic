@@ -41,11 +41,24 @@
             <ion-input type="text" ngModel name="dni" required #dniCtrl="ngModel"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating">
+         <!--   <ion-label position="floating">
               <ion-icon slot="start" name="call"></ion-icon>
               Telefono
             </ion-label>
-            <ion-input type="tel" ngModel name="tel" required #telCtrl="ngModel"></ion-input>
+            <ion-input type="tel" ngModel name="tel" required #telCtrl="ngModel"></ion-input>  -->
+            <div formGroupName="country_phone_group">
+              <ion-item>
+                <ion-label position="floating" color="primary">Country</ion-label>
+                <ion-select formControlName="country" cancelText="Cancel" okText="OK">
+                  <ion-select-option *ngFor="let item of countries" [value]="item">{{item.name}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating" color="primary">Phone</ion-label>
+                <ion-input placeholder="{{ validations_form.value.country_phone.country.sample_phone }}" type="text" formControlName="phone"></ion-input>
+              </ion-item>
+            </div>
+
           </ion-item>
           <ion-item>
             <ion-label position="floating">
