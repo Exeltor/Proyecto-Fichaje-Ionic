@@ -19,13 +19,13 @@
                                 <ion-avatar slot="start">
                                     <img src="../../../assets/res/avatar.svg" />
                                 </ion-avatar>
-                                <ion-label *ngIf="user.Nombre_Empresa == (authService.user | async)?.Nombre_Empresa">
+                                <ion-label>
                                     <h2>{{ user.nombre }}</h2>
                                     <p>DNI: {{ user.DNI }}</p>
                                 </ion-label>
                             </ion-item>
                             <ion-item-options>
-                                <ion-item-option color="danger" (click)="borrarUsuario(user)">
+                                <ion-item-option color="danger" (click)="borrarUsuario(user.uid)">
                                     <ion-icon name="trash"></ion-icon>
                                 </ion-item-option>
                             </ion-item-options>
