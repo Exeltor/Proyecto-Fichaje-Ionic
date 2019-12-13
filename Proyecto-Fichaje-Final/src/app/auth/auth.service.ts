@@ -184,15 +184,47 @@ export class AuthService {
 
   signInWithGoogle() {
     const provider = new auth.GoogleAuthProvider();
-    this.afAuth.auth.signInWithPopup(provider).then(() => {
-      this.router.navigateByUrl("/home");
+    this.afAuth.auth.signInWithPopup(provider).then(val => {
+      if(val.additionalUserInfo.isNewUser) {
+        val.user.delete();
+        this.alertController.create({
+          header: 'No se ha podido iniciar sesion',
+          message: 'No tiene una cuenta',
+          buttons: [
+            {
+              text: "Aceptar",
+              role: "cancel"
+            }
+          ]
+        }).then(alert => {
+          alert.present();
+        })
+      } else {
+        this.router.navigateByUrl("/home");
+      }
     });
   }
 
   signInWithFacebook() {
     const provider = new auth.FacebookAuthProvider();
-    this.afAuth.auth.signInWithPopup(provider).then(() => {
-      this.router.navigateByUrl("/home");
+    this.afAuth.auth.signInWithPopup(provider).then(val => {
+      if(val.additionalUserInfo.isNewUser) {
+        val.user.delete();
+        this.alertController.create({
+          header: 'No se ha podido iniciar sesion',
+          message: 'No tiene una cuenta',
+          buttons: [
+            {
+              text: "Aceptar",
+              role: "cancel"
+            }
+          ]
+        }).then(alert => {
+          alert.present();
+        })
+      } else {
+        this.router.navigateByUrl("/home");
+      }
     });
   }
 

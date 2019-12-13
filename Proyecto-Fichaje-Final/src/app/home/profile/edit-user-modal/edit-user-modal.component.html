@@ -72,14 +72,14 @@
         <ion-col>
           <ion-button (click)="linkWithFacebook()">
             <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
+            <ion-icon slot="icon-only" name="checkmark" *ngIf="(facebookExists() | async)"></ion-icon>
           </ion-button>
-          <ion-icon name="checkmark" *ngIf="(facebookExists() | async)"></ion-icon>
         </ion-col>
         <ion-col>
           <ion-button (click)="linkWithGoogle()">
             <ion-icon slot="icon-only" name="logo-google"></ion-icon>
+            <ion-icon slot="icon-only" name="checkmark" *ngIf="(googleExists() | async)"></ion-icon>
           </ion-button>
-          <ion-icon name="checkmark" *ngIf="(googleExists() | async)"></ion-icon>
         </ion-col>
       </ion-row>
     </ion-grid>
