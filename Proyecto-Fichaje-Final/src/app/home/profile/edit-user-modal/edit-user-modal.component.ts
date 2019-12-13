@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { NgForm, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/auth/auth.service';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-edit-user-modal',
@@ -15,7 +17,7 @@ export class EditUserModalComponent implements OnInit {
 
   editingForm: FormGroup;
 
-  constructor(private modalController: ModalController, private fb: FormBuilder) { }
+  constructor(private modalController: ModalController, private fb: FormBuilder, private authService: AuthService) { }
 
   ngOnInit() {
     this.editingForm = this.fb.group({
@@ -34,6 +36,22 @@ export class EditUserModalComponent implements OnInit {
 
   modalDismiss() {
     this.modalController.dismiss();
+  }
+
+  linkWithFacebook() {
+    this.authService.linkWithFacebook();
+  }
+  
+  linkWithGoogle() {
+    this.authService.linkWithGoogle();
+  }
+
+  facebookExists() {
+    return from(this.authService.getSignInMethods().filter(data => (data.providerId == 'facebook.com')));
+  }
+
+  googleExists() {
+    return from(this.authService.getSignInMethods().filter(data => (data.providerId == 'google.com')));
   }
 
   onSubmit() {

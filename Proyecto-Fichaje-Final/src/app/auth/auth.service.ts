@@ -10,6 +10,7 @@ import { Router } from "@angular/router";
 import { AlertController, LoadingController } from "@ionic/angular";
 import { User } from "../models/user.model";
 import { HttpClient } from "@angular/common/http";
+import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: "root"
@@ -169,6 +170,34 @@ export class AuthService {
               });
           });
       });
+  }
+
+  linkWithFacebook() {
+    const provider = new auth.FacebookAuthProvider();
+    this.afAuth.auth.currentUser.linkWithPopup(provider);
+  }
+
+  linkWithGoogle() {
+    const provider = new auth.GoogleAuthProvider();
+    this.afAuth.auth.currentUser.linkWithPopup(provider);
+  }
+
+  signInWithGoogle() {
+    const provider = new auth.GoogleAuthProvider();
+    this.afAuth.auth.signInWithPopup(provider).then(() => {
+      this.router.navigateByUrl("/home");
+    });
+  }
+
+  signInWithFacebook() {
+    const provider = new auth.FacebookAuthProvider();
+    this.afAuth.auth.signInWithPopup(provider).then(() => {
+      this.router.navigateByUrl("/home");
+    });
+  }
+
+  getSignInMethods() {
+    return this.afAuth.auth.currentUser.providerData;
   }
 
   updateProfile(newData) {

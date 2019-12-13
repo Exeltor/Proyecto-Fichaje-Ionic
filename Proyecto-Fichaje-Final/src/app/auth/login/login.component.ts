@@ -17,4 +17,12 @@ export class LoginComponent implements OnInit {
     this.authService.login(form.value.email, form.value.password);
   }
 
+  google() {
+    this.authService.signInWithGoogle();
+  }
+
+  facebook() {
+    this.authService.signInWithFacebook();
+  }
+
 }

@@ -3,10 +3,8 @@ import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { UserServiceService } from '../user-service.service';
 import { LoadingController } from '@ionic/angular';
-import { Plugins } from '@capacitor/core'
-
-
-const { Device } = Plugins;
+import { Plugins } from '@capacitor/core';
+import { phone} from 'libphonenumber'
 
 @Component({
   selector: 'app-home',
@@ -14,12 +12,12 @@ const { Device } = Plugins;
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  async ngOnInit(){
-    const info = await Device.getInfo();
-    console.log(info);
+  ngOnInit(){
   }
 
-  constructor(private router: Router, private userService: UserServiceService, private loadingController: LoadingController) {}
+  constructor(private router: Router, private userService: UserServiceService, private loadingController: LoadingController, ) {
+
+  }
 
   toSecondPage() {
     this.router.navigateByUrl('/second-page');
@@ -36,6 +34,12 @@ export class HomePage implements OnInit {
       }, 5000);
       this.router.navigateByUrl('/second-page');
     });
+  }
+
+  phonenumber(forms: NgForm){
+    //console.log(phonaco(forms.form.value.number))
+    //sole.log(p
+    console.log(phone.isValidNumber(forms.form.value.number));
   }
 
 }
