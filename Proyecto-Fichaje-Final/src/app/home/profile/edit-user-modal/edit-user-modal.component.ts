@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { NgForm, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
 import { from } from 'rxjs';
-
+import { countryCodes } from 'src/environments/environment' 
 @Component({
   selector: 'app-edit-user-modal',
   templateUrl: './edit-user-modal.component.html',
@@ -14,7 +14,8 @@ export class EditUserModalComponent implements OnInit {
   @Input() DNI: string;
   @Input() telefono: string;
   @Input() email: string;
-
+  paises:any;
+  
   editingForm: FormGroup;
 
   constructor(private modalController: ModalController, private fb: FormBuilder, private authService: AuthService) { }
@@ -28,6 +29,10 @@ export class EditUserModalComponent implements OnInit {
       password: ['', Validators.minLength(6)],
       confirmPassword: ['']
     }, {validators : this.passwordMatchValidator});
+
+    this.paises = countryCodes;
+    console.log(this.paises)
+
   }
 
   passwordMatchValidator(frm: FormGroup) {

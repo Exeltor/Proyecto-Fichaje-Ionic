@@ -35,6 +35,12 @@
             <ion-input formControlName="DNI"></ion-input>
           </ion-item>
           <ion-item>
+              <ion-select>
+                  <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
+          
+                </ion-select>
+          </ion-item>
+          <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="call"></ion-icon>
               Telefono
