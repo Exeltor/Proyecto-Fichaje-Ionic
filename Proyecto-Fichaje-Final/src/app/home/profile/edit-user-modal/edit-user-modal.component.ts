@@ -3,7 +3,8 @@ import { ModalController } from '@ionic/angular';
 import { NgForm, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
 import { from } from 'rxjs';
-
+import { countryCodes } from 'src/environments/environment' 
+import { PhoneValidator } from 'src/app/auth/phone.validator'
 @Component({
   selector: 'app-edit-user-modal',
   templateUrl: './edit-user-modal.component.html',
@@ -14,7 +15,8 @@ export class EditUserModalComponent implements OnInit {
   @Input() DNI: string;
   @Input() telefono: string;
   @Input() email: string;
-
+  paises = countryCodes;
+  pais:any;
   editingForm: FormGroup;
 
   constructor(private modalController: ModalController, private fb: FormBuilder, private authService: AuthService) { }
@@ -23,13 +25,17 @@ export class EditUserModalComponent implements OnInit {
     this.editingForm = this.fb.group({
       email: [this.email, Validators.compose([Validators.email, Validators.required])],
       DNI: [this.DNI, Validators.required],
-      telefono: [this.telefono, Validators.required],
+      country: [this.pais, Validators.required],
+      telefono: [this.telefono, Validators.compose([PhoneValidator.number_check(), Validators.required])],
       nombre: [this.nombre, Validators.required],
       password: ['', Validators.minLength(6)],
       confirmPassword: ['']
     }, {validators : this.passwordMatchValidator});
   }
 
+  countryUpdate(data){
+    PhoneValidator.country_check(data);
+  }
   passwordMatchValidator(frm: FormGroup) {
     return frm.controls['password'].value === frm.controls['confirmPassword'].value ? null : {'mismatch' : true};
   }
