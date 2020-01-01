@@ -39,8 +39,8 @@
               <ion-icon slot="start" name="globe"></ion-icon>
               País
             </ion-label>
-            <ion-select #C (ionChange)="countryUpdate(C.value)" placeholder="Selecciona un país" >
-              <ion-select-option formControName="country" [value]="pais.code" *ngFor="let pais of paises" >{{pais.name}}</ion-select-option>
+            <ion-select placeholder="Selecciona un país" formControlName="country">
+              <ion-select-option [value]="pais.code" *ngFor="let pais of paises" >{{pais.name}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>

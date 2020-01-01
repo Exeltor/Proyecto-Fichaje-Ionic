@@ -44,7 +44,7 @@ export class AuthService {
     return this.afAuth.auth.currentUser.email;
   }
 
-  registerUser(email: string, password: string, nameSurname, dni, tel, hours) {
+  registerUser(email: string, password: string, nameSurname, dni, country, tel, hours) {
     this.loadingController
       .create({
         keyboardClose: true,
@@ -61,7 +61,7 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setUserDoc(jsonResponse.uid, nameSurname, dni, tel, hours);
+              this.setUserDoc(jsonResponse.uid, nameSurname, dni, country, tel, hours);
               console.log("usuario y documento creados");
               loadingEl.dismiss();
             },
@@ -102,7 +102,7 @@ export class AuthService {
       });
   }
 
-  private setUserDoc(uid, nameSurname, dni, tel, hours) {
+  private setUserDoc(uid, nameSurname, dni,country, tel, hours) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -114,6 +114,7 @@ export class AuthService {
         nombre: nameSurname,
         DNI: dni,
         admin: false,
+        countryCode: country,
         telefono: tel,
         Nombre_Empresa: data.Nombre_Empresa,
         horasDiarias: hours,
@@ -236,10 +237,11 @@ export class AuthService {
     this.afs.doc(`users/${this.userUid}`).update({
       DNI: newData.DNI,
       nombre: newData.nombre,
-      telefono: newData.telefono
+      telefono: newData.telefono,
+      countryCode: newData.country
     })
 
-    this.changePhone(newData.telefono);
+    this.changePhone(newData.telefono, newData.country);
     this.changeEmail(newData.email);
     if(newData.password) {
       this.changePassword(newData.password);
@@ -254,8 +256,12 @@ export class AuthService {
     this.afAuth.auth.currentUser.updateEmail(newEmail);
   }
 
-  private changePhone(newPhone) {
-    this.afAuth.auth.currentUser.updatePhoneNumber(newPhone);
+  private changePhone(newPhone: string, newCountry: string) {
+    this.http.post('https://us-central1-fichaje-uni.cloudfunctions.net/updatePhone', {
+      tel: newPhone,
+      country: newCountry,
+      uid: this.afAuth.auth.currentUser.uid
+    }).subscribe(response => {}, err => {})
   }
 
   logout() {

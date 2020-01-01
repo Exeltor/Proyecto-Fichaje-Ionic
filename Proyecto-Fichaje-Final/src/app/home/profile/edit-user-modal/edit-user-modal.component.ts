@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { from } from 'rxjs';
 import { countryCodes } from 'src/environments/environment' 
 import { PhoneValidator } from 'src/app/auth/phone.validator'
+import { take } from 'rxjs/operators';
 @Component({
   selector: 'app-edit-user-modal',
   templateUrl: './edit-user-modal.component.html',
@@ -15,22 +16,28 @@ export class EditUserModalComponent implements OnInit {
   @Input() DNI: string;
   @Input() telefono: string;
   @Input() email: string;
+  @Input() country: string;
   paises = countryCodes;
-  pais:any;
   editingForm: FormGroup;
 
-  constructor(private modalController: ModalController, private fb: FormBuilder, private authService: AuthService) { }
+  constructor(private modalController: ModalController, private fb: FormBuilder, public authService: AuthService) { }
 
   ngOnInit() {
     this.editingForm = this.fb.group({
       email: [this.email, Validators.compose([Validators.email, Validators.required])],
       DNI: [this.DNI, Validators.required],
-      country: [this.pais, Validators.required],
+      country: [this.country, Validators.required],
       telefono: [this.telefono, Validators.compose([PhoneValidator.number_check(), Validators.required])],
       nombre: [this.nombre, Validators.required],
       password: ['', Validators.minLength(6)],
       confirmPassword: ['']
     }, {validators : this.passwordMatchValidator});
+  }
+
+  getCountry() {
+    this.authService.user.pipe(take(1)).subscribe(user => {
+
+    })
   }
 
   countryUpdate(data){
@@ -61,7 +68,7 @@ export class EditUserModalComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.editingForm.value);
+    this.authService.updateProfile(this.editingForm.value);
   }
 
 }
