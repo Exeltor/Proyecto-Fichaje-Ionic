@@ -5,6 +5,7 @@ export interface User {
     Nombre_Empresa: string;
     admin: boolean;
     telefono: string;
+    countryCode: string;
     horasDiarias: number;
 }
 // un usuario no necesita mas campos pero hay que relacionarle un horario

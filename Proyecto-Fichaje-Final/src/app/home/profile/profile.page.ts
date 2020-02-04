@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ModalController } from '@ionic/angular';
 import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
+import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
+import { take } from 'rxjs/operators';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -23,6 +26,24 @@ export class ProfilePage implements OnInit {
     }).then(modalEl => {
       modalEl.present();
     });
+  }
+
+  editProfile() {
+    this.authService.user.pipe(take(1)).subscribe(user => {
+      this.modalController.create({
+        component: EditUserModalComponent,
+        componentProps: {
+          'nombre': user.nombre,
+          'DNI': user.DNI,
+          'email':  this.authService.getUserEmail(),
+          'telefono': user.telefono,
+          'country': user.countryCode
+        }
+      }).then(modalEl => {
+        modalEl.present();
+      });
+    });
+    
   }
 
 }

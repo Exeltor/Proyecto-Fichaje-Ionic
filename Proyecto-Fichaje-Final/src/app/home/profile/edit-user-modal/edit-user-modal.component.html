@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Perfil</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button fill="clear" (click)="modalDismiss()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="editingForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="mail"></ion-icon>
+              Email
+            </ion-label>
+            <ion-input formControlName="email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon name="person"></ion-icon>
+              Nombre y Apellidos
+            </ion-label>
+            <ion-input formControlName="nombre">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="clipboard"></ion-icon>
+              DNI
+            </ion-label>
+            <ion-input formControlName="DNI"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="globe"></ion-icon>
+              País
+            </ion-label>
+            <ion-select placeholder="Selecciona un país" formControlName="country">
+              <ion-select-option [value]="pais.code" *ngFor="let pais of paises" >{{pais.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="call"></ion-icon>
+              Telefono
+            </ion-label>
+            <ion-input formControlName="telefono"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Cambia tu contraseña</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="key"></ion-icon>
+                  Nueva Contraseña
+                </ion-label>
+                <ion-input type="password" formControlName="password"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="key"></ion-icon>
+                  Repite tu contraseña
+                </ion-label>
+                <ion-input type="password" formControlName="confirmPassword"></ion-input>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <ion-button (click)="linkWithFacebook()">
+            <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
+            <ion-icon slot="icon-only" name="checkmark" *ngIf="(facebookExists() | async)"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button (click)="linkWithGoogle()">
+            <ion-icon slot="icon-only" name="logo-google"></ion-icon>
+            <ion-icon slot="icon-only" name="checkmark" *ngIf="(googleExists() | async)"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <!-- fab placed to the bottom end -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button (click)="onSubmit()" [disabled]="!editingForm.valid">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </form>
+</ion-content>
