@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { take, switchMap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
+import { UinfoPage } from './uinfo/uinfo.page';
 
 
 @Component({
@@ -23,8 +24,11 @@ export class HoraPage implements OnInit {
     }));
   }
 
-  public openModal(){
-    
+  async presentModal() {
+    const modal = await this.modalCtrl.create({
+      component: UinfoPage
+    });
+    return await modal.present();
   }
 
   ngOnInit() {
