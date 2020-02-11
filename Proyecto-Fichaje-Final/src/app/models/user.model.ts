@@ -2,7 +2,7 @@ export interface User {
     uid: string;
     nombre: string;
     DNI: string;
-    Nombre_Empresa: string;
+    empresa: string;
     admin: boolean;
     telefono: string;
     countryCode: string;

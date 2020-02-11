@@ -18,7 +18,7 @@ import { auth } from 'firebase/app';
 export class AuthService {
   user: Observable<User>;
   userUid: string;
-  Nombre_Empresa: string;
+  empresa: string;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -116,7 +116,7 @@ export class AuthService {
         admin: false,
         countryCode: country,
         telefono: tel,
-        Nombre_Empresa: data.Nombre_Empresa,
+        empresa: data.empresa,
         horasDiarias: hours,
       };
 
