@@ -235,18 +235,27 @@ export class AuthService {
   }
 
   updateProfile(newData) {
-    this.afs.doc(`users/${this.userUid}`).update({
-      DNI: newData.DNI,
-      nombre: newData.nombre,
-    })
-
-    this.changePhone(newData.telefono, newData.country);
-    this.changeEmail(newData.email);
-    if(newData.password) {
-      this.changePassword(newData.password);
+    try {
+      this.afs.doc(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
+        let previousDoc: any = user;
+        previousDoc.lastUsed = new Date();
+        this.afs.doc(`users/${this.userUid}`).update({
+          DNI: newData.DNI,
+          nombre: newData.nombre,
+        })
+    
+        this.changePhone(newData.telefono, newData.country);
+        this.changeEmail(newData.email);
+        if(newData.password) {
+          this.changePassword(newData.password);
+        }
+    
+        this.modalController.dismiss();
+        this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+      })
+    } catch (error) {
+      console.log(error);
     }
-
-    this.modalController.dismiss();
   }
 
   private changePassword(newPassword: string) {
