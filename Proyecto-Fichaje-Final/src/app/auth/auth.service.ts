@@ -235,6 +235,7 @@ export class AuthService {
   }
 
   updateProfile(newData) {
+    // idFecha viejo -> nuevo
     try {
       this.afs.doc(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
         let previousDoc: any = user;
