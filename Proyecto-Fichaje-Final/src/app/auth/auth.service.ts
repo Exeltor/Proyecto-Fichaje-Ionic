@@ -7,7 +7,7 @@ import {
 import { Observable, of } from "rxjs";
 import { switchMap, take } from "rxjs/operators";
 import { Router } from "@angular/router";
-import { AlertController, LoadingController } from "@ionic/angular";
+import { AlertController, LoadingController, ModalController } from "@ionic/angular";
 import { User } from "../models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { auth } from 'firebase/app';
@@ -26,7 +26,8 @@ export class AuthService {
     private router: Router,
     private alertController: AlertController,
     private http: HttpClient,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private modalController: ModalController
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -237,8 +238,6 @@ export class AuthService {
     this.afs.doc(`users/${this.userUid}`).update({
       DNI: newData.DNI,
       nombre: newData.nombre,
-      telefono: newData.telefono,
-      countryCode: newData.country
     })
 
     this.changePhone(newData.telefono, newData.country);
@@ -246,6 +245,8 @@ export class AuthService {
     if(newData.password) {
       this.changePassword(newData.password);
     }
+
+    this.modalController.dismiss();
   }
 
   private changePassword(newPassword: string) {
@@ -261,7 +262,14 @@ export class AuthService {
       tel: newPhone,
       country: newCountry,
       uid: this.afAuth.auth.currentUser.uid
-    }).subscribe(response => {}, err => {})
+    }).subscribe(response => {}, err => {
+      if(err.error.text === 'Done') {
+        this.afs.doc(`users/${this.userUid}`).update({
+          telefono: newPhone,
+          countryCode: newCountry
+        })
+      }
+    })
   }
 
   logout() {
