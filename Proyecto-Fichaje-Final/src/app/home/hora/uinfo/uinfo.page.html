@@ -6,8 +6,53 @@
 </ion-header>
 
 <ion-content>
-  <ion-label>{{ nombreU }}<br></ion-label>
-  <ion-label>{{ DNI }}<br></ion-label>
-  <ion-label>{{ horasD }}<br></ion-label>
-  <ion-label>{{ telf }}</ion-label>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header color="dark">
+            <ion-card-title>{{ (empresa | async)?.Nombre }}</ion-card-title></ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-list-header color="primary">
+                <ion-label>Nombre y Apellidos</ion-label>
+              </ion-list-header>
+              <ion-item>
+                <ion-label color="tertiary">
+                  {{ nombreU }}
+                </ion-label>
+              </ion-item>
+              <ion-list-header color="primary">
+                <ion-label>DNI</ion-label>
+              </ion-list-header>
+              <ion-item>
+                <ion-label color="tertiary">
+                  {{ DNI }}
+                </ion-label>
+              </ion-item>
+              <ion-list-header color="primary">
+                <ion-label>Horas Diarias</ion-label>
+              </ion-list-header>
+              <ion-item>
+                <ion-label color="tertiary">
+                  {{ horasD }}
+                </ion-label>
+              </ion-item>
+              <ion-list-header color="primary">
+                <ion-label>Numero de Telefono</ion-label>
+              </ion-list-header>
+              <ion-item>
+                <ion-label color="tertiary">
+                  {{ telf }}
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+    
+ 
 </ion-content>
