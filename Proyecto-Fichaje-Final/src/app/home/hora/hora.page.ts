@@ -24,9 +24,12 @@ export class HoraPage implements OnInit {
     }));
   }
 
-  async presentModal() {
+  async presentModal(nombre) {
     const modal = await this.modalCtrl.create({
-      component: UinfoPage
+      component: UinfoPage,
+      componentProps: {
+        nombreU : nombre
+      }
     });
     return await modal.present();
   }

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, Input } from '@angular/core';
+import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-uinfo',
@@ -7,8 +7,9 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./uinfo.page.scss'],
 })
 export class UinfoPage implements OnInit {
+  @Input () nombreU: string;
 
-  constructor(public mdlCtrl: ModalController) { }
+  constructor(public mdlCtrl: ModalController, public navParams: NavParams) { }
 
   public closeModal() {
     this.mdlCtrl.dismiss();
