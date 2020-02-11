@@ -46,8 +46,8 @@
               <ion-icon slot="start" name="globe"></ion-icon>
               País
             </ion-label>
-            <ion-select placeholder="Selecciona un país" name="country">
-              <ion-select-option [value]="pais.code" *ngFor="let pais of paises" >{{pais.name}}</ion-select-option>
+            <ion-select placeholder="Selecciona un país" ngModel name="country">
+              <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>

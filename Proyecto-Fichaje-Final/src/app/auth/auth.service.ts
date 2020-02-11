@@ -44,7 +44,7 @@ export class AuthService {
     return this.afAuth.auth.currentUser.email;
   }
 
-  registerUser(email: string, password: string, nameSurname, dni, country, tel, hours) {
+  registerUser(email: string, password: string, nameSurname, dni, country, telefono, hours) {
     this.loadingController
       .create({
         keyboardClose: true,
@@ -52,6 +52,8 @@ export class AuthService {
       })
       .then(loadingEl => {
         loadingEl.present();
+        const tel = `+${country}${telefono}`;
+        
         this.http
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
@@ -62,6 +64,7 @@ export class AuthService {
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
               this.setUserDoc(jsonResponse.uid, nameSurname, dni, country, tel, hours);
+              console.log(country)
               console.log("usuario y documento creados");
               loadingEl.dismiss();
             },
@@ -103,6 +106,7 @@ export class AuthService {
   }
 
   private setUserDoc(uid, nameSurname, dni,country, tel, hours) {
+
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -114,7 +118,7 @@ export class AuthService {
         nombre: nameSurname,
         DNI: dni,
         admin: false,
-        countryCode: country,
+        countryCode: country.toString(),
         telefono: tel,
         empresa: data.empresa,
         horasDiarias: hours,

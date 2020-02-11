@@ -35,6 +35,7 @@ export class FichajeService {
   // Creacion del documento del respectivo dia de trabajo y marcado de la hora en la que se comenzo el dia de trabajo
   startWorkDay() {
     // Comprobamos si el documento existe
+    
     this.authService.user.pipe(take(1)).subscribe(userData => {
       this.afs.firestore
         .doc(
