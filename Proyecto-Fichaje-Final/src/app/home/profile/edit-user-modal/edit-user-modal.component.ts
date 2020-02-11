@@ -1,11 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { NgForm, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { NgForm, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
 import { from } from 'rxjs';
 import { countryCodes } from 'src/environments/environment' 
 import { PhoneValidator } from 'src/app/auth/phone.validator'
-import { take } from 'rxjs/operators';
 @Component({
   selector: 'app-edit-user-modal',
   templateUrl: './edit-user-modal.component.html',
@@ -23,6 +22,7 @@ export class EditUserModalComponent implements OnInit {
   constructor(private modalController: ModalController, private fb: FormBuilder, public authService: AuthService) { }
 
   ngOnInit() {
+    this.countryUpdate(this.country)
     this.editingForm = this.fb.group({
       email: [this.email, Validators.compose([Validators.email, Validators.required])],
       DNI: [this.DNI, Validators.required],
@@ -32,12 +32,6 @@ export class EditUserModalComponent implements OnInit {
       password: ['', Validators.minLength(6)],
       confirmPassword: ['']
     }, {validators : this.passwordMatchValidator});
-  }
-
-  getCountry() {
-    this.authService.user.pipe(take(1)).subscribe(user => {
-
-    })
   }
 
   countryUpdate(data){

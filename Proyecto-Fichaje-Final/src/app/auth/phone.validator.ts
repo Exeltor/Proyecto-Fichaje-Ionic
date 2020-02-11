@@ -13,14 +13,11 @@ export class PhoneValidator {
       var phone = control.value;
       if(phone.length > 1) {
         const regionCode = phoneUtil.getRegionCodeForCountryCode(this.pais);
-        console.log(phone);
         if (regionCode.toUpperCase() === "ZZ") {
           return { isValid: true };
         }
-
         const phoneNumber = phoneUtil.parse(phone.toString(), regionCode);
         let isValid = phoneUtil.isValidNumber(phoneNumber);
-        console.log(isValid);
         if (!isValid) {
           return { number_check: { isValid } };
         } else {
