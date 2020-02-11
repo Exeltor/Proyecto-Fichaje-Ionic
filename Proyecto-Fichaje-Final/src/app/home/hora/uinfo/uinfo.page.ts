@@ -8,6 +8,9 @@ import { ModalController, NavParams } from '@ionic/angular';
 })
 export class UinfoPage implements OnInit {
   @Input () nombreU: string;
+  @Input () telf: string;
+  @Input () DNI: string;
+  @Input () horasD: string;
 
   constructor(public mdlCtrl: ModalController, public navParams: NavParams) { }
 

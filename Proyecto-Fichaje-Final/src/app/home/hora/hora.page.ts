@@ -24,11 +24,14 @@ export class HoraPage implements OnInit {
     }));
   }
 
-  async presentModal(nombre) {
+  async presentModal(nombre, telefono, dni, horasDiarias) {
     const modal = await this.modalCtrl.create({
       component: UinfoPage,
       componentProps: {
-        nombreU : nombre
+        nombreU : nombre,
+        telf: telefono,
+        DNI: dni,
+        horasD: horasDiarias
       }
     });
     return await modal.present();
