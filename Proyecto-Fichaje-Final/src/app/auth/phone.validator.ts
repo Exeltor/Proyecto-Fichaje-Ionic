@@ -5,6 +5,7 @@ const phoneUtil = PhoneNumberUtil.getInstance();
 export class PhoneValidator {
   static pais;
   static country_check(data) {
+    console.log(data)
     this.pais = data;
   }
   static number_check(): ValidatorFn {
