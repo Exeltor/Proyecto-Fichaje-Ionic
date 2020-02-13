@@ -45,7 +45,8 @@ const routes: Routes = [
     path: '',
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
-  }
+  },
+  { path: 'uinfo', loadChildren: './hora/uinfo/uinfo.module#UinfoPageModule' }
 ];
 
 @NgModule({
