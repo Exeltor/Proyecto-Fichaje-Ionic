@@ -17,7 +17,9 @@ export class RegisterUserModalComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+   
+  }
 
   modalDismiss() {
     this.modalController.dismiss();
@@ -25,7 +27,7 @@ export class RegisterUserModalComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     const formData = form.value;
-
+    console.log(formData)
     this.authService.registerUser(
       formData.email,
       formData.password,
