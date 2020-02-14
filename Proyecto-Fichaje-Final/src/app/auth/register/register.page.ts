@@ -15,7 +15,9 @@ export class RegisterPage implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    this.authService.registerAdmin(form.value.email,
+    this.authService.registerAdmin(form.value.nombreEmpresa,
+    form.value.loc,
+    form.value.email,
     form.value.password, 
     form.value.nameSurname, 
     form.value.dni, 

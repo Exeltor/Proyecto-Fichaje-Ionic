@@ -16,6 +16,7 @@ import { HttpClient } from "@angular/common/http";
 })
 export class AuthService {
   user: Observable<User>;
+  empresa: Observable<any>;
   Nombre_Empresa: string;
 
   constructor(
@@ -116,8 +117,24 @@ export class AuthService {
     });
   }
 
+  private crearEmpresa(nombre, id, loc){
+    const empresaRef: AngularFirestoreDocument<any> = this.afs.doc(
+      `empresas/${id}`
+    );
 
-  registerAdmin(email: string, password: string, nameSurname, dni, tel, hours) {
+    this.empresa.pipe(take(1)).subscribe(data => {
+      const empresaDoc: any = {
+        id,
+        Nombre: nombre,
+        loc: loc,
+      };
+
+      empresaRef.set(empresaDoc);
+    });
+}
+
+
+  registerAdmin(nombreEmpresa, loc, email: string, password: string, nameSurname, dni, tel, hours) {
     this.loadingController
       .create({
         keyboardClose: true,
@@ -135,7 +152,8 @@ export class AuthService {
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
               this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours);
-              console.log("administrador y documento creados");
+              this.crearEmpresa(nombreEmpresa, jsonResponse.id, loc);
+              console.log("administrador, empresa y documento creados");
               loadingEl.dismiss();
             },
             err => {
@@ -174,6 +192,8 @@ export class AuthService {
           );
       });
   }
+
+
 
   private setAdminDoc(uid, nameSurname, dni, tel, hours) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
