@@ -21,5 +21,5 @@ export class LoginComponent implements OnInit {
   navigate(){
     this.router.navigate(['/register'])
   }
-
+  
 }

@@ -116,6 +116,86 @@ export class AuthService {
     });
   }
 
+
+  registerAdmin(email: string, password: string, nameSurname, dni, tel, hours) {
+    this.loadingController
+      .create({
+        keyboardClose: true,
+        message: "Creando administrador"
+      })
+      .then(loadingEl => {
+        loadingEl.present();
+        this.http
+          .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
+            email,
+            password,
+            tel
+          })
+          .subscribe(
+            response => {
+              const jsonResponse = JSON.parse(JSON.stringify(response));
+              this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours);
+              console.log("administrador y documento creados");
+              loadingEl.dismiss();
+            },
+            err => {
+              const jsonError = JSON.parse(JSON.stringify(err));
+              const error = jsonError.error.text;
+              console.log(err);
+              let errorMessage;
+              if (
+                error ===
+                "Error: Error: The email address is already in use by another account."
+              ) {
+                errorMessage = "Email en uso";
+              } else if (
+                error ===
+                "Error: Error: The user with the provided phone number already exists."
+              ) {
+                errorMessage = "Telefono en uso";
+              } else {
+                errorMessage = "Intentelo de nuevo";
+              }
+
+              loadingEl.dismiss();
+              this.alertController.create({
+                header: "No se ha podido crear la cuenta",
+                message: errorMessage,
+                buttons: [
+                  {
+                    role: "cancel",
+                    text: "Aceptar"
+                  }
+                ]
+              }).then(alertEl => {
+                alertEl.present();
+              });
+            }
+          );
+      });
+  }
+
+  private setAdminDoc(uid, nameSurname, dni, tel, hours) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+      `users/${uid}`
+    );
+
+    // TODO: Datos se rellenan por el administrador
+    this.user.pipe(take(1)).subscribe(data => {
+      const userDoc: User = {
+        uid,
+        nombre: nameSurname,
+        DNI: dni,
+        admin: true,
+        telefono: tel,
+        Nombre_Empresa: data.Nombre_Empresa,
+        horasDiarias: hours,
+      };
+
+      userRef.set(userDoc);
+    });
+  }
+
   login(email: string, password: string) {
     this.loadingController
       .create({

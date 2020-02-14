@@ -1,9 +1,51 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>register</ion-title>
+    <ion-title>Registro</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <form #form="ngForm" (ngSubmit)="register(form)" method="post">
+    <ion-item>
+        <ion-label position="floating">Nombre de empresa</ion-label>
+        <ion-input ngModel name="empresa"></ion-input>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input ngModel name="nameSurname"></ion-input>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" ngModel name="email"></ion-input>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" ngModel name="password"></ion-input>
+    </ion-item>
 
-</ion-content>
+    <ion-item>
+      <ion-label position="floating">Horas semanales</ion-label>
+      <ion-input ngModel type="number" name="hours" min="1" max="10"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating"><nav>Número de teléfono</nav></ion-label>
+      <!-- <ion-select ngModel type="number" name="pais"></ion-select>
+        <ion-select-option value="sp">España</ion-select-option>
+        <ion-select-option value="ger">Alemania</ion-select-option>
+        <ion-select-option value="ng">Nigeria del sur</ion-select-option> -->
+      <ion-input ngModel name="tel"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">DNI</ion-label>
+      <ion-input ngModel name="dni"></ion-input>
+    </ion-item>
+  
+    <ion-button type="submit" expand="full">Register</ion-button>
+  </form>
+ 
+</ion-content>  
