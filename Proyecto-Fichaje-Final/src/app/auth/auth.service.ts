@@ -11,6 +11,7 @@ import { AlertController, LoadingController, ModalController } from "@ionic/angu
 import { User } from "../models/user.model";
 import { HttpClient } from "@angular/common/http";
 import { auth } from 'firebase/app';
+import { LoggingService } from '../aux/logging.service';
 
 @Injectable({
   providedIn: "root"
@@ -27,7 +28,8 @@ export class AuthService {
     private alertController: AlertController,
     private http: HttpClient,
     private loadingController: LoadingController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private logger: LoggingService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -89,6 +91,7 @@ export class AuthService {
               }
 
               loadingEl.dismiss();
+              this.logger.logEvent(errorMessage, 5, 'authService registerUser')
               this.alertController.create({
                 header: "No se ha podido crear la cuenta",
                 message: errorMessage,
@@ -126,6 +129,7 @@ export class AuthService {
       };
 
       userRef.set(userDoc);
+      this.logger.logEvent(`User created: ${uid}`, 3, 'authService setUserDoc')
     });
   }
 
@@ -140,7 +144,7 @@ export class AuthService {
         this.afAuth.auth
           .signInWithEmailAndPassword(email, password)
           .then(val => {
-            console.log(val, "Funciona");
+            this.logger.logEvent(`User logged in: ${val.user.uid}`, 3, 'authService login')
             loadingEl.dismiss();
             this.router.navigateByUrl("/home");
           })
@@ -159,6 +163,7 @@ export class AuthService {
             }
 
             loadingEl.dismiss();
+            this.logger.logEvent(`Failed to log in: ${err.code}`, 4, 'authService login')
 
             this.alertController
               .create({
@@ -204,8 +209,10 @@ export class AuthService {
           ]
         }).then(alert => {
           alert.present();
+          this.logger.logEvent(`Sign in with Google failed, no account linked`, 4, 'authService signInWithGoogle')
         })
       } else {
+        this.logger.logEvent(`Signed in with Google: ${val.user.uid}`, 3, 'authService signInWithGoogle')
         this.router.navigateByUrl("/home");
       }
     });
@@ -227,8 +234,10 @@ export class AuthService {
           ]
         }).then(alert => {
           alert.present();
+          this.logger.logEvent(`Sign in with Facebook failed, no account linked`, 4, 'authService signInWithFacebook')
         })
       } else {
+        this.logger.logEvent(`Signed in with Facebook: ${val.user.uid}`, 3, 'authService signInWithFacebook')
         this.router.navigateByUrl("/home");
       }
     });
@@ -255,9 +264,11 @@ export class AuthService {
         this.modalController.dismiss();
         //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
         this.updateHistory(newData, user);
+        this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
       })
     } catch (error) {
       console.log(error);
+      this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
     }
   }
 
@@ -316,9 +327,10 @@ export class AuthService {
       .then(val => {
         console.log("Logged out");
         this.router.navigateByUrl("auth");
+        this.logger.logEvent(`User ${this.userUid} logged out`, 3, 'authService logout')
       })
       .catch(err => {
-        console.log("Cannot log out");
+        this.logger.logEvent(err, 4, 'authService logout')
       });
   }
 }
