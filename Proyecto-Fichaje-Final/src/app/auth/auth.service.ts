@@ -237,14 +237,11 @@ export class AuthService {
   updateProfile(newData) {
     // idFecha viejo -> nuevo
     try {
-      this.afs.doc(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
-        let previousDoc: any = user;
-        previousDoc.lastUsed = new Date();
+      this.afs.doc<User>(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
         this.afs.doc(`users/${this.userUid}`).update({
           DNI: newData.DNI,
           nombre: newData.nombre,
         })
-    
         this.changePhone(newData.telefono, newData.country);
         this.changeEmail(newData.email);
         if(newData.password) {
@@ -252,11 +249,38 @@ export class AuthService {
         }
     
         this.modalController.dismiss();
-        this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        this.updateHistory(newData, user);
       })
     } catch (error) {
       console.log(error);
     }
+  }
+
+  private updateHistory(newData, previousData) {
+    let changes = {};
+    if(newData.DNI !== previousData.DNI) {
+      changes = {...changes, '-DNI': previousData.DNI, '+DNI': newData.DNI}
+    }
+
+    if(newData.nombre !== previousData.nombre) {
+      changes = {...changes, '-nombre': previousData.nombre, '+nombre': newData.nombre}
+    }
+
+    if(newData.country !== previousData.countryCode) {
+      changes = {...changes, '-country': previousData.countryCode, '+country': newData.country}
+    }
+
+    if(newData.telefono !== previousData.telefono) {
+      changes = {...changes, '-telefono': previousData.telefono, '+telefono': newData.telefono}
+    }
+
+    if(newData.DNI !== previousData.DNI) {
+      changes = {...changes, '-DNI': previousData.DNI, '+DNI': newData.DNI}
+    }
+
+    const currentDate = new Date().toString()
+    this.afs.collection(`users/${this.userUid}/historicoDatos`).doc(currentDate).set(changes)
   }
 
   private changePassword(newPassword: string) {
