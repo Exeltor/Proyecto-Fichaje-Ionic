@@ -5,7 +5,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
 import { GeolocService } from './geoloc.service';
-
+const distFrom = require('distance-from')
 @Component({
   selector: "app-ficha",
   templateUrl: "./ficha.page.html",
@@ -74,10 +74,12 @@ export class FichaPage implements OnInit {
   async comenzarDia() {
     let coords = await this.geo.getLoc();
     console.log(coords[0] + ', ' + coords[1])
-    /*if (!this.comenzado) {
+
+    console.log(distFrom(coords).to([40.6,-3.7]).in('m')) // Calculo de distancia en metros
+    if (!this.comenzado) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
-    }*/
+    }
   }
 
   /*
