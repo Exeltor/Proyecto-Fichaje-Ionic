@@ -5,8 +5,9 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take, switchMap } from "rxjs/operators";
 import { GeolocService } from './geoloc.service';
-import { Observable } from 'rxjs';
-const distFrom = require('distance-from')
+import { Observable, Subscription } from 'rxjs';
+import { S_IFDIR } from 'constants';
+const distFrom = require('distance-from');
 
 
 @Component({
@@ -21,6 +22,7 @@ export class FichaPage implements OnInit {
   masPauses;
   terminado;
   isLoading;
+  locationBlocked;
 
   constructor(
     private toastController: ToastController,
@@ -74,47 +76,36 @@ export class FichaPage implements OnInit {
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
- mierda: boolean = false;
   async comenzarDia() {
-    let coords = await this.geo.getLoc();
-    console.log(coords[0] + ', ' + coords[1])
-
-    console.log(distFrom(coords).to([40.6,-3.7]).in('m')) // Calculo de distancia en metros
-
-
-//hasta aqui funciona
-
-   // let coordsEmpresa = this.cogerCoordenadaEmpresa();
-   this.authService.user.pipe(take(1)).subscribe(user=>{
-    this.afs.doc(
-      `empresas/` + user.empresa
-    ).get().subscribe(data => {
-      let coordinates =  data.get("loc");
-      console.log(coordinates, "dentro d esubscribe")
-      this.mierda = true;
-      return [coordinates[0], coordinates[1]];
-
+    this.isLoading = true;
+    this.locationBlocked = false;
+    let coords = await this.geo.getLoc().catch(error => {
+      console.log(error);
+      this.locationBlocked = true;
+      this.isLoading = false;
     });
+
+    if(this.locationBlocked) return;
+
+    // Calculo de distancia en metros
     
-  }); 
-    
+    let coordsEmpresa = await this.cogerCoordenadaEmpresa()
+    this.isLoading = false;
+
+    if (!this.comenzado && distFrom(coords).to(coordsEmpresa).in('m') < 200) {
+      this.comenzado = !this.comenzado;
+      this.fichajeService.startWorkDay();
+    } else {
+      this.toastPausaResume("Tienes que estar en el trabajo para empezar tu jornada laboral");
+    }
   }
   
   cogerCoordenadaEmpresa(){
-    let coords = this.authService.user.pipe(take(1)).subscribe(user=>{
-      return this.afs.doc(
-        `empresas/` + user.empresa
-      ).get().subscribe(data => {
-        let coordinates =  data.get("loc");
-        console.log(coordinates, "dentro d esubscribe")
-        this.mierda = true;
-        return [coordinates[0], coordinates[1]];
-
-      });
-      
-    });
-    
-    console.log(coords)
+    return this.authService.user.pipe(take(1)).toPromise().then(user => {
+      return this.afs.doc(`empresas/` + user.empresa).get().toPromise().then(data => {
+        return data.get("loc");
+      })
+    })
 
   }
   /*
@@ -151,11 +142,18 @@ export class FichaPage implements OnInit {
     }
   }
 
+  getLocalizacion(){
+    this.geo.getLoc().catch(err => {
+      console.log(err);
+      this.locationBlocked = true;
+    })
+  }
   /*
     Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
     Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
   */
   getIfComenzado() {
+    this.getLocalizacion();
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {

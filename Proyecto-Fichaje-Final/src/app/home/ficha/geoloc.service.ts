@@ -13,7 +13,7 @@ export class GeolocService {
     return this.geolocation.getCurrentPosition().then((data)=> {
       return [data.coords.latitude, data.coords.longitude];
     }).catch((error)=>{
-      console.log('Oyeme mami hay un error', error);
+      throw new Error("Can't get location");
     })
   }
 }
