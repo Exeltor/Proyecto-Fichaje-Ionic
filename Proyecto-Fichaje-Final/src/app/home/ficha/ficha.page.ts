@@ -3,9 +3,12 @@ import { FichajeService } from "./fichaje.service";
 import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
-import { take } from "rxjs/operators";
+import { take, switchMap } from "rxjs/operators";
 import { GeolocService } from './geoloc.service';
+import { Observable } from 'rxjs';
 const distFrom = require('distance-from')
+
+
 @Component({
   selector: "app-ficha",
   templateUrl: "./ficha.page.html",
@@ -71,17 +74,49 @@ export class FichaPage implements OnInit {
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
+ mierda: boolean = false;
   async comenzarDia() {
     let coords = await this.geo.getLoc();
     console.log(coords[0] + ', ' + coords[1])
 
     console.log(distFrom(coords).to([40.6,-3.7]).in('m')) // Calculo de distancia en metros
-    if (!this.comenzado) {
-      this.comenzado = !this.comenzado;
-      this.fichajeService.startWorkDay();
-    }
-  }
 
+
+//hasta aqui funciona
+
+   // let coordsEmpresa = this.cogerCoordenadaEmpresa();
+   this.authService.user.pipe(take(1)).subscribe(user=>{
+    this.afs.doc(
+      `empresas/` + user.empresa
+    ).get().subscribe(data => {
+      let coordinates =  data.get("loc");
+      console.log(coordinates, "dentro d esubscribe")
+      this.mierda = true;
+      return [coordinates[0], coordinates[1]];
+
+    });
+    
+  }); 
+    
+  }
+  
+  cogerCoordenadaEmpresa(){
+    let coords = this.authService.user.pipe(take(1)).subscribe(user=>{
+      return this.afs.doc(
+        `empresas/` + user.empresa
+      ).get().subscribe(data => {
+        let coordinates =  data.get("loc");
+        console.log(coordinates, "dentro d esubscribe")
+        this.mierda = true;
+        return [coordinates[0], coordinates[1]];
+
+      });
+      
+    });
+    
+    console.log(coords)
+
+  }
   /*
     Alerta de confirmacion de finalizacion del dia de trabajo, en el caso de que la persona haya presionado el boton erroneamente
   */
