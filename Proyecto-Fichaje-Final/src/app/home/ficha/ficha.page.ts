@@ -4,6 +4,7 @@ import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
+import { GeolocService } from './geoloc.service';
 
 @Component({
   selector: "app-ficha",
@@ -23,7 +24,8 @@ export class FichaPage implements OnInit {
     private alertController: AlertController,
     public fichajeService: FichajeService,
     private authService: AuthService,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private geo: GeolocService,
   ) {}
 
   ngOnInit() {
@@ -69,11 +71,13 @@ export class FichaPage implements OnInit {
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
-  comenzarDia() {
-    if (!this.comenzado) {
+  async comenzarDia() {
+    let coords = await this.geo.getLoc();
+    console.log(coords[0] + ', ' + coords[1])
+    /*if (!this.comenzado) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
-    }
+    }*/
   }
 
   /*
