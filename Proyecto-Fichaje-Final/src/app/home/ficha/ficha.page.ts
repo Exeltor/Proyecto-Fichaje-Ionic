@@ -3,12 +3,9 @@ import { FichajeService } from "./fichaje.service";
 import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
-import { take, switchMap } from "rxjs/operators";
+import { take } from "rxjs/operators";
 import { GeolocService } from './geoloc.service';
-import { Observable, Subscription } from 'rxjs';
-import { S_IFDIR } from 'constants';
-const distFrom = require('distance-from');
-
+import * as geolib from 'geolib';
 
 @Component({
   selector: "app-ficha",
@@ -91,8 +88,8 @@ export class FichaPage implements OnInit {
     
     let coordsEmpresa = await this.cogerCoordenadaEmpresa()
     this.isLoading = false;
-
-    if (!this.comenzado && distFrom(coords).to(coordsEmpresa).in('m') < 200) {
+    
+    if (!this.comenzado && geolib.isPointWithinRadius({latitude: coords[0], longitude: coords[1]}, {latitude: coordsEmpresa[0], longitude: coordsEmpresa[1]}, 100)) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
     } else {
