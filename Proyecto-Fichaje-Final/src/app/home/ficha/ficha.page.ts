@@ -4,6 +4,8 @@ import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
+import { GeolocService } from './geoloc.service';
+import * as geolib from 'geolib';
 
 @Component({
   selector: "app-ficha",
@@ -17,13 +19,15 @@ export class FichaPage implements OnInit {
   masPauses;
   terminado;
   isLoading;
+  locationBlocked;
 
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
     public fichajeService: FichajeService,
     private authService: AuthService,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private geo: GeolocService,
   ) {}
 
   ngOnInit() {
@@ -69,13 +73,38 @@ export class FichaPage implements OnInit {
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
-  comenzarDia() {
-    if (!this.comenzado) {
+  async comenzarDia() {
+    this.isLoading = true;
+    this.locationBlocked = false;
+    let coords = await this.geo.getLoc().catch(error => {
+      console.log(error);
+      this.locationBlocked = true;
+      this.isLoading = false;
+    });
+
+    if(this.locationBlocked) return;
+
+    // Calculo de distancia en metros
+    
+    let coordsEmpresa = await this.cogerCoordenadaEmpresa()
+    this.isLoading = false;
+    
+    if (!this.comenzado && geolib.isPointWithinRadius({latitude: coords[0], longitude: coords[1]}, {latitude: coordsEmpresa[0], longitude: coordsEmpresa[1]}, 100)) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
+    } else {
+      this.toastPausaResume("Tienes que estar en el trabajo para empezar tu jornada laboral");
     }
   }
+  
+  cogerCoordenadaEmpresa(){
+    return this.authService.user.pipe(take(1)).toPromise().then(user => {
+      return this.afs.doc(`empresas/` + user.empresa).get().toPromise().then(data => {
+        return data.get("loc");
+      })
+    })
 
+  }
   /*
     Alerta de confirmacion de finalizacion del dia de trabajo, en el caso de que la persona haya presionado el boton erroneamente
   */
@@ -110,11 +139,18 @@ export class FichaPage implements OnInit {
     }
   }
 
+  getLocalizacion(){
+    this.geo.getLoc().catch(err => {
+      console.log(err);
+      this.locationBlocked = true;
+    })
+  }
   /*
     Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
     Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
   */
   getIfComenzado() {
+    this.getLocalizacion();
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {

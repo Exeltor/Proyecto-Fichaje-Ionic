@@ -1,24 +1,24 @@
-import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Injectable, ɵCodegenComponentFactoryResolver } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
-import {
-  AngularFirestore,
-  AngularFirestoreDocument
-} from "@angular/fire/firestore";
-import { Observable, of } from "rxjs";
-import { switchMap, take } from "rxjs/operators";
+import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { AlertController, LoadingController, ModalController } from "@ionic/angular";
+import { Observable, of } from "rxjs";
+import { switchMap, take } from "rxjs/operators";
+import { Empresa } from '../models/empresa.model';
 import { User } from "../models/user.model";
-import { HttpClient } from "@angular/common/http";
 import { auth } from 'firebase/app';
+import { LoggingService } from '../aux/logging.service';
 
 @Injectable({
   providedIn: "root"
 })
 export class AuthService {
   user: Observable<User>;
-  userUid: string;
-  empresa: string;
+  empresa: Observable<Empresa>;
+  Nombre_Empresa: string;
+  userUid;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -27,7 +27,8 @@ export class AuthService {
     private alertController: AlertController,
     private http: HttpClient,
     private loadingController: LoadingController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private logger: LoggingService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -89,6 +90,7 @@ export class AuthService {
               }
 
               loadingEl.dismiss();
+              this.logger.logEvent(errorMessage, 5, 'authService registerUser')
               this.alertController.create({
                 header: "No se ha podido crear la cuenta",
                 message: errorMessage,
@@ -106,8 +108,68 @@ export class AuthService {
       });
   }
 
-  private setUserDoc(uid, nameSurname, dni,country, tel, hours) {
 
+  registerAdmin(email: string, password: string, nameSurname, hours, dni, telefono, empresa, code) {
+    // const newtel = "+"+code+tel;
+    this.loadingController.create({
+        keyboardClose: true,
+        message: "Creando administrador"
+      })
+      .then(loadingEl => {
+        loadingEl.present();
+        const tel = `+${code}${telefono}`
+        this.http
+          .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
+            email,
+            password,
+            tel
+          })
+          .subscribe(
+            response => {
+              const jsonResponse = JSON.parse(JSON.stringify(response));
+              this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours, empresa, code);
+              loadingEl.dismiss();
+            },
+            err => {
+              const jsonError = JSON.parse(JSON.stringify(err));
+              const error = jsonError.error.text;
+              console.log(err);
+              let errorMessage;
+              if (
+                error ===
+                "Error: Error: The email address is already in use by another account."
+              ) {
+                errorMessage = "Email en uso";
+              } else if (
+                error ===
+                "Error: Error: The user with the provided phone number already exists."
+              ) {
+                errorMessage = "Telefono en uso";
+              } else {
+                errorMessage = "Intentelo de nuevo";
+              }
+
+              loadingEl.dismiss();
+              this.alertController.create({
+                header: "No se ha podido crear la cuenta",
+                message: errorMessage,
+                buttons: [
+                  {
+                    role: "cancel",
+                    text: "Aceptar"
+                  }
+                ]
+              }).then(alertEl => {
+                alertEl.present();
+              });
+            }
+          );
+      });
+  }
+
+
+
+  private setUserDoc(uid, nameSurname, dni, country, tel, hours) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -122,12 +184,45 @@ export class AuthService {
         countryCode: country.toString(),
         telefono: tel,
         empresa: data.empresa,
+        horasDiarias: hours
+      };
+
+      userRef.set(userDoc);
+      this.logger.logEvent(`User created: ${uid}`, 3, 'authService setUserDoc')
+    });
+  }
+
+  private setAdminDoc(uid, nameSurname, dni, tel, hours, empresa, code) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+      `users/${uid}`
+    );
+
+    // TODO: Datos se rellenan por el administrador
+    
+
+    this.user.pipe(take(1)).subscribe(data => {
+      const userDoc: User = {
+        DNI: dni,
+        admin: true,
+        countryCode: code,
+        empresa: empresa,
         horasDiarias: hours,
+        nombre: nameSurname,
+        telefono: tel,
+        uid
       };
 
       userRef.set(userDoc);
     });
   }
+
+  crearEmpresa(cif, nombre, loc1, loc2){
+    this.afs.collection(`empresas`).doc(cif).set({
+      Nombre: nombre,
+      id: cif,
+      loc:[loc1, loc2]
+    }).then(suc =>{}).catch(error => {})
+}
 
   login(email: string, password: string) {
     this.loadingController
@@ -140,7 +235,7 @@ export class AuthService {
         this.afAuth.auth
           .signInWithEmailAndPassword(email, password)
           .then(val => {
-            console.log(val, "Funciona");
+            this.logger.logEvent(`User logged in: ${val.user.uid}`, 3, 'authService login')
             loadingEl.dismiss();
             this.router.navigateByUrl("/home");
           })
@@ -159,6 +254,7 @@ export class AuthService {
             }
 
             loadingEl.dismiss();
+            this.logger.logEvent(`Failed to log in: ${err.code}`, 4, 'authService login')
 
             this.alertController
               .create({
@@ -204,8 +300,10 @@ export class AuthService {
           ]
         }).then(alert => {
           alert.present();
+          this.logger.logEvent(`Sign in with Google failed, no account linked`, 4, 'authService signInWithGoogle')
         })
       } else {
+        this.logger.logEvent(`Signed in with Google: ${val.user.uid}`, 3, 'authService signInWithGoogle')
         this.router.navigateByUrl("/home");
       }
     });
@@ -227,8 +325,10 @@ export class AuthService {
           ]
         }).then(alert => {
           alert.present();
+          this.logger.logEvent(`Sign in with Facebook failed, no account linked`, 4, 'authService signInWithFacebook')
         })
       } else {
+        this.logger.logEvent(`Signed in with Facebook: ${val.user.uid}`, 3, 'authService signInWithFacebook')
         this.router.navigateByUrl("/home");
       }
     });
@@ -239,18 +339,54 @@ export class AuthService {
   }
 
   updateProfile(newData) {
-    this.afs.doc(`users/${this.userUid}`).update({
-      DNI: newData.DNI,
-      nombre: newData.nombre,
-    })
+    // idFecha viejo -> nuevo
+    try {
+      this.afs.doc<User>(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
+        this.afs.doc(`users/${this.userUid}`).update({
+          DNI: newData.DNI,
+          nombre: newData.nombre,
+        })
+        this.changePhone(newData.telefono, newData.country);
+        this.changeEmail(newData.email);
+        if(newData.password) {
+          this.changePassword(newData.password);
+        }
+    
+        this.modalController.dismiss();
+        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        this.updateHistory(newData, user);
+        this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
+      })
+    } catch (error) {
+      console.log(error);
+      this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
+    }
+  }
 
-    this.changePhone(newData.telefono, newData.country);
-    this.changeEmail(newData.email);
-    if(newData.password) {
-      this.changePassword(newData.password);
+  private updateHistory(newData, previousData) {
+    let changes = {};
+    if(newData.DNI !== previousData.DNI) {
+      changes = {...changes, '-DNI': previousData.DNI, '+DNI': newData.DNI}
     }
 
-    this.modalController.dismiss();
+    if(newData.nombre !== previousData.nombre) {
+      changes = {...changes, '-nombre': previousData.nombre, '+nombre': newData.nombre}
+    }
+
+    if(newData.country !== previousData.countryCode) {
+      changes = {...changes, '-country': previousData.countryCode, '+country': newData.country}
+    }
+
+    if(newData.telefono !== previousData.telefono) {
+      changes = {...changes, '-telefono': previousData.telefono, '+telefono': newData.telefono}
+    }
+
+    if(newData.DNI !== previousData.DNI) {
+      changes = {...changes, '-DNI': previousData.DNI, '+DNI': newData.DNI}
+    }
+
+    const currentDate = new Date().toString()
+    this.afs.collection(`users/${this.userUid}/historicoDatos`).doc(currentDate).set(changes)
   }
 
   private changePassword(newPassword: string) {
@@ -282,9 +418,10 @@ export class AuthService {
       .then(val => {
         console.log("Logged out");
         this.router.navigateByUrl("auth");
+        this.logger.logEvent(`User ${this.userUid} logged out`, 3, 'authService logout')
       })
       .catch(err => {
-        console.log("Cannot log out");
+        this.logger.logEvent(err, 4, 'authService logout')
       });
   }
 }
