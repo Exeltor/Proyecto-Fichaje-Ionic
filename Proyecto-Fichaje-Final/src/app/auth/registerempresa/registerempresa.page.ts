@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { NgForm } from '@angular/forms';
 import { ValueAccessor } from '@ionic/angular/dist/directives/control-value-accessors/value-accessor';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registerempresa',
@@ -10,7 +11,7 @@ import { ValueAccessor } from '@ionic/angular/dist/directives/control-value-acce
 })
 export class RegisterempresaPage implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -31,9 +32,13 @@ export class RegisterempresaPage implements OnInit {
     form.value.hours,
     form.value.dni,
     form.value.tel,
-    form.value.nombre,
+    form.value.cif,
     form.value.code);
-
+    
+    this.exit();
+  }
+  exit(){
+    this.router.navigateByUrl('/auth');
   }
 
 }

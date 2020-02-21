@@ -97,15 +97,6 @@ export class AuthService {
 
 
   registerAdmin(email: string, password: string, nameSurname, hours, dni, telefono, empresa, code) {
-
-    console.log("mail:" + email);
-    console.log("pass:" + password);
-    console.log("nombre:" + nameSurname);
-    console.log("horas:" + hours);
-    console.log("dni:" + dni);
-    console.log("telefono:" + telefono);
-    console.log("empresa:" + empresa);
-    console.log("code:" + code);
     // const newtel = "+"+code+tel;
     this.loadingController.create({
         keyboardClose: true,
@@ -124,7 +115,6 @@ export class AuthService {
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
               this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours, empresa, code);
-              console.log("administrador y documento creados");
               loadingEl.dismiss();
             },
             err => {
