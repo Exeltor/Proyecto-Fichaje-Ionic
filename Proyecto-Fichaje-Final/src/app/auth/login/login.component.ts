@@ -18,8 +18,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(form.value.email, form.value.password);
   }
 
-  navigate(){
-    this.router.navigate(['/register'])
+  navigateEmpresaRegister(){
+    this.router.navigate(['/registerempresa'])
   }
   
 }

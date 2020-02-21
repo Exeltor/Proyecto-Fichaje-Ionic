@@ -1,22 +1,21 @@
-import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Injectable, ɵCodegenComponentFactoryResolver } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
-import {
-  AngularFirestore,
-  AngularFirestoreDocument
-} from "@angular/fire/firestore";
-import { Observable, of } from "rxjs";
-import { switchMap, take } from "rxjs/operators";
+import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { AlertController, LoadingController } from "@ionic/angular";
+import { Observable, of } from "rxjs";
+import { switchMap, take } from "rxjs/operators";
+import { Empresa } from '../models/empresa.model';
 import { User } from "../models/user.model";
-import { HttpClient } from "@angular/common/http";
+
 
 @Injectable({
   providedIn: "root"
 })
 export class AuthService {
   user: Observable<User>;
-  empresa: Observable<any>;
+  empresa: Observable<Empresa>;
   Nombre_Empresa: string;
 
   constructor(
@@ -96,52 +95,25 @@ export class AuthService {
       });
   }
 
-  private setUserDoc(uid, nameSurname, dni, tel, hours) {
-    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
-      `users/${uid}`
-    );
 
-    // TODO: Datos se rellenan por el administrador
-    this.user.pipe(take(1)).subscribe(data => {
-      const userDoc: User = {
-        uid,
-        nombre: nameSurname,
-        DNI: dni,
-        admin: false,
-        telefono: tel,
-        Nombre_Empresa: data.Nombre_Empresa,
-        horasDiarias: hours,
-      };
+  registerAdmin(email: string, password: string, nameSurname, hours, dni, telefono, empresa, code) {
 
-      userRef.set(userDoc);
-    });
-  }
-
-  private crearEmpresa(nombre, id, loc){
-    const empresaRef: AngularFirestoreDocument<any> = this.afs.doc(
-      `empresas/${id}`
-    );
-
-    this.empresa.pipe(take(1)).subscribe(data => {
-      const empresaDoc: any = {
-        id,
-        Nombre: nombre,
-        loc: loc,
-      };
-
-      empresaRef.set(empresaDoc);
-    });
-}
-
-
-  registerAdmin(nombreEmpresa, loc, email: string, password: string, nameSurname, dni, tel, hours) {
-    this.loadingController
-      .create({
+    console.log("mail:" + email);
+    console.log("pass:" + password);
+    console.log("nombre:" + nameSurname);
+    console.log("horas:" + hours);
+    console.log("dni:" + dni);
+    console.log("telefono:" + telefono);
+    console.log("empresa:" + empresa);
+    console.log("code:" + code);
+    // const newtel = "+"+code+tel;
+    this.loadingController.create({
         keyboardClose: true,
         message: "Creando administrador"
       })
       .then(loadingEl => {
         loadingEl.present();
+        const tel = `+${code}${telefono}`
         this.http
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
@@ -151,9 +123,8 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours);
-              this.crearEmpresa(nombreEmpresa, jsonResponse.id, loc);
-              console.log("administrador, empresa y documento creados");
+              this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours, empresa, code);
+              console.log("administrador y documento creados");
               loadingEl.dismiss();
             },
             err => {
@@ -195,7 +166,7 @@ export class AuthService {
 
 
 
-  private setAdminDoc(uid, nameSurname, dni, tel, hours) {
+  private setUserDoc(uid, nameSurname, dni, tel, hours) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -206,15 +177,48 @@ export class AuthService {
         uid,
         nombre: nameSurname,
         DNI: dni,
-        admin: true,
+        admin: false,
         telefono: tel,
-        Nombre_Empresa: data.Nombre_Empresa,
+        empresa: data.empresa,
         horasDiarias: hours,
+        countryCode: "34"
       };
 
       userRef.set(userDoc);
     });
   }
+
+  private setAdminDoc(uid, nameSurname, dni, tel, hours, empresa, code) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+      `users/${uid}`
+    );
+
+    // TODO: Datos se rellenan por el administrador
+    
+
+    this.user.pipe(take(1)).subscribe(data => {
+      const userDoc: User = {
+        DNI: dni,
+        admin: true,
+        countryCode: code,
+        empresa: empresa,
+        horasDiarias: hours,
+        nombre: nameSurname,
+        telefono: tel,
+        uid
+      };
+
+      userRef.set(userDoc);
+    });
+  }
+
+  crearEmpresa(cif, nombre, loc1, loc2){
+    this.afs.collection(`empresas`).doc(cif).set({
+      Nombre: nombre,
+      id: cif,
+      loc:[loc1, loc2]
+    }).then(suc =>{}).catch(error => {})
+}
 
   login(email: string, password: string) {
     this.loadingController

@@ -1,16 +1,28 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Registro</ion-title>
+    <ion-title>Registro empresa</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
   <form #form="ngForm" (ngSubmit)="onSubmit(form)" method="post">
+
     <ion-item>
-        <ion-label position="floating">Nombre de empresa</ion-label>
-        <ion-input ngModel name="empresa"></ion-input>
+      <ion-label position="floating">CIF empresa</ion-label>
+      <ion-input ngModel name="cif"></ion-input>
     </ion-item>
   
+    <ion-item>
+      <ion-label position="floating">Nombre empresa</ion-label>
+      <ion-input ngModel name="nombre"></ion-input>
+    </ion-item>
+  
+    <ion-item>
+      <ion-label position="floating">Localización</ion-label>
+      <ion-input ngModel name="loc1"></ion-input>
+      <ion-input ngModel name="loc2"></ion-input>
+    </ion-item>
+
     <ion-item>
       <ion-label position="floating">Nombre</ion-label>
       <ion-input ngModel name="nameSurname"></ion-input>
@@ -32,11 +44,12 @@
     </ion-item>
 
     <ion-item>
+      <ion-label position="floating"><nav>Código País</nav></ion-label>
+      <ion-input ngModel name="code"></ion-input>
+    </ion-item>
+
+    <ion-item>
       <ion-label position="floating"><nav>Número de teléfono</nav></ion-label>
-      <!-- <ion-select ngModel type="number" name="pais"></ion-select>
-        <ion-select-option value="sp">España</ion-select-option>
-        <ion-select-option value="ger">Alemania</ion-select-option>
-        <ion-select-option value="ng">Nigeria del sur</ion-select-option> -->
       <ion-input ngModel name="tel"></ion-input>
     </ion-item>
 
@@ -44,8 +57,11 @@
       <ion-label position="floating">DNI</ion-label>
       <ion-input ngModel name="dni"></ion-input>
     </ion-item>
+
+    
   
-    <ion-button type="submit" expand="full">Register</ion-button>
+    <ion-button type="submit" expand="full">Registrar empresa</ion-button>
   </form>
  
 </ion-content>  
+
