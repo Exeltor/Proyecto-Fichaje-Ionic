@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <ion-grid *ngIf="!isLoading">
+    <ion-grid *ngIf="!isLoading&&!locationBlocked">
         <ion-row>
             <ion-col>
                 <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
@@ -66,6 +66,13 @@
         <ion-row>
             <ion-col>
                 <ion-spinner></ion-spinner>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="locationBlocked">
+        <ion-row>
+            <ion-col>
+                <p>Ah we acepta puto</p>
             </ion-col>
         </ion-row>
     </ion-grid>
