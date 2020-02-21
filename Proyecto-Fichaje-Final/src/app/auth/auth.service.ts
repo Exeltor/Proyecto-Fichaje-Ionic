@@ -1,15 +1,13 @@
-import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Injectable, ɵCodegenComponentFactoryResolver } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
-import {
-  AngularFirestore,
-  AngularFirestoreDocument
-} from "@angular/fire/firestore";
-import { Observable, of } from "rxjs";
-import { switchMap, take } from "rxjs/operators";
+import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { AlertController, LoadingController, ModalController } from "@ionic/angular";
+import { Observable, of } from "rxjs";
+import { switchMap, take } from "rxjs/operators";
+import { Empresa } from '../models/empresa.model';
 import { User } from "../models/user.model";
-import { HttpClient } from "@angular/common/http";
 import { auth } from 'firebase/app';
 import { LoggingService } from '../aux/logging.service';
 
@@ -18,8 +16,9 @@ import { LoggingService } from '../aux/logging.service';
 })
 export class AuthService {
   user: Observable<User>;
-  userUid: string;
-  empresa: string;
+  empresa: Observable<Empresa>;
+  Nombre_Empresa: string;
+  userUid;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -109,8 +108,68 @@ export class AuthService {
       });
   }
 
-  private setUserDoc(uid, nameSurname, dni,country, tel, hours) {
 
+  registerAdmin(email: string, password: string, nameSurname, hours, dni, telefono, empresa, code) {
+    // const newtel = "+"+code+tel;
+    this.loadingController.create({
+        keyboardClose: true,
+        message: "Creando administrador"
+      })
+      .then(loadingEl => {
+        loadingEl.present();
+        const tel = `+${code}${telefono}`
+        this.http
+          .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
+            email,
+            password,
+            tel
+          })
+          .subscribe(
+            response => {
+              const jsonResponse = JSON.parse(JSON.stringify(response));
+              this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours, empresa, code);
+              loadingEl.dismiss();
+            },
+            err => {
+              const jsonError = JSON.parse(JSON.stringify(err));
+              const error = jsonError.error.text;
+              console.log(err);
+              let errorMessage;
+              if (
+                error ===
+                "Error: Error: The email address is already in use by another account."
+              ) {
+                errorMessage = "Email en uso";
+              } else if (
+                error ===
+                "Error: Error: The user with the provided phone number already exists."
+              ) {
+                errorMessage = "Telefono en uso";
+              } else {
+                errorMessage = "Intentelo de nuevo";
+              }
+
+              loadingEl.dismiss();
+              this.alertController.create({
+                header: "No se ha podido crear la cuenta",
+                message: errorMessage,
+                buttons: [
+                  {
+                    role: "cancel",
+                    text: "Aceptar"
+                  }
+                ]
+              }).then(alertEl => {
+                alertEl.present();
+              });
+            }
+          );
+      });
+  }
+
+
+
+  private setUserDoc(uid, nameSurname, dni, country, tel, hours) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -125,13 +184,45 @@ export class AuthService {
         countryCode: country.toString(),
         telefono: tel,
         empresa: data.empresa,
-        horasDiarias: hours,
+        horasDiarias: hours
       };
 
       userRef.set(userDoc);
       this.logger.logEvent(`User created: ${uid}`, 3, 'authService setUserDoc')
     });
   }
+
+  private setAdminDoc(uid, nameSurname, dni, tel, hours, empresa, code) {
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+      `users/${uid}`
+    );
+
+    // TODO: Datos se rellenan por el administrador
+    
+
+    this.user.pipe(take(1)).subscribe(data => {
+      const userDoc: User = {
+        DNI: dni,
+        admin: true,
+        countryCode: code,
+        empresa: empresa,
+        horasDiarias: hours,
+        nombre: nameSurname,
+        telefono: tel,
+        uid
+      };
+
+      userRef.set(userDoc);
+    });
+  }
+
+  crearEmpresa(cif, nombre, loc1, loc2){
+    this.afs.collection(`empresas`).doc(cif).set({
+      Nombre: nombre,
+      id: cif,
+      loc:[loc1, loc2]
+    }).then(suc =>{}).catch(error => {})
+}
 
   login(email: string, password: string) {
     this.loadingController

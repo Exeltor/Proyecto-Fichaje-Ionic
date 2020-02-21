@@ -1,7 +1,7 @@
 <ion-grid>
     <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
         <ion-col>
-            <ion-img src="../../assets/res/placeholder-logo.svg"></ion-img>
+            <ion-img class="logo" src="../../assets/logof.png"></ion-img>
             <ion-row class="ion-justify-content-center ion-align-items-center">
                 <ion-item>
                     <ion-label position="floating">E-mail</ion-label>
@@ -15,6 +15,7 @@
                 </ion-item>
             </ion-row>
             <ion-button expand="block" class="ion-margin" type="submit">Login</ion-button>
+            <ion-button (click)="navigateEmpresaRegister()" expand="block" class="ion-margin">Registrar empresa</ion-button>
         </ion-col>
     </form>
     <ion-row class="ion-text-center">

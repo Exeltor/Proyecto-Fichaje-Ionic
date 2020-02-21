@@ -1,7 +1,0 @@
-{
-  "appId": "com.Ficharify.app",
-  "appName": "Ficharify",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www"
-}
