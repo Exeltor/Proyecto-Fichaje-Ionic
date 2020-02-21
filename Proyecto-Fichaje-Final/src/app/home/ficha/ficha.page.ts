@@ -109,6 +109,39 @@ export class FichaPage implements OnInit {
         });
     }
   }
+  reabrirDia() {
+    console.log("Hola Mundo");
+    console.log(this.comenzado);
+    if (this.comenzado) {
+      this.alertController
+        .create({
+          header: "Confirmacion",
+          message: "¿Estas seguro que quieres reabrir el dia?",
+          buttons: [
+            {
+              text: "Si",
+              handler: () => {
+                console.log("Dia reabierto");
+                this.comenzado = !this.comenzado;
+                this.terminado = false;
+                // this.fichajeService.endWorkDay();
+                this.fichajeService.editWorkDay();
+              }
+            },
+            {
+              text: "No",
+              role: "cancel",
+              handler: () => {
+                console.log("cancelado");
+              }
+            }
+          ]
+        })
+        .then(alertEl => {
+          alertEl.present();
+        });
+    }
+  }
 
   /*
     Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)

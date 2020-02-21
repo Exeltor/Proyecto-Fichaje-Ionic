@@ -44,7 +44,7 @@
                     <ion-card-header>
                         <ion-card-subtitle>El tiempo se actualizara con cada descanso</ion-card-subtitle>
                         <ion-card-title>{{ ((fichajeService.currentWorkingData | async)?.horaTotal)?.toDate() | date:"HH:mm:ss":"+0000" }}</ion-card-title>
-                    </ion-card-header>
+                    </ion-card-header>n
                 </ion-card>
             </ion-col>
         </ion-row>
@@ -57,6 +57,19 @@
                     </ion-card-header>
                     <ion-card-content>
                         Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-card color="warning" *ngIf="terminado" (click)="reabrirDia()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Accion de dimitir y jubilarse</ion-card-subtitle>
+                        <ion-card-title>Dimmito!</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de que quieres dejar de trabajar. Probablemente si quieres volver no te quieran contratar de nuevo
                     </ion-card-content>
                 </ion-card>
             </ion-col>

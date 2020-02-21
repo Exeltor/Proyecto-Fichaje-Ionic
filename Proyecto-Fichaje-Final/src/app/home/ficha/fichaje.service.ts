@@ -25,7 +25,7 @@ export class FichajeService {
       if (userdata){
         return this.afs.doc(`users/${
           userdata.uid
-        }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`).valueChanges();
+        }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`).valueChanges();
       } else {
         return of(null);
       }
@@ -35,12 +35,13 @@ export class FichajeService {
   // Creacion del documento del respectivo dia de trabajo y marcado de la hora en la que se comenzo el dia de trabajo
   startWorkDay() {
     // Comprobamos si el documento existe
+    console.log(`currentDate ${this.currentTimestamp.toISOString()} Empezamos el date ${this.currentTimestamp.getDate()} dia ${this.currentTimestamp.getDay()} mes ${this.currentTimestamp.getMonth()+1} fullyear ${this.currentTimestamp.getFullYear()} getTime ${this.currentTimestamp.getTime()}`)
     this.authService.user.pipe(take(1)).subscribe(userData => {
       this.afs.firestore
         .doc(
           `users/${
             userData.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
@@ -49,7 +50,7 @@ export class FichajeService {
             const entryRef: AngularFirestoreDocument<any> = this.afs.doc(
               `users/${
                 userData.uid
-              }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+              }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
             );
             const data = {
               horaInicio: new Date(),
@@ -70,7 +71,7 @@ export class FichajeService {
         .doc(
           `users/${
             userData.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .ref.update(
           'horasPausa',
@@ -87,7 +88,7 @@ export class FichajeService {
         .doc(
           `users/${
             userData.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .ref.update(
           'horasResume',
@@ -102,8 +103,22 @@ export class FichajeService {
     const entryRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${
         userData.uid
-      }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+      }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
     );
+    const data = {
+      horaFin: new Date()
+    };
+    entryRef.update(data);
+    });
+  }
+  editWorkDay() {
+    this.authService.user.pipe(take(1)).subscribe(userData => {
+    const entryRef: AngularFirestoreDocument<any> = this.afs.doc(
+      `users/${
+        userData.uid
+      }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
+    );
+    console.log(`editando dia ${entryRef.ref.id}`);
     const data = {
       horaFin: new Date()
     };
