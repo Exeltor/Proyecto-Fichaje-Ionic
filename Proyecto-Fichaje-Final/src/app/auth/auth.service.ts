@@ -9,7 +9,7 @@ import { switchMap, take } from "rxjs/operators";
 import { Empresa } from '../models/empresa.model';
 import { User } from "../models/user.model";
 import { auth } from 'firebase/app';
-import { LoggingService } from '../aux/logging.service';
+import { LoggingService } from '../logging/logging.service';
 
 @Injectable({
   providedIn: "root"
