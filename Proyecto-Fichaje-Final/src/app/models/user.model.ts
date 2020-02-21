@@ -7,7 +7,6 @@ export interface User {
     telefono: string;
     countryCode: string;
     horasDiarias: number;
-    countryCode: string;
 }
 // un usuario no necesita mas campos pero hay que relacionarle un horario
 // o al menos las horas a las que entra
