@@ -105,3 +105,33 @@ exports.calculateHours = functions.firestore
         return 0;
       });
   });
+
+  exports.updatePhone = functions.https.onRequest((request, response) => {
+    corsHandler(request, response, () => {
+      if (request.method !== "POST") {
+        response.status(400).send("400");
+        return 0;
+      }
+      const tel = request.body.tel;
+      const country = request.body.country;
+      const uid = request.body.uid;
+  
+      admin
+        .auth()
+        .updateUser(uid, {
+          phoneNumber: `+${country}${tel}`
+        })
+        .then(function(userRecord) {
+          // See the UserRecord reference doc for the contents of userRecord.
+          response.send('Done');
+          return 1;
+        })
+        .catch(function(error) {
+          response.send("Error: " + error);
+          console.log("Error updating phone:", error);
+          return 1;
+        });
+  
+      return 1;
+    });
+  });

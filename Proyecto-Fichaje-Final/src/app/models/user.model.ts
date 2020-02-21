@@ -5,6 +5,7 @@ export interface User {
     empresa: string;
     admin: boolean;
     telefono: string;
+    countryCode: string;
     horasDiarias: number;
     countryCode: string;
 }

@@ -22,4 +22,12 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/registerempresa'])
   }
   
+  google() {
+    this.authService.signInWithGoogle();
+  }
+
+  facebook() {
+    this.authService.signInWithFacebook();
+  }
+
 }

@@ -4,6 +4,11 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Perfil</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button (click)="editProfile()">
+                <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
@@ -23,7 +28,7 @@
                         <ion-card-content>
                             <ion-list>
                                 <ion-list-header color="primary">
-                                    <ion-label>{{ (authService.user | async)?.Nombre_Empresa }}</ion-label>
+                                    <ion-label>{{ (empresa | async)?.Nombre }}</ion-label>
                                 </ion-list-header>
                                 <ion-item>
                                     <ion-icon name="card" slot="start"></ion-icon>
