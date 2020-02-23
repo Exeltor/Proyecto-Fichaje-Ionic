@@ -20,14 +20,22 @@ export class PushNotificationsService {
     }
     
     if(this.platform.is('ios')) {
-      token = await this.firebaseNative.getToken();
-      await this.firebaseNative.grantPermission();
+      if(!this.firebaseNative.hasPermission) await this.firebaseNative.grantPermission();
+      
+      token = await this.firebaseNative.getToken().catch(err => {
+        console.log('ios token error', err);
+      });
     }
 
     if(!this.platform.is('cordova')) {
+      console.log('getting token web')
       this.afMessaging.requestToken
       .subscribe(
-        (token) => { console.log('Permission granted! Save to the server!', token); },
+        (token) => {
+          console.log('Permission granted! Save to the server!', token); 
+          this.saveTokenToFirestore(token)
+          
+        },
         (error) => { console.error(error); },  
       );
     }
@@ -36,7 +44,7 @@ export class PushNotificationsService {
   }
 
   private saveTokenToFirestore(token) {
-    if (!token || this.authService.userUid) return;
+    if (!token) return;
 
     const devicesRef = this.afs.collection('devices');
 

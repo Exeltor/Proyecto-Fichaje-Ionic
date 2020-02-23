@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
 import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
 import { User } from 'src/app/models/user.model';
 import { Observable } from 'rxjs';
-import { take, switchMap } from 'rxjs/operators';
+import { take, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { PushNotificationsService } from 'src/app/push-notifications.service';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
@@ -17,7 +17,7 @@ import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 export class ProfilePage implements OnInit {
   admin = true;
   empresa: Observable<any>;
-  constructor(public authService: AuthService, private modalController: ModalController, private afs: AngularFirestore, private pushNotifications: PushNotificationsService, private firebaseNative: FirebaseX) { }
+  constructor(public authService: AuthService, private modalController: ModalController, private afs: AngularFirestore, private pushNotifications: PushNotificationsService, private firebaseNative: FirebaseX, private platform: Platform) { }
 
   ngOnInit() {
     this.empresa = this.authService.user.pipe(switchMap(user=>{
@@ -28,9 +28,12 @@ export class ProfilePage implements OnInit {
 
     this.pushNotifications.getToken();
 
-    this.firebaseNative.onMessageReceived().subscribe(message => {
-      console.log(message);
-    })
+    if(this.platform.is('cordova')) {
+      console.log('native device push notifications tap')
+      this.firebaseNative.onMessageReceived().pipe(tap(message => {
+        console.log(message);
+      })).subscribe()
+    }
   }
 
   // Apertura modal para introduccion de datos de la persona a registrar
