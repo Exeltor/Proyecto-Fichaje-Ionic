@@ -15,7 +15,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 @NgModule({
@@ -38,7 +37,6 @@ import { AngularFireMessagingModule } from '@angular/fire/messaging';
     AngularFireAuthGuard,
     AngularFirestoreModule,
     Geolocation,
-    FirebaseX,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

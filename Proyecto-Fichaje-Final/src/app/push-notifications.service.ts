@@ -1,32 +1,24 @@
 import { Injectable } from '@angular/core';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Platform } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from './auth/auth.service';
+import {
+  Plugins,
+  PushNotification,
+  PushNotificationToken,
+  PushNotificationActionPerformed } from '@capacitor/core';
+
+const { PushNotifications } = Plugins;
 
 @Injectable({
   providedIn: 'root'
 })
 export class PushNotificationsService {
 
-  constructor(private firebaseNative: FirebaseX, private afMessaging: AngularFireMessaging, private platform: Platform, private afs: AngularFirestore, private authService: AuthService) { }
+  constructor(private afMessaging: AngularFireMessaging, private platform: Platform, private afs: AngularFirestore, private authService: AuthService) { }
 
   async getToken() {
-    let token;
-
-    if (this.platform.is('android')) {
-      token = await this.firebaseNative.getToken();
-    }
-    
-    if(this.platform.is('ios')) {
-      if(!this.firebaseNative.hasPermission) await this.firebaseNative.grantPermission();
-      
-      token = await this.firebaseNative.getToken().catch(err => {
-        console.log('ios token error', err);
-      });
-    }
-
     if(!this.platform.is('cordova')) {
       console.log('getting token web')
       this.afMessaging.requestToken
@@ -38,9 +30,32 @@ export class PushNotificationsService {
         },
         (error) => { console.error(error); },  
       );
-    }
+    } else {
+      PushNotifications.register();
+      PushNotifications.addListener('registration', 
+      (token: PushNotificationToken) => {
+        this.saveTokenToFirestore(token.value)
+      }
+    );
 
-    return this.saveTokenToFirestore(token)
+    PushNotifications.addListener('registrationError', 
+      (error: any) => {
+        alert('Error on registration: ' + JSON.stringify(error));
+      }
+    );
+
+    PushNotifications.addListener('pushNotificationReceived', 
+      (notification: PushNotification) => {
+        alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
+
+    PushNotifications.addListener('pushNotificationActionPerformed', 
+      (notification: PushNotificationActionPerformed) => {
+        alert('Push action performed: ' + JSON.stringify(notification));
+      }
+    );
+    }
   }
 
   private saveTokenToFirestore(token) {
@@ -50,7 +65,7 @@ export class PushNotificationsService {
 
     const docData = {
       token,
-      userId: this.authService.userUid
+      userId: this.authService.afAuth.auth.currentUser.uid
     }
 
     return devicesRef.doc(token).set(docData)

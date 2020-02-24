@@ -21,7 +21,7 @@ export class AuthService {
   userUid;
 
   constructor(
-    private afAuth: AngularFireAuth,
+    public afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router,
     private alertController: AlertController,
