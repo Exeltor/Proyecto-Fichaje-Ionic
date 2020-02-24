@@ -48,6 +48,7 @@ exports.calculateHours = functions.firestore
     const horasResume: Array<Timestamp> = change.after.get("horasResume");
     const horaFin: Timestamp = change.after.get("horaFin");
     let pauseReminder
+    console.log('clearing reminder')
     clearTimeout(pauseReminder);
     let horaTotal = 0;
     if (horasResume.length === 0) {
@@ -60,6 +61,7 @@ exports.calculateHours = functions.firestore
       }
     } else {
       if (horasPause.length > horasResume.length) {
+        console.log('setting reminder')
         pauseReminder = setTimeout(() => {
           admin.firestore().collection('devices').where('userId', '==', user).get().then(snapshot => {
             if (snapshot.empty) return;
