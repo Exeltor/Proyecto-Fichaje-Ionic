@@ -42,14 +42,11 @@ exports.register = functions.https.onRequest((request, response) => {
 exports.calculateHours = functions.firestore
   .document("users/{userid}/asistenciaTrabajo/{fecha}")
   .onWrite((change, context) => {
-    const user = context.params.userid;
     const horaInicio: Timestamp = change.after.get("horaInicio");
     const horasPause: Array<Timestamp> = change.after.get("horasPausa");
     const horasResume: Array<Timestamp> = change.after.get("horasResume");
     const horaFin: Timestamp = change.after.get("horaFin");
-    let pauseReminder
-    console.log('clearing reminder')
-    clearTimeout(pauseReminder);
+    
     let horaTotal = 0;
     if (horasResume.length === 0) {
       if (horasPause.length === 0) {
@@ -61,21 +58,7 @@ exports.calculateHours = functions.firestore
       }
     } else {
       if (horasPause.length > horasResume.length) {
-        console.log('setting reminder')
-        pauseReminder = setTimeout(() => {
-          admin.firestore().collection('devices').where('userId', '==', user).get().then(snapshot => {
-            if (snapshot.empty) return;
-            let deviceIds: Array<string> = []
-            snapshot.forEach(doc => {
-              deviceIds.push(doc.data().token);
-            });
-            const pauseMessage = {
-              notification: {title: 'Sigues en descanso', body: 'Ya llevas 15 minutos descansando'},
-              tokens: deviceIds
-            }
-            admin.messaging().sendMulticast(pauseMessage)
-          })
-        }, 900000)
+        
         for (let i = 0; i < horasPause.length; i++) {
           if (i === 0) {
             horaTotal += horasPause[i].seconds - horaInicio.seconds;
