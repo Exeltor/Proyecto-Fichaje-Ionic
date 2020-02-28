@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { FichajeService } from "./fichaje.service";
+import { FichajeService } from "../../services/fichaje.service";
 import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
-import { GeolocService } from './geoloc.service';
+import { GeolocService } from '../../services/geoloc.service';
 import * as geolib from 'geolib';
 
 @Component({

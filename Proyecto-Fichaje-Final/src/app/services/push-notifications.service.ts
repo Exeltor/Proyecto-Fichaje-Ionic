@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Platform } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import {
   Plugins,
   PushNotification,

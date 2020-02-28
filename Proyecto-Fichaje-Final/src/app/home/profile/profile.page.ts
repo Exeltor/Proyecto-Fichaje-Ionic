@@ -6,7 +6,7 @@ import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.compon
 import { Observable } from 'rxjs';
 import { take, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { PushNotificationsService } from 'src/app/push-notifications.service';
+import { PushNotificationsService } from '../../services/push-notifications.service';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
