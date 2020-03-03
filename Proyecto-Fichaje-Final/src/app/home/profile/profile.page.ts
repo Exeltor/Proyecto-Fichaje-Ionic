@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ModalController } from '@ionic/angular';
 import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
+import { EditBusinessModalComponent } from './edit-business-modal/edit-business-modal.component'
 import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
 import { User } from 'src/app/models/user.model';
 import { Observable } from 'rxjs';
@@ -13,7 +14,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  admin = true;
+  admin = false;
   empresa: Observable<any>;
   constructor(public authService: AuthService, private modalController: ModalController, private afs: AngularFirestore) { }
 
@@ -50,6 +51,21 @@ export class ProfilePage implements OnInit {
       });
     });
     
+  }
+
+  editBusiness() {
+    this.authService.empresa.pipe(take(1)).subscribe(empresa => {
+      this.modalController.create({
+        component: EditBusinessModalComponent,
+        componentProps: {
+          'nombre': empresa.nombre,
+          'loc': [empresa.loc[0], empresa.loc[1]]
+          
+        }
+      }).then(modalEl => {
+        modalEl.present();
+      });
+    });
   }
 
 }
