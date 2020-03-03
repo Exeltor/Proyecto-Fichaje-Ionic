@@ -7,6 +7,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { take, switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { Observable, of } from 'rxjs';
+import { Plugins } from '@capacitor/core';
+const { LocalNotifications } = Plugins;
 
 @Injectable({
   providedIn: 'root'
@@ -77,6 +79,16 @@ export class FichajeService {
           'horasPausa',
           firebase.firestore.FieldValue.arrayUnion(new Date())
         );
+    });
+    LocalNotifications.schedule({
+      notifications: [
+        {
+          title: "Vuelve al trabajo",
+          body: "Llevas 15 minutos descansando, vuelve al trabajo",
+          id: 1,
+          schedule: { at: new Date(Date.now() + 900000) }
+        }
+      ]
     });
   }
 

@@ -72,7 +72,10 @@
     <ion-grid *ngIf="locationBlocked">
         <ion-row>
             <ion-col>
-                <p>Ah we acepta puto</p>
+                <p>Permite el uso de la localización a esta aplicación para usar la funcionalidad de fichar</p>
+                <ion-button (click)="activateLocation()" expand="block" fill="clear" shape="round">
+                    Activar Geolocalización
+                </ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>

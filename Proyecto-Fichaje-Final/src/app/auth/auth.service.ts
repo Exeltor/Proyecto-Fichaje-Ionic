@@ -10,6 +10,8 @@ import { Empresa } from '../models/empresa.model';
 import { User } from "../models/user.model";
 import { auth } from 'firebase/app';
 import { LoggingService } from '../logging/logging.service';
+import { AngularFireMessaging } from '@angular/fire/messaging';
+import { SendPushService } from '../services/send-push.service'
 
 @Injectable({
   providedIn: "root"
@@ -21,14 +23,15 @@ export class AuthService {
   userUid;
 
   constructor(
-    private afAuth: AngularFireAuth,
+    public afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router,
     private alertController: AlertController,
     private http: HttpClient,
     private loadingController: LoadingController,
     private modalController: ModalController,
-    private logger: LoggingService
+    private logger: LoggingService,
+    private sendPush: SendPushService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -186,11 +189,19 @@ export class AuthService {
         empresa: data.empresa,
         horasDiarias: hours
       };
-
+      this.afs.collection('users')
+      .ref.where('empresa', "==", data.empresa).where('admin', '==', true)
+      .get().then(docs => {
+        let uids:Array<string> = [];
+        docs.forEach(doc =>{
+          uids.push(doc.data().uid)
+        })
+        this.sendPush.sendPush(`Se ha creado un trabajador en la empresa ${data.empresa}`, `El administrador ${data.nombre} ha añadido a ${nameSurname} a la empresa`, uids);
+        })
       userRef.set(userDoc);
       this.logger.logEvent(`User created: ${uid}`, 3, 'authService setUserDoc')
     });
-  }
+  } 
 
   private setAdminDoc(uid, nameSurname, dni, tel, hours, empresa, code) {
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
