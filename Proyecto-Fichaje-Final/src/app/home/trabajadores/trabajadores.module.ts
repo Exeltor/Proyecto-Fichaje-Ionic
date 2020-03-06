@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { TrabajadoresPageRoutingModule } from './trabajadores-routing.module';
 
 import { TrabajadoresPage } from './trabajadores.page';
+import { UinfoPage } from './uinfo/uinfo.page';
 
 @NgModule({
+  entryComponents: [UinfoPage],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     TrabajadoresPageRoutingModule
   ],
-  declarations: [TrabajadoresPage]
+  declarations: [TrabajadoresPage, UinfoPage]
 })
 export class TrabajadoresPageModule {}
