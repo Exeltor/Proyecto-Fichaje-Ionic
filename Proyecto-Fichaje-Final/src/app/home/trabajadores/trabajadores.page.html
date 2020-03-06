@@ -15,7 +15,7 @@
                   <ion-list *ngIf="(authService.user | async)?.admin">
                       <ion-list-header>{{ (empresa | async)?.Nombre }}</ion-list-header>
                       <ion-item-sliding *ngFor="let user of fireList | async">
-                          <ion-item>
+                          <ion-item *ngIf="(authService.user | async)?.DNI != user.DNI">
                               <ion-avatar slot="start">
                                   <img src="../../../assets/res/avatar.svg" />
                               </ion-avatar>
