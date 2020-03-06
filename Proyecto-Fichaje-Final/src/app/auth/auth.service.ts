@@ -21,6 +21,7 @@ export class AuthService {
   empresa: Observable<Empresa>;
   Nombre_Empresa: string;
   userUid;
+  ok: Boolean = false;
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -49,7 +50,8 @@ export class AuthService {
     return this.afAuth.auth.currentUser.email;
   }
 
-  registerUser(email: string, password: string, nameSurname, dni, country, telefono, hours) {
+  registerUser(datos) {
+    this.ok = false;
     this.loadingController
       .create({
         keyboardClose: true,
@@ -57,8 +59,9 @@ export class AuthService {
       })
       .then(loadingEl => {
         loadingEl.present();
-        const tel = `+${country}${telefono}`;
-        
+        const tel = `+${datos.country}${datos.telefono}`;
+        const email = datos.email;
+        const password = datos.password;
         this.http
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
@@ -68,9 +71,9 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setUserDoc(jsonResponse.uid, nameSurname, dni, country, tel, hours);
-              console.log(country)
+              this.setUserDoc(jsonResponse.uid, datos.nombre, datos.DNI, datos.country, datos.telefono, datos.horasTrabajo);
               console.log("usuario y documento creados");
+              this.presentAlertSinError('Creado', `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`);
               loadingEl.dismiss();
             },
             err => {
@@ -94,18 +97,7 @@ export class AuthService {
 
               loadingEl.dismiss();
               this.logger.logEvent(errorMessage, 5, 'authService registerUser')
-              this.alertController.create({
-                header: "No se ha podido crear la cuenta",
-                message: errorMessage,
-                buttons: [
-                  {
-                    role: "cancel",
-                    text: "Aceptar"
-                  }
-                ]
-              }).then(alertEl => {
-                alertEl.present();
-              });
+              this.presentAlertError(errorMessage);
             }
           );
       });
@@ -113,7 +105,7 @@ export class AuthService {
 
 
   registerAdmin(email: string, password: string, nameSurname, hours, dni, telefono, empresa, code) {
-    // const newtel = "+"+code+tel;
+    this.ok = false;
     this.loadingController.create({
         keyboardClose: true,
         message: "Creando administrador"
@@ -132,6 +124,7 @@ export class AuthService {
               const jsonResponse = JSON.parse(JSON.stringify(response));
               this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours, empresa, code);
               loadingEl.dismiss();
+              this.presentAlertSinError('Admin Registrado',`El administrador ${nameSurname} ha sido creado`)
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
@@ -153,18 +146,7 @@ export class AuthService {
               }
 
               loadingEl.dismiss();
-              this.alertController.create({
-                header: "No se ha podido crear la cuenta",
-                message: errorMessage,
-                buttons: [
-                  {
-                    role: "cancel",
-                    text: "Aceptar"
-                  }
-                ]
-              }).then(alertEl => {
-                alertEl.present();
-              });
+              this.presentAlertError(errorMessage);
             }
           );
       });
@@ -228,11 +210,12 @@ export class AuthService {
   }
 
   crearEmpresa(cif, nombre, loc1, loc2){
+    this.ok = false;
     this.afs.collection(`empresas`).doc(cif).set({
       Nombre: nombre,
       id: cif,
       loc:[loc1, loc2]
-    }).then(suc =>{}).catch(error => {})
+    }).then(suc =>{}).catch(error => {this.ok = true;})
 }
 
   login(email: string, password: string) {
@@ -350,6 +333,7 @@ export class AuthService {
   }
 
   updateProfile(newData) {
+    this.ok = false;
     // idFecha viejo -> nuevo
     try {
       this.afs.doc<User>(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
@@ -362,15 +346,14 @@ export class AuthService {
         if(newData.password) {
           this.changePassword(newData.password);
         }
-    
-        this.modalController.dismiss();
-        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        this.presentAlertSinError('Perfil editado', `El perfil de ${newData.nombre} ha sido correctamente editado`)
         this.updateHistory(newData, user);
         this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
       })
     } catch (error) {
       console.log(error);
-      this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
+      this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile');
+      this.presentAlertError(error);
     }
   }
 
@@ -434,5 +417,41 @@ export class AuthService {
       .catch(err => {
         this.logger.logEvent(err, 4, 'authService logout')
       });
+  }
+  async presentAlertError(message) {
+    const alert = await this.alertController.create({
+      header: 'Error',
+      message: message,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.modalController.dismiss();
+          }
+        }, {
+          text: 'Editar',
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async presentAlertSinError(title, message) {
+    const alert = await this.alertController.create({
+      header: title,
+      message: message,
+      buttons: [{
+          text: 'OK',
+          handler: () => {
+            this.modalController.dismiss();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

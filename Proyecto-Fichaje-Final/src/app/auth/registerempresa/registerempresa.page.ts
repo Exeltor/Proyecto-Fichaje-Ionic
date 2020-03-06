@@ -16,8 +16,6 @@ export class RegisterempresaPage implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    console.log("El telefono es:" + form.value.tel);
-
     this.authService.crearEmpresa(
     form.value.cif,
     form.value.nombre,

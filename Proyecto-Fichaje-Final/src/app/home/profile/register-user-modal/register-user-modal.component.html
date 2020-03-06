@@ -7,8 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+<ion-content fullscreen scroll-y="false">
+  <form [formGroup]="registerForm">
     <ion-grid>
       <ion-row>
         <ion-col>
@@ -17,36 +17,36 @@
               <ion-icon slot="start" name="mail"></ion-icon>
               Email
             </ion-label>
-            <ion-input type="email" ngModel name="email" required email #emailCtrl="ngModel"></ion-input>
+            <ion-input formControlName="email"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="key"></ion-icon>
               Contraseña
             </ion-label>
-            <ion-input type="password" ngModel name="password" required minlength="6" #passwordCtrl="ngModel">
-            </ion-input>
+            <ion-input formControlName="password"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">
               <ion-icon name="person"></ion-icon>
               Nombre y Apellidos
             </ion-label>
-            <ion-input type="text" ngModel name="nameSurname" required #nameSurnameCtrl="ngModel"></ion-input>
+            <ion-input formControlName="nombre">
+            </ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="clipboard"></ion-icon>
               DNI
             </ion-label>
-            <ion-input type="text" ngModel name="dni" required #dniCtrl="ngModel"></ion-input>
+            <ion-input formControlName="DNI"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="globe"></ion-icon>
               País
             </ion-label>
-            <ion-select placeholder="Selecciona un país" ngModel name="country">
+            <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
               <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
             </ion-select>
           </ion-item>
@@ -55,23 +55,24 @@
               <ion-icon slot="start" name="call"></ion-icon>
               Telefono
             </ion-label>
-            <ion-input type="tel" ngModel name="tel" required #telCtrl="ngModel"></ion-input>
-
+            <ion-input formControlName="telefono" ionChange="updateAll()"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="alarm"></ion-icon>
               Horas de trabajo diarias
             </ion-label>
-            <ion-input type="number" min="0" ngModel name="hours" required #hoursCtrl="ngModel"></ion-input>
+            <ion-input formControlName="horasTrabajo"></ion-input>
+
           </ion-item>
         </ion-col>
       </ion-row>
-      <ion-row>
-        <ion-col>
-          <ion-button expand="block" type="submit">Registrar</ion-button>
-        </ion-col>
-      </ion-row>
     </ion-grid>
+    <!-- fab placed to the bottom end -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button (click)="onSubmit()" [disabled]="!registerForm.valid">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
   </form>
 </ion-content>

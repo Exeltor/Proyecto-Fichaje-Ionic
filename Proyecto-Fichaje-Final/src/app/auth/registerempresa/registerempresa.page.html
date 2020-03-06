@@ -1,72 +1,102 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Registro empresa</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="exit()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
+    <ion-title>Registro empresa</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  <form #form="ngForm" (ngSubmit)="onSubmit(form)" method="post">
+  <form #form="ngForm" (ngSubmit)="onSubmit(form)" method="post" style="height: 100%;">
+    <ion-slides style="height: 100%;">
+      <ion-slide>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Datos Empresa</h1>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating">CIF empresa</ion-label>
+                <ion-input ngModel name="cif"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating">Nombre empresa</ion-label>
+                <ion-input ngModel name="nombre"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating">Localización</ion-label>
+                <ion-input ngModel name="loc1"></ion-input>
+                <ion-input ngModel name="loc2"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
 
-    <ion-item>
-      <ion-label position="floating">CIF empresa</ion-label>
-      <ion-input ngModel name="cif"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Nombre empresa</ion-label>
-      <ion-input ngModel name="nombre"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Localización</ion-label>
-      <ion-input ngModel name="loc1"></ion-input>
-      <ion-input ngModel name="loc2"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input ngModel name="nameSurname"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" ngModel name="email"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" ngModel name="password"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Horas semanales</ion-label>
-      <ion-input ngModel type="number" name="hours" min="1" max="40"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-label position="floating"><nav>Código País</nav></ion-label>
-      <ion-input ngModel name="code"></ion-input>
-    </ion-item>
+      </ion-slide>
+      <ion-slide>
+        <h1>Mapa</h1>
+      </ion-slide>
+      <ion-slide>
+        <h1>Admin</h1>
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input ngModel name="nameSurname"></ion-input>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating"><nav>Número de teléfono</nav></ion-label>
-      <ion-input ngModel name="tel"></ion-input>
-    </ion-item>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" ngModel name="email"></ion-input>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">DNI</ion-label>
-      <ion-input ngModel name="dni"></ion-input>
-    </ion-item>
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input type="password" ngModel name="password"></ion-input>
+        </ion-item>
 
-    
-  
-    <ion-button type="submit" expand="full">Registrar empresa</ion-button>
+        <ion-item>
+          <ion-label position="floating">Horas semanales</ion-label>
+          <ion-input ngModel type="number" name="hours" min="1" max="40"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">
+            <nav>Código País</nav>
+          </ion-label>
+          <ion-input ngModel name="code"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">
+            <nav>Número de teléfono</nav>
+          </ion-label>
+          <ion-input ngModel name="tel"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">DNI</ion-label>
+          <ion-input ngModel name="dni"></ion-input>
+        </ion-item>
+      </ion-slide>
+      <ion-slide>
+        <ion-button type="submit" expand="full">Registrar empresa</ion-button>
+      </ion-slide>
+    </ion-slides>
+
+
+
+
+
+
+
   </form>
- 
-</ion-content>  
 
+</ion-content>
