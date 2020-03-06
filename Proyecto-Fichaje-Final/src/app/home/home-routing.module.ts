@@ -35,6 +35,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: "trabajadores",
+        children: [
+          {
+            path: "",
+            loadChildren: "./trabajadores/trabajadores.module#TrabajadoresPageModule"
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"
