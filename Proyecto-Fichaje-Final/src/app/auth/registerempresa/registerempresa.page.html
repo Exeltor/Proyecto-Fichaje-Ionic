@@ -7,96 +7,113 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <form #form="ngForm" (ngSubmit)="onSubmit(form)" method="post" style="height: 100%;">
-    <ion-slides style="height: 100%;">
-      <ion-slide>
+<ion-content>
+  <ion-slides pager="true" style="height: 100%;" *ngIf="showSlides">
+    <ion-slide>
+      <form [formGroup]="registerCompany">
         <ion-grid>
           <ion-row>
             <ion-col>
               <h1>Datos Empresa</h1>
-            </ion-col>
-            <ion-col>
               <ion-item>
                 <ion-label position="floating">CIF empresa</ion-label>
-                <ion-input ngModel name="cif"></ion-input>
+                <ion-input formControlName="cif"></ion-input>
               </ion-item>
-            </ion-col>
-            <ion-col>
               <ion-item>
                 <ion-label position="floating">Nombre empresa</ion-label>
-                <ion-input ngModel name="nombre"></ion-input>
+                <ion-input formControlName="nombreEmpresa"></ion-input>
               </ion-item>
-            </ion-col>
-            <ion-col>
               <ion-item>
-                <ion-label position="floating">Localización</ion-label>
-                <ion-input ngModel name="loc1"></ion-input>
-                <ion-input ngModel name="loc2"></ion-input>
+                <ion-label position="floating">Latitud</ion-label>
+                <ion-input formControlName="latEmpresa"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">Longitud</ion-label>
+                <ion-input formControlName="lonEmpresa"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
         </ion-grid>
-
-
-
-
-      </ion-slide>
-      <ion-slide>
-        <h1>Mapa</h1>
-      </ion-slide>
-      <ion-slide>
+      </form>
+    </ion-slide>
+    <ion-slide>
+      <form [formGroup]="registerCompany">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Mapa</h1>
+              <ion-item>
+                <ion-label position="floating">Dirección</ion-label>
+                <!--<ion-input formControlName="direccion"></ion-input>-->
+               
+              </ion-item>
+              <ion-button (click)="registerEmpresa()" expand="block" fill="clear" shape="round">
+                Registrar empresa
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
+    </ion-slide>
+    <ion-slide>
+      <form [formGroup]="registerAdmin">
         <h1>Admin</h1>
         <ion-item>
-          <ion-label position="floating">Nombre</ion-label>
-          <ion-input ngModel name="nameSurname"></ion-input>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="mail"></ion-icon>
+            Email
+          </ion-label>
+          <ion-input formControlName="email"></ion-input>
         </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input type="email" ngModel name="email"></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Password</ion-label>
-          <ion-input type="password" ngModel name="password"></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Horas semanales</ion-label>
-          <ion-input ngModel type="number" name="hours" min="1" max="40"></ion-input>
-        </ion-item>
-
         <ion-item>
           <ion-label position="floating">
-            <nav>Código País</nav>
+            <ion-icon slot="start" name="key"></ion-icon>
+            Contraseña
           </ion-label>
-          <ion-input ngModel name="code"></ion-input>
+          <ion-input formControlName="password"></ion-input>
         </ion-item>
-
         <ion-item>
           <ion-label position="floating">
-            <nav>Número de teléfono</nav>
+            <ion-icon name="person"></ion-icon>
+            Nombre y Apellidos
           </ion-label>
-          <ion-input ngModel name="tel"></ion-input>
+          <ion-input formControlName="nombre">
+          </ion-input>
         </ion-item>
-
         <ion-item>
-          <ion-label position="floating">DNI</ion-label>
-          <ion-input ngModel name="dni"></ion-input>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="clipboard"></ion-icon>
+            DNI
+          </ion-label>
+          <ion-input formControlName="DNI"></ion-input>
         </ion-item>
-      </ion-slide>
-      <ion-slide>
-        <ion-button type="submit" expand="full">Registrar empresa</ion-button>
-      </ion-slide>
-    </ion-slides>
-
-
-
-
-
-
-
-  </form>
-
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="globe"></ion-icon>
+            País
+          </ion-label>
+          <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
+            <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="call"></ion-icon>
+            Telefono
+          </ion-label>
+          <ion-input formControlName="telefono" ionChange="updateAll()"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="alarm"></ion-icon>
+            Horas de trabajo diarias
+          </ion-label>
+          <ion-input formControlName="horasTrabajo"></ion-input>
+        </ion-item>
+      </form>
+      <ion-button (click)="registerAdministrador()" expand="block" fill="clear" shape="round">
+        Registrar admin
+      </ion-button>
+    </ion-slide>
+  </ion-slides>
 </ion-content>

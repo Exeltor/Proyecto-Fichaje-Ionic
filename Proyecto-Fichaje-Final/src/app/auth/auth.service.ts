@@ -104,7 +104,7 @@ export class AuthService {
   }
 
 
-  registerAdmin(email: string, password: string, nameSurname, hours, dni, telefono, empresa, code) {
+  registerAdmin(data, cifEmpresa) {
     this.ok = false;
     this.loadingController.create({
         keyboardClose: true,
@@ -112,7 +112,9 @@ export class AuthService {
       })
       .then(loadingEl => {
         loadingEl.present();
-        const tel = `+${code}${telefono}`
+        const tel = `+${data.code}${data.telefono}`
+        const email = data.email;
+        const password = data.password;
         this.http
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
@@ -122,9 +124,9 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setAdminDoc(jsonResponse.uid, nameSurname, dni, tel, hours, empresa, code);
+              this.setAdminDoc(jsonResponse.uid, data.nombre, data.DNI, data.telefono, data.horasTrabajo, cifEmpresa, data.country);
               loadingEl.dismiss();
-              this.presentAlertSinError('Admin Registrado',`El administrador ${nameSurname} ha sido creado`)
+              this.presentAlertSinError('Admin Registrado',`El administrador ${data.nombre} ha sido creado`)
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
@@ -209,13 +211,12 @@ export class AuthService {
     });
   }
 
-  crearEmpresa(cif, nombre, loc1, loc2){
-    this.ok = false;
-    this.afs.collection(`empresas`).doc(cif).set({
-      Nombre: nombre,
-      id: cif,
-      loc:[loc1, loc2]
-    }).then(suc =>{}).catch(error => {this.ok = true;})
+  crearEmpresa(data){
+    this.afs.collection(`empresas`).doc(data.cif).set({
+      Nombre: data.nombreEmpresa,
+      id: data.cif,
+      loc:[data.latEmpresa, data.lonEmpresa]
+    }).then(suc =>{}).catch(error => {})
 }
 
   login(email: string, password: string) {
