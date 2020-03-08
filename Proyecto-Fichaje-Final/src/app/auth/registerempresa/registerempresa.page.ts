@@ -3,9 +3,11 @@ import { AuthService } from "../auth.service";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { IonSlides } from "@ionic/angular";
-import { PhoneValidator, CIFValidator } from "../phone.validator";
+import { PhoneValidator } from "../phone.validator";
+import { CIFValidator } from "../cif.validator";
 import { countryCodes } from "src/environments/environment";
 import { catchError } from "rxjs/operators";
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: "app-registerempresa",
@@ -32,12 +34,12 @@ export class RegisterempresaPage implements OnInit {
   registerCompany: FormGroup;
   registerAdmin: FormGroup;
   paises = countryCodes;
-  constructor(private authService: AuthService, private fb: FormBuilder) {}
+  constructor(private authService: AuthService, private fb: FormBuilder, private afs: AngularFirestore) {}
   @ViewChild("slides") slides: IonSlides;
 
   ngOnInit() {
     this.registerCompany = this.fb.group({
-      cif: ["", CIFValidator.cif_check()],
+      cif: ["", CIFValidator.cif_check(this.afs)],
       nombreEmpresa: ["", Validators.required],
       latEmpresa: ["", Validators.required],
       lonEmpresa: ["", Validators.required],
@@ -100,8 +102,16 @@ export class RegisterempresaPage implements OnInit {
     this.slides.getActiveIndex().then(val => {
       this.activeIndex = val;
     });
-    this.authService.prueba();
+    //this.authService.prueba();
     
+  }
+
+  nextSlide() {
+    this.slides.slideNext();
+  }
+  
+  prevSlide() {
+    this.slides.slidePrev();
   }
 
   

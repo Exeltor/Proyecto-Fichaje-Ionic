@@ -32,24 +32,3 @@ export class PhoneValidator {
     };
   }
 }
-export class CIFValidator {
-  cifs = [];
-  constructor(private afs:AngularFirestore) {
-    this.afs.collection(`empresas`).get().pipe(take(1)).forEach(data =>{
-      data.docChanges().forEach(data => {
-        this.cifs.push(data.doc.id)
-      });
-    });
-  }
-  
-  static cif_check(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } => {
-      var cif = control.value;
-      let isValid;
-      if (cif.length < 2) {
-        return { cif_check: { isValid: true } };
-      
-      }
-    };
-  }
-}
