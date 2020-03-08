@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-slides pager="true" style="height: 100%;" *ngIf="showSlides">
+  <ion-slides #slides pager="true" style="height: 100%;" *ngIf="showSlides" (ionSlideDidChange)="slideChanged()">
     <ion-slide>
       <form [formGroup]="registerCompany">
         <ion-grid>
@@ -44,8 +44,8 @@
               <h1>Mapa</h1>
               <ion-item>
                 <ion-label position="floating">Dirección</ion-label>
-                <!--<ion-input formControlName="direccion"></ion-input>-->
-               
+                <ion-input formControlName="direccionEmpresa"></ion-input>
+
               </ion-item>
               <ion-button (click)="registerEmpresa()" expand="block" fill="clear" shape="round">
                 Registrar empresa
@@ -110,10 +110,10 @@
           </ion-label>
           <ion-input formControlName="horasTrabajo"></ion-input>
         </ion-item>
+          <ion-button (click)="registerAdministrador()" expand="block" fill="clear" shape="round">
+            Registrar admin
+          </ion-button>
       </form>
-      <ion-button (click)="registerAdministrador()" expand="block" fill="clear" shape="round">
-        Registrar admin
-      </ion-button>
     </ion-slide>
   </ion-slides>
 </ion-content>

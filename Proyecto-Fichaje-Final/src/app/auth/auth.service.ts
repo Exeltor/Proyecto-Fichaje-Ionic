@@ -1,17 +1,24 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, ɵCodegenComponentFactoryResolver } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
-import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/firestore";
+import {
+  AngularFirestore,
+  AngularFirestoreDocument
+} from "@angular/fire/firestore";
 import { Router } from "@angular/router";
-import { AlertController, LoadingController, ModalController } from "@ionic/angular";
+import {
+  AlertController,
+  LoadingController,
+  ModalController
+} from "@ionic/angular";
 import { Observable, of } from "rxjs";
 import { switchMap, take } from "rxjs/operators";
-import { Empresa } from '../models/empresa.model';
+import { Empresa } from "../models/empresa.model";
 import { User } from "../models/user.model";
-import { auth } from 'firebase/app';
-import { LoggingService } from '../logging/logging.service';
-import { AngularFireMessaging } from '@angular/fire/messaging';
-import { SendPushService } from '../services/send-push.service'
+import { auth } from "firebase/app";
+import { LoggingService } from "../logging/logging.service";
+import { AngularFireMessaging } from "@angular/fire/messaging";
+import { SendPushService } from "../services/send-push.service";
 
 @Injectable({
   providedIn: "root"
@@ -71,9 +78,21 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setUserDoc(jsonResponse.uid, datos.nombre, datos.DNI, datos.country, datos.telefono, datos.horasTrabajo);
+              this.setDoc(
+                jsonResponse.uid,
+                datos.nombre,
+                datos.DNI,
+                datos.country,
+                "",
+                datos.telefono,
+                datos.horasTrabajo,
+                false
+              );
               console.log("usuario y documento creados");
-              this.presentAlertSinError('Creado', `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`);
+              this.presentAlertSinError(
+                "Creado",
+                `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`
+              );
               loadingEl.dismiss();
             },
             err => {
@@ -96,25 +115,25 @@ export class AuthService {
               }
 
               loadingEl.dismiss();
-              this.logger.logEvent(errorMessage, 5, 'authService registerUser')
+              this.logger.logEvent(errorMessage, 5, "authService registerUser");
               this.presentAlertError(errorMessage);
             }
           );
       });
   }
 
-
-  registerAdmin(data, cifEmpresa) {
+  registerAdmin(datos, cifEmpresa) {
     this.ok = false;
-    this.loadingController.create({
+    this.loadingController
+      .create({
         keyboardClose: true,
         message: "Creando administrador"
       })
       .then(loadingEl => {
         loadingEl.present();
-        const tel = `+${data.code}${data.telefono}`
-        const email = data.email;
-        const password = data.password;
+        const tel = `+${datos.country}${datos.telefono}`;
+        const email = datos.email;
+        const password = datos.password;
         this.http
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
@@ -124,9 +143,21 @@ export class AuthService {
           .subscribe(
             response => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
-              this.setAdminDoc(jsonResponse.uid, data.nombre, data.DNI, data.telefono, data.horasTrabajo, cifEmpresa, data.country);
+              this.setDoc(
+                jsonResponse.uid,
+                datos.nombre,
+                datos.DNI,
+                datos.telefono,
+                datos.horasTrabajo,
+                cifEmpresa,
+                datos.country,
+                true
+              );
               loadingEl.dismiss();
-              this.presentAlertSinError('Admin Registrado',`El administrador ${data.nombre} ha sido creado`)
+              this.presentAlertSinError(
+                "Admin Registrado",
+                `El administrador ${datos.nombre} ha sido creado`
+              );
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
@@ -154,70 +185,82 @@ export class AuthService {
       });
   }
 
-
-
-  private setUserDoc(uid, nameSurname, dni, country, tel, hours) {
+  private setDoc(
+    uid,
+    nameSurname,
+    DNI,
+    country,
+    empresa,
+    telefono,
+    hours,
+    admin
+  ) {
+    //TODO: change every uid to DNI
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
 
-    // TODO: Datos se rellenan por el administrador
     this.user.pipe(take(1)).subscribe(data => {
+      if ((admin = false)) {
+        empresa = data.empresa;
+      }
       const userDoc: User = {
         uid,
         nombre: nameSurname,
-        DNI: dni,
+        DNI,
         admin: false,
         countryCode: country.toString(),
-        telefono: tel,
-        empresa: data.empresa,
+        telefono,
+        empresa,
         horasDiarias: hours
       };
-      this.afs.collection('users')
-      .ref.where('empresa', "==", data.empresa).where('admin', '==', true)
-      .get().then(docs => {
-        let uids:Array<string> = [];
-        docs.forEach(doc =>{
-          uids.push(doc.data().uid)
-        })
-        this.sendPush.sendPush(`Se ha creado un trabajador en la empresa ${data.empresa}`, `El administrador ${data.nombre} ha añadido a ${nameSurname} a la empresa`, uids);
-        })
-      userRef.set(userDoc);
-      this.logger.logEvent(`User created: ${uid}`, 3, 'authService setUserDoc')
-    });
-  } 
 
-  private setAdminDoc(uid, nameSurname, dni, tel, hours, empresa, code) {
-    const userRef: AngularFirestoreDocument<User> = this.afs.doc(
-      `users/${uid}`
-    );
-
-    // TODO: Datos se rellenan por el administrador
-    
-
-    this.user.pipe(take(1)).subscribe(data => {
-      const userDoc: User = {
-        DNI: dni,
-        admin: true,
-        countryCode: code,
-        empresa: empresa,
-        horasDiarias: hours,
-        nombre: nameSurname,
-        telefono: tel,
-        uid
-      };
-
-      userRef.set(userDoc);
+      if (admin == false) {
+        this.afs
+          .collection("users")
+          .ref.where("empresa", "==", data.empresa)
+          .where("admin", "==", true)
+          .get()
+          .then(docs => {
+            let uids: Array<string> = [];
+            docs.forEach(doc => {
+              uids.push(doc.data().uid);
+            });
+            this.sendPush.sendPush(
+              `Se ha creado un trabajador en la empresa ${data.empresa}`,
+              `El administrador ${data.nombre} ha añadido a ${nameSurname} a la empresa`,
+              uids
+            );
+          });
+        userRef.set(userDoc);
+        this.logger.logEvent(
+          `User created: ${DNI}`,
+          3,
+          "authService setDoc"
+        );
+      } else {
+        userRef.set(userDoc);
+        this.logger.logEvent(
+          `Admin created: ${DNI}`,
+          3,
+          "authService setDoc"
+        );
+      }
     });
   }
 
-  crearEmpresa(data){
-    this.afs.collection(`empresas`).doc(data.cif).set({
-      Nombre: data.nombreEmpresa,
-      id: data.cif,
-      loc:[data.latEmpresa, data.lonEmpresa]
-    }).then(suc =>{}).catch(error => {})
-}
+  crearEmpresa(data) {
+    this.afs
+      .collection(`empresas`)
+      .doc(data.cif)
+      .set({
+        Nombre: data.nombreEmpresa,
+        id: data.cif,
+        loc: [data.latEmpresa, data.lonEmpresa]
+      })
+      .then(suc => {})
+      .catch(error => {});
+  }
 
   login(email: string, password: string) {
     this.loadingController
@@ -230,7 +273,11 @@ export class AuthService {
         this.afAuth.auth
           .signInWithEmailAndPassword(email, password)
           .then(val => {
-            this.logger.logEvent(`User logged in: ${val.user.uid}`, 3, 'authService login')
+            this.logger.logEvent(
+              `User logged in: ${val.user.uid}`,
+              3,
+              "authService login"
+            );
             loadingEl.dismiss();
             this.router.navigateByUrl("/home");
           })
@@ -249,7 +296,11 @@ export class AuthService {
             }
 
             loadingEl.dismiss();
-            this.logger.logEvent(`Failed to log in: ${err.code}`, 4, 'authService login')
+            this.logger.logEvent(
+              `Failed to log in: ${err.code}`,
+              4,
+              "authService login"
+            );
 
             this.alertController
               .create({
@@ -282,23 +333,33 @@ export class AuthService {
   signInWithGoogle() {
     const provider = new auth.GoogleAuthProvider();
     this.afAuth.auth.signInWithPopup(provider).then(val => {
-      if(val.additionalUserInfo.isNewUser) {
+      if (val.additionalUserInfo.isNewUser) {
         val.user.delete();
-        this.alertController.create({
-          header: 'No se ha podido iniciar sesion',
-          message: 'No tiene una cuenta',
-          buttons: [
-            {
-              text: "Aceptar",
-              role: "cancel"
-            }
-          ]
-        }).then(alert => {
-          alert.present();
-          this.logger.logEvent(`Sign in with Google failed, no account linked`, 4, 'authService signInWithGoogle')
-        })
+        this.alertController
+          .create({
+            header: "No se ha podido iniciar sesion",
+            message: "No tiene una cuenta",
+            buttons: [
+              {
+                text: "Aceptar",
+                role: "cancel"
+              }
+            ]
+          })
+          .then(alert => {
+            alert.present();
+            this.logger.logEvent(
+              `Sign in with Google failed, no account linked`,
+              4,
+              "authService signInWithGoogle"
+            );
+          });
       } else {
-        this.logger.logEvent(`Signed in with Google: ${val.user.uid}`, 3, 'authService signInWithGoogle')
+        this.logger.logEvent(
+          `Signed in with Google: ${val.user.uid}`,
+          3,
+          "authService signInWithGoogle"
+        );
         this.router.navigateByUrl("/home");
       }
     });
@@ -307,23 +368,33 @@ export class AuthService {
   signInWithFacebook() {
     const provider = new auth.FacebookAuthProvider();
     this.afAuth.auth.signInWithPopup(provider).then(val => {
-      if(val.additionalUserInfo.isNewUser) {
+      if (val.additionalUserInfo.isNewUser) {
         val.user.delete();
-        this.alertController.create({
-          header: 'No se ha podido iniciar sesion',
-          message: 'No tiene una cuenta',
-          buttons: [
-            {
-              text: "Aceptar",
-              role: "cancel"
-            }
-          ]
-        }).then(alert => {
-          alert.present();
-          this.logger.logEvent(`Sign in with Facebook failed, no account linked`, 4, 'authService signInWithFacebook')
-        })
+        this.alertController
+          .create({
+            header: "No se ha podido iniciar sesion",
+            message: "No tiene una cuenta",
+            buttons: [
+              {
+                text: "Aceptar",
+                role: "cancel"
+              }
+            ]
+          })
+          .then(alert => {
+            alert.present();
+            this.logger.logEvent(
+              `Sign in with Facebook failed, no account linked`,
+              4,
+              "authService signInWithFacebook"
+            );
+          });
       } else {
-        this.logger.logEvent(`Signed in with Facebook: ${val.user.uid}`, 3, 'authService signInWithFacebook')
+        this.logger.logEvent(
+          `Signed in with Facebook: ${val.user.uid}`,
+          3,
+          "authService signInWithFacebook"
+        );
         this.router.navigateByUrl("/home");
       }
     });
@@ -337,51 +408,81 @@ export class AuthService {
     this.ok = false;
     // idFecha viejo -> nuevo
     try {
-      this.afs.doc<User>(`users/${this.userUid}`).valueChanges().pipe(take(1)).subscribe(user => {
-        this.afs.doc(`users/${this.userUid}`).update({
-          DNI: newData.DNI,
-          nombre: newData.nombre,
-        })
-        this.changePhone(newData.telefono, newData.country);
-        this.changeEmail(newData.email);
-        if(newData.password) {
-          this.changePassword(newData.password);
-        }
-        this.presentAlertSinError('Perfil editado', `El perfil de ${newData.nombre} ha sido correctamente editado`)
-        this.updateHistory(newData, user);
-        this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
-      })
+      this.afs
+        .doc<User>(`users/${this.userUid}`)
+        .valueChanges()
+        .pipe(take(1))
+        .subscribe(user => {
+          this.afs.doc(`users/${this.userUid}`).update({
+            DNI: newData.DNI,
+            nombre: newData.nombre
+          });
+          this.changePhone(newData.telefono, newData.country);
+          this.changeEmail(newData.email);
+          if (newData.password) {
+            this.changePassword(newData.password);
+          }
+          this.presentAlertSinError(
+            "Perfil editado",
+            `El perfil de ${newData.nombre} ha sido correctamente editado`
+          );
+          this.updateHistory(newData, user);
+          this.logger.logEvent(
+            `User ${user.uid} updated profile`,
+            3,
+            "authService updateProfile"
+          );
+        });
     } catch (error) {
       console.log(error);
-      this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile');
+      this.logger.logEvent(
+        `${this.userUid}: ${error}`,
+        4,
+        "authService updateProfile"
+      );
       this.presentAlertError(error);
     }
   }
 
   private updateHistory(newData, previousData) {
     let changes = {};
-    if(newData.DNI !== previousData.DNI) {
-      changes = {...changes, '-DNI': previousData.DNI, '+DNI': newData.DNI}
+    if (newData.DNI !== previousData.DNI) {
+      changes = { ...changes, "-DNI": previousData.DNI, "+DNI": newData.DNI };
     }
 
-    if(newData.nombre !== previousData.nombre) {
-      changes = {...changes, '-nombre': previousData.nombre, '+nombre': newData.nombre}
+    if (newData.nombre !== previousData.nombre) {
+      changes = {
+        ...changes,
+        "-nombre": previousData.nombre,
+        "+nombre": newData.nombre
+      };
     }
 
-    if(newData.country !== previousData.countryCode) {
-      changes = {...changes, '-country': previousData.countryCode, '+country': newData.country}
+    if (newData.country !== previousData.countryCode) {
+      changes = {
+        ...changes,
+        "-country": previousData.countryCode,
+        "+country": newData.country
+      };
     }
 
-    if(newData.telefono !== previousData.telefono) {
-      changes = {...changes, '-telefono': previousData.telefono, '+telefono': newData.telefono}
+    if (newData.telefono !== previousData.telefono) {
+      changes = {
+        ...changes,
+        "-telefono": previousData.telefono,
+        "+telefono": newData.telefono
+      };
     }
 
-    if(newData.DNI !== previousData.DNI) {
-      changes = {...changes, '-DNI': previousData.DNI, '+DNI': newData.DNI}
+    if (newData.DNI !== previousData.DNI) {
+      changes = { ...changes, "-DNI": previousData.DNI, "+DNI": newData.DNI };
     }
 
-    const currentDate = new Date().toString()
-    this.afs.collection(`users/${this.userUid}/historicoDatos`).doc(currentDate).set(changes)
+    const currentDate = new Date().toString();
+    this.afs
+      .collection(`users/${this.userUid}/historicoDatos`)
+      .doc(currentDate)
+      .set(changes);
   }
 
   private changePassword(newPassword: string) {
@@ -393,18 +494,23 @@ export class AuthService {
   }
 
   private changePhone(newPhone: string, newCountry: string) {
-    this.http.post('https://us-central1-fichaje-uni.cloudfunctions.net/updatePhone', {
-      tel: newPhone,
-      country: newCountry,
-      uid: this.afAuth.auth.currentUser.uid
-    }).subscribe(response => {}, err => {
-      if(err.error.text === 'Done') {
-        this.afs.doc(`users/${this.userUid}`).update({
-          telefono: newPhone,
-          countryCode: newCountry
-        })
-      }
-    })
+    this.http
+      .post("https://us-central1-fichaje-uni.cloudfunctions.net/updatePhone", {
+        tel: newPhone,
+        country: newCountry,
+        uid: this.afAuth.auth.currentUser.uid
+      })
+      .subscribe(
+        response => {},
+        err => {
+          if (err.error.text === "Done") {
+            this.afs.doc(`users/${this.userUid}`).update({
+              telefono: newPhone,
+              countryCode: newCountry
+            });
+          }
+        }
+      );
   }
 
   logout() {
@@ -413,26 +519,31 @@ export class AuthService {
       .then(val => {
         console.log("Logged out");
         this.router.navigateByUrl("auth");
-        this.logger.logEvent(`User ${this.userUid} logged out`, 3, 'authService logout')
+        this.logger.logEvent(
+          `User ${this.userUid} logged out`,
+          3,
+          "authService logout"
+        );
       })
       .catch(err => {
-        this.logger.logEvent(err, 4, 'authService logout')
+        this.logger.logEvent(err, 4, "authService logout");
       });
   }
   async presentAlertError(message) {
     const alert = await this.alertController.create({
-      header: 'Error',
+      header: "Error",
       message: message,
       buttons: [
         {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
+          text: "Cancel",
+          role: "cancel",
+          cssClass: "secondary",
           handler: () => {
             this.modalController.dismiss();
           }
-        }, {
-          text: 'Editar',
+        },
+        {
+          text: "Editar"
         }
       ]
     });
@@ -444,8 +555,9 @@ export class AuthService {
     const alert = await this.alertController.create({
       header: title,
       message: message,
-      buttons: [{
-          text: 'OK',
+      buttons: [
+        {
+          text: "OK",
           handler: () => {
             this.modalController.dismiss();
           }

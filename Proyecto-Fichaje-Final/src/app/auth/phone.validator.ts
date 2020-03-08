@@ -1,18 +1,20 @@
 import { AbstractControl, ValidatorFn } from "@angular/forms";
 import { PhoneNumberUtil } from "google-libphonenumber";
+import { AngularFirestore } from '@angular/fire/firestore';
+import { take } from 'rxjs/operators';
+import { renderFlagCheckIfStmt } from '@angular/compiler/src/render3/view/template';
 const phoneUtil = PhoneNumberUtil.getInstance();
 
 export class PhoneValidator {
   static pais;
   static country_check(data) {
-    console.log(data, "country_check")
+    console.log(data, "country_check");
     this.pais = data;
   }
   static number_check(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } => {
-      
       var phone = control.value;
-      if(phone.length > 1) {
+      if (phone.length > 1) {
         const regionCode = phoneUtil.getRegionCodeForCountryCode(this.pais);
         if (regionCode.toUpperCase() === "ZZ") {
           return { isValid: true };
@@ -24,8 +26,29 @@ export class PhoneValidator {
         } else {
           return null;
         }
-      } else{
+      } else {
         return { isValid: true };
+      }
+    };
+  }
+}
+export class CIFValidator {
+  cifs = [];
+  constructor(private afs:AngularFirestore) {
+    this.afs.collection(`empresas`).get().pipe(take(1)).forEach(data =>{
+      data.docChanges().forEach(data => {
+        this.cifs.push(data.doc.id)
+      });
+    });
+  }
+  
+  static cif_check(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } => {
+      var cif = control.value;
+      let isValid;
+      if (cif.length < 2) {
+        return { cif_check: { isValid: true } };
+      
       }
     };
   }
