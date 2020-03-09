@@ -39,7 +39,7 @@ export class RegisterempresaPage implements OnInit {
 
   ngOnInit() {
     this.registerCompany = this.fb.group({
-      cif: ["", CIFValidator.cif_check(this.afs)],
+      cif: ["", Validators.compose([Validators.required, CIFValidator.cif_check(this.afs)])],
       nombreEmpresa: ["", Validators.required],
       latEmpresa: ["", Validators.required],
       lonEmpresa: ["", Validators.required],
