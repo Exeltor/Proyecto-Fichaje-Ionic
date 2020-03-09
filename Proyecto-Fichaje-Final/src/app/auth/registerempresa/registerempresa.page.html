@@ -15,6 +15,12 @@
           <ion-row>
             <ion-col>
               <h1>Datos Empresa</h1>
+              <div *ngIf="cif_.invalid && cif_.dirty" class="notification is-danger">
+                <strong>{{ cif_.value }}</strong> is not valid or already taken
+              </div>
+              <div *ngIf="cif_.valid" class="notification is-success">
+                <strong>{{ cif_.value }}</strong> is available
+              </div>
               <ion-item>
                 <ion-label position="floating">CIF empresa</ion-label>
                 <ion-input formControlName="cif"></ion-input>

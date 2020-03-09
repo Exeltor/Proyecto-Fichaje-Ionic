@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild, Input } from "@angular/core";
 import { AuthService } from "../auth.service";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators, AbstractControl } from "@angular/forms";
 import { Router } from "@angular/router";
 import { IonSlides } from "@ionic/angular";
 import { PhoneValidator } from "../phone.validator";
 import { CIFValidator } from "../cif.validator";
 import { countryCodes } from "src/environments/environment";
-import { catchError } from "rxjs/operators";
+import { catchError, debounceTime, take, map } from "rxjs/operators";
 import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
@@ -39,7 +39,7 @@ export class RegisterempresaPage implements OnInit {
 
   ngOnInit() {
     this.registerCompany = this.fb.group({
-      cif: ["", Validators.compose([Validators.required, CIFValidator.cif_check(this.afs)])],
+      cif: ["", Validators.compose([Validators.minLength(8), Validators.required]), CIFValidator.cif_check(this.afs)],
       nombreEmpresa: ["", Validators.required],
       latEmpresa: ["", Validators.required],
       lonEmpresa: ["", Validators.required],
@@ -81,6 +81,10 @@ export class RegisterempresaPage implements OnInit {
       this.registerAdmin.value,
       this.registerCompany.value.cif
     );
+  }
+
+  get cif_(){
+    return this.registerCompany.get('cif');
   }
 
   blockSwipeif(){
