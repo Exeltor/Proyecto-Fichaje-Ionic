@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "923103800796",
+    "firebase_url": "https://fichaje-uni.firebaseio.com",
+    "project_id": "fichaje-uni",
+    "storage_bucket": "fichaje-uni.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923103800796:android:0f49743af848376a04b319",
+        "android_client_info": {
+          "package_name": "com.ficharify.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "923103800796-qarjtp3nv45ir9pt1h8pats0t6cu6ooe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcL1Au93HeB6Zs6IPL4Lk6Kh8yhPj6i6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "923103800796-qarjtp3nv45ir9pt1h8pats0t6cu6ooe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "923103800796-l6q4t21mmrmev4m2tq2tj1l04s7j2uot.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ficharify.com"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

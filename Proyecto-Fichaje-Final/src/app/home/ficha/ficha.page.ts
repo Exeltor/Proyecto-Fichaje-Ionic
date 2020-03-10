@@ -1,10 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { FichajeService } from "./fichaje.service";
+import { FichajeService } from "../../services/fichaje.service";
 import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
-import { GeolocService } from './geoloc.service';
+import { GeolocService } from '../../services/geoloc.service';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import * as geolib from 'geolib';
 
 @Component({
@@ -28,6 +29,7 @@ export class FichaPage implements OnInit {
     private authService: AuthService,
     private afs: AngularFirestore,
     private geo: GeolocService,
+    private locationAccuracy: LocationAccuracy,
   ) {}
 
   ngOnInit() {
@@ -69,20 +71,35 @@ export class FichaPage implements OnInit {
       });
   }
 
+  activateLocation(){
+    this.locationAccuracy.canRequest().then((canRequest: boolean) => {
+      if(canRequest) {
+        // the accuracy option will be ignored by iOS
+        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
+          () => {
+            console.log('Request successful')
+            this.locationBlocked = false;
+          } ,
+          error => {
+            console.log('Error requesting location permissions', error)
+            this.locationBlocked = true;
+          }
+        );
+      }
+    });
+  }
   /*
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
   async comenzarDia() {
-    this.isLoading = true;
-    this.locationBlocked = false;
+    this.activateLocation();
+    if(this.locationBlocked) return;
+    this.isLoading = false;
     let coords = await this.geo.getLoc().catch(error => {
       console.log(error);
-      this.locationBlocked = true;
       this.isLoading = false;
     });
-
-    if(this.locationBlocked) return;
 
     // Calculo de distancia en metros
     
@@ -139,10 +156,12 @@ export class FichaPage implements OnInit {
     }
   }
 
-  getLocalizacion(){
+  getLocationPermission(){
     this.geo.getLoc().catch(err => {
       console.log(err);
       this.locationBlocked = true;
+      //hacer prompt para activar la localizacion
+
     })
   }
   /*
@@ -150,7 +169,7 @@ export class FichaPage implements OnInit {
     Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
   */
   getIfComenzado() {
-    this.getLocalizacion();
+    this.getLocationPermission();
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {

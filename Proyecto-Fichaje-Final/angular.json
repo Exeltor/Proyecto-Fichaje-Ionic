@@ -20,6 +20,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/firebase-messaging-sw.js",
               {
                 "glob": "**/*",
                 "input": "src/assets",
@@ -101,6 +102,7 @@
             "styles": [],
             "scripts": [],
             "assets": [
+              "src/firebase-messaging-sw.js",
               {
                 "glob": "favicon.ico",
                 "input": "src/",
@@ -128,7 +130,9 @@
               "tsconfig.spec.json",
               "e2e/tsconfig.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "e2e": {
@@ -174,7 +178,8 @@
     }
   },
   "cli": {
-    "defaultCollection": "@ionic/angular-toolkit"
+    "defaultCollection": "@ionic/angular-toolkit",
+    "analytics": "d5eff110-4b60-4e0e-8209-114f8f0f3fa6"
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {
