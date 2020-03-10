@@ -100,12 +100,13 @@ export class FichaPage implements OnInit {
       console.log(error);
       this.isLoading = false;
     });
-
+    
     // Calculo de distancia en metros
     
     let coordsEmpresa = await this.cogerCoordenadaEmpresa()
     this.isLoading = false;
-    
+    console.log("Coordenadas de la empresa:  " + coordsEmpresa );
+    console.log("Coordenadas del usuario:  " + coords );
     if (!this.comenzado && geolib.isPointWithinRadius({latitude: coords[0], longitude: coords[1]}, {latitude: coordsEmpresa[0], longitude: coordsEmpresa[1]}, 100)) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
