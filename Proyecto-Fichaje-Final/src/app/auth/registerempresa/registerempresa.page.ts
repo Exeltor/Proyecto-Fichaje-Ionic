@@ -50,8 +50,8 @@ export class RegisterempresaPage implements OnInit {
         CIFValidator.cif_check(this.afs)
       ],
       nombreEmpresa: ["", Validators.required],
-      latEmpresa: ["", Validators.required],
-      lonEmpresa: ["", Validators.required],
+      latEmpresa: [null, Validators.required],
+      lonEmpresa: [null, Validators.required],
       direccionEmpresa: ["", Validators.required]
     });
 
@@ -92,23 +92,33 @@ export class RegisterempresaPage implements OnInit {
     );
   }
 
-  openMap() {
-    let direccion = this.registerCompany.value.direccionEmpresa;
-    let jsonQ = this.http.get(`https://nominatim.openstreetmap.org/search?q=${direccion.split(' ').join("+")}`).toPromise().catch(err=> console.log(err))
+  async openMap() {
+    let direccionEncoded = encodeURI(this.registerCompany.value.direccionEmpresa);
 
+    let jsonQ = await this.http.get(`https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`).toPromise()
 
-    console.log(jsonQ)
+    const latLon = [jsonQ[0].lat, jsonQ[0].lon]
 
-    this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: MapaempresaComponent,
-      componentProps: {  }
-    }).then(modal => {
-      modal.present();
+      componentProps: { latLon }
     })
+
+    modal.onDidDismiss().then((callback) => {
+      this.latEmpresa = callback.data.lat;
+      this.lonEmpresa = callback.data.lng;
+    })
+
+    await modal.present();
+
   }
 
   get cif_() {
     return this.registerCompany.get("cif");
+  }
+
+  get direccion_(){
+    return this.registerCompany.get("direccionEmpresa");
   }
 
   blockSwipeif() {
