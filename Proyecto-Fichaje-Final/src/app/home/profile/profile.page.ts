@@ -15,7 +15,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  admin = false;
   empresa: Observable<any>;
   constructor(public authService: AuthService, private modalController: ModalController, private afs: AngularFirestore) { }
 
