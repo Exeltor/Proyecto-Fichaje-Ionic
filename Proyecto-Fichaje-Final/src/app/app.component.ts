@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
-import { Platform } from '@ionic/angular';
 import { AuthService } from './auth/auth.service';
 
 @Component({
@@ -10,7 +8,6 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent implements OnInit {
   constructor(
-    private platform: Platform,
     private authService: AuthService
   ) {
     this.initializeApp();

@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable, ɵCodegenComponentFactoryResolver } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
@@ -17,7 +17,6 @@ import { Empresa } from "../models/empresa.model";
 import { User } from "../models/user.model";
 import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
-import { AngularFireMessaging } from "@angular/fire/messaging";
 import { SendPushService } from "../services/send-push.service";
 
 @Injectable({
@@ -233,18 +232,10 @@ export class AuthService {
             );
           });
         userRef.set(userDoc);
-        this.logger.logEvent(
-          `User created: ${DNI}`,
-          3,
-          "authService setDoc"
-        );
+        this.logger.logEvent(`User created: ${DNI}`, 3, "authService setDoc");
       } else {
         userRef.set(userDoc);
-        this.logger.logEvent(
-          `Admin created: ${DNI}`,
-          3,
-          "authService setDoc"
-        );
+        this.logger.logEvent(`Admin created: ${DNI}`, 3, "authService setDoc");
       }
     });
   }

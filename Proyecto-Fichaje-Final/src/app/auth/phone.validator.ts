@@ -1,8 +1,5 @@
 import { AbstractControl, ValidatorFn } from "@angular/forms";
 import { PhoneNumberUtil } from "google-libphonenumber";
-import { AngularFirestore } from '@angular/fire/firestore';
-import { take } from 'rxjs/operators';
-import { renderFlagCheckIfStmt } from '@angular/compiler/src/render3/view/template';
 const phoneUtil = PhoneNumberUtil.getInstance();
 
 export class PhoneValidator {
