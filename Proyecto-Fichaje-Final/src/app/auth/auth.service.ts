@@ -17,8 +17,9 @@ import { LoggingService } from '../logging/logging.service';
 export class AuthService {
   user: Observable<User>;
   empresa: Observable<Empresa>;
-  Nombre_Empresa: string;
+  Nombre: string;
   userUid;
+  id;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -360,6 +361,26 @@ export class AuthService {
     } catch (error) {
       console.log(error);
       this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
+    }
+  }
+
+  updateBusiness(newData) {
+    try {
+      this.afs.doc<Empresa>(`empresas/${newData.CIF}`).valueChanges().pipe(take(1)).subscribe(empresa => {
+        this.afs.doc(`empresas/${newData.CIF}`).update({
+          
+          Nombre: newData.Nombre,
+          id: newData.CIF,
+          loc: [newData.loc1, newData.loc2]
+        })
+        this.modalController.dismiss();
+        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        // this.updateHistory(newData, user);
+        // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
+      })
+    } catch (error) {
+      console.log(error);
+      // this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
     }
   }
 

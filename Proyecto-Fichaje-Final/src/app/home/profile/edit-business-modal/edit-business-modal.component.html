@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Editar Empresa</ion-title>
+    <ion-title>Editar datos de empresa</ion-title>
     <ion-buttons slot="primary">
       <ion-button fill="clear" (click)="modalDismiss()">Cancelar</ion-button>
     </ion-buttons>
@@ -12,23 +12,44 @@
     <ion-grid>
       <ion-row>
         <ion-col>
+
           <ion-item>
             <ion-label position="floating">
-              <ion-icon slot="start" name="nombre"></ion-icon>
-              Nombre de empresa
+              <ion-icon name="people"></ion-icon>
+              Nombre de la empresa
             </ion-label>
-            <ion-input formControlName="nombre"></ion-input>
+            <ion-input formControlName="Nombre"></ion-input>
           </ion-item>
+
           <ion-item>
             <ion-label position="floating">
-              <ion-icon name="loc"></ion-icon>
-              Localización
+              <ion-icon slot="start" name="card"></ion-icon>
+              CIF
             </ion-label>
-            <ion-input formControlName="loc">
+            <ion-input formControlName="CIF">
             </ion-input>
+          </ion-item>
+
+          <!-- Se introduciría por mapa en un futuro -->
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="globe"></ion-icon>
+              Localización: Latitud
+            </ion-label>
+            <ion-input formControlName="loc1"></ion-input>
+            <ion-label position="floating">
+              Localización: Longitud
+            </ion-label>
+            <ion-input formControlName="loc2"></ion-input>
+          </ion-item>
+
+
+         
           
         </ion-col>
       </ion-row>
+     
+     
     </ion-grid>
     <!-- fab placed to the bottom end -->
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">

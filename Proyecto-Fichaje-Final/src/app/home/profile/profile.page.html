@@ -54,25 +54,48 @@
         </ion-row>
         <ion-row>
             <ion-col>
-            <ion-card color= "dark" *ngIf="(authService.user | async)?.admin">
-                <ion-card-header>
-                    <ion-card-title>Datos de Empresa</ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                    <ion-row>
-                        <ion-col size="10">
-                            <ion-item>
-                                {{ (empresa | async)?.Nombre }}
-                            </ion-item>
-                        </ion-col> 
-                        <ion-col size="2" class="ion-align-items-end">
-                            <ion-button color="light" (click)="editBusiness()">
-                                    <ion-icon color="dark" slot="icon-only" name="create"></ion-icon>
-                            </ion-button>
-                        </ion-col> 
-                    </ion-row>
-                </ion-card-content>
-            </ion-card>
+                <ion-card color= "dark" *ngIf="(authService.user | async)?.admin">
+                    <ion-card-header>
+                        <ion-card-title>Datos de Empresa</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-row>
+                            <ion-col size="5">
+                                <ion-item>
+                                    {{ (empresa | async)?.Nombre }}
+                                </ion-item>
+                            </ion-col> 
+                            <ion-col size="3">
+                                <!-- <ion-buttons slot="primary"> -->
+                                    <ion-button (click)="editBusiness()">
+                                        <ion-icon slot="icon-only" name="create"></ion-icon>
+                                    </ion-button>
+                                <!-- </ion-buttons> -->
+                            </ion-col> 
+                        </ion-row>
+                        <ion-row>
+                            <form *ngIf="showMe" #form="ngForm" (ngSubmit)="onSubmit(form)" method="post">
+                                <ion-item>
+                                    <ion-label position="floating"> Nombre de la empresa</ion-label>
+                                    <ion-input ngModel name="Nombre"></ion-input>
+                                </ion-item>
+
+                                <ion-item>
+                                    <ion-label position="floating"> Localización</ion-label>
+                                    <ion-input ngModel name="loc1"></ion-input>
+                                    <ion-input ngModel name="loc2"></ion-input>
+                                </ion-item>
+
+                                
+
+                                <ion-button (click)="editBusiness()" name="editarempresa">
+                                    Actualizar datos
+                                </ion-button>
+
+                            </form>
+                        </ion-row>
+                    </ion-card-content>
+                </ion-card>
 
             <!-- <div #mapElement class="map">
                 
@@ -80,7 +103,6 @@
 
 
             </div> -->
-                
             </ion-col>
         </ion-row>
     </ion-grid>
