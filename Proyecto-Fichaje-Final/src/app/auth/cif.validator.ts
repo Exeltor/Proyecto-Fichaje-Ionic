@@ -7,13 +7,12 @@ export class CIFValidator {
     return (control: AbstractControl) => {
       const cif = control.value; //.toLowerCase();
       return afs
-        .collection("empresas", ref => ref.where("id", "==", cif))
+        .collection("empresasPendientes", ref => ref.where("cif", "==", cif))
         .valueChanges()
         .pipe(
           debounceTime(500),
           take(1),
-          map(arr => (arr.length ? { isValid: false } : null))
-        );
+          map(arr => arr.length ? null : { isValid: true }));
     };
   }
 }
