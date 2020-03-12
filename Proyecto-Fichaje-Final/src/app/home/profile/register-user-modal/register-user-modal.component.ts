@@ -11,13 +11,16 @@ import { PhoneValidator } from "src/app/auth/phone.validator";
   styleUrls: ["./register-user-modal.component.scss"]
 })
 export class RegisterUserModalComponent implements OnInit {
-  @Input() nombre: string;
-  @Input() DNI: string;
-  @Input() telefono: string;
-  @Input() email: string;
-  @Input() country: string;
-  @Input() password: string;
-  @Input() horasTrabajo: number;
+  latPersona;
+  lonPersona;
+
+  nombre: string;
+  DNI: string;
+  telefono: string;
+  email: string;
+  country: string;
+  password: string;
+  horasTrabajo: number;
   admin = true;
   paises = countryCodes;
   registerForm: FormGroup;
@@ -38,6 +41,8 @@ export class RegisterUserModalComponent implements OnInit {
         "",
         Validators.compose([PhoneValidator.number_check(), Validators.required])
       ],
+      latPersona: [null, Validators.required],
+      lonPersona: [null, Validators.required],
       nombre: ["", Validators.required],
       password: ["", Validators.compose([Validators.required,Validators.minLength(6)])],
       horasTrabajo: ["", Validators.max(24)]
