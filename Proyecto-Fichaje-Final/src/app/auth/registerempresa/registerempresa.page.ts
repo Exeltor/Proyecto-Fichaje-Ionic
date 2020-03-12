@@ -1,19 +1,20 @@
-import { Component, OnInit, ViewChild, Input } from "@angular/core";
+import { Component, OnInit, ViewChild, Input, AfterViewInit, AfterViewChecked } from "@angular/core";
 import { AuthService } from "../auth.service";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { IonSlides, ModalController } from "@ionic/angular";
+import { IonSlides, ModalController, NavController } from "@ionic/angular";
 import { PhoneValidator } from "../phone.validator";
 import { CIFValidator } from "../cif.validator";
 import { countryCodes } from "src/environments/environment";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { MapaempresaComponent } from './mapaempresa/mapaempresa.component'
 import { HttpClient } from '@angular/common/http';
+import { DNIValidator } from '../dni.validator';
 @Component({
   selector: "app-registerempresa",
   templateUrl: "./registerempresa.page.html",
   styleUrls: ["./registerempresa.page.scss"]
 })
-export class RegisterempresaPage implements OnInit {
+export class RegisterempresaPage implements OnInit, AfterViewInit {
   @Input() cif: String;
   @Input() nombreEmpresa: String;
   @Input() latEmpresa: String;
@@ -29,7 +30,6 @@ export class RegisterempresaPage implements OnInit {
   @Input() horasTrabajo: number;
 
   activeIndex = 0;
-  showSlides = false;
   registerCompany: FormGroup;
   registerAdmin: FormGroup;
   paises = countryCodes;
@@ -38,11 +38,13 @@ export class RegisterempresaPage implements OnInit {
     private fb: FormBuilder,
     private afs: AngularFirestore,
     private modalCtrl: ModalController,
-    private http: HttpClient
+    private http: HttpClient,
+    private navCtrl: NavController
   ) {}
   @ViewChild("slides") slides: IonSlides;
 
   ngOnInit() {
+    console.log('brah')
     this.registerCompany = this.fb.group({
       cif: [
         "",
@@ -57,7 +59,7 @@ export class RegisterempresaPage implements OnInit {
 
     this.registerAdmin = this.fb.group({
       email: ["", Validators.compose([Validators.email, Validators.required])],
-      DNI: ["", Validators.required],
+      DNI: ["", Validators.required, DNIValidator.dni_check(this.afs)],
       country: [this.country, Validators.required],
       telefono: [
         "",
@@ -71,26 +73,22 @@ export class RegisterempresaPage implements OnInit {
       horasTrabajo: ["", Validators.max(24)]
     });
   }
-  ionViewDidEnter() {
-    this.showSlides = true;
+
+  ngAfterViewInit() {
+    console.log(this.slides)
+    this.slides.lockSwipes(true);
   }
-  ionViewDidLeave() {
-    this.showSlides = false;
-  }
+
   updateAll() {
     PhoneValidator.country_check(this.registerAdmin.value.country);
   }
 
-  registerEmpresa() {
-    //this.authService.crearEmpresa(this.registerCompany.value, lat, lon);
+  closePage() {
+    this.navCtrl.pop();
   }
 
-  registerAdministrador() {
-    this.authService.registerAdmin(
-      this.registerAdmin.value,
-      this.registerCompany.value.cif
-    );
-  }
+
+
 
   async openMap() {
     let direccionEncoded = encodeURI(this.registerCompany.value.direccionEmpresa);
@@ -121,32 +119,32 @@ export class RegisterempresaPage implements OnInit {
     return this.registerCompany.get("direccionEmpresa");
   }
 
+  get dni_(){
+    return this.registerAdmin.get("DNI");
+  }
+
+  cif_check(data){
+    this.blockSwipeif()
+    DNIValidator.cif_check(data);
+  }
+  
   blockSwipeif() {
-    switch (this.activeIndex) {
-      case 0:
-        console.log("Registro empresa");
-        break;
-      case 1:
-        console.log("Admin");
-        this.registerEmpresa();
-        break;
-      default:
-        break;
+    if(this.registerCompany.get("cif").valid){
+      this.slides.lockSwipes(false);
+    } else{
+      this.slides.lockSwipes(true);
     }
   }
-  slideChanged() {
-    this.slides.getActiveIndex().then(val => {
-      this.activeIndex = val;
-      this.blockSwipeif();
-    });
-    //this.authService.prueba();
-  }
 
-  nextSlide() {
-    this.slides.slideNext();
-  }
 
-  prevSlide() {
-    this.slides.slidePrev();
+  registerAll(){
+    this.authService.crearEmpresa(this.registerCompany.value);
+    
+    this.authService.registerAdmin(
+      this.registerAdmin.value,
+      this.registerCompany.value.cif
+    );
+
+    
   }
 }

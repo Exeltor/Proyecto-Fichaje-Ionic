@@ -1,14 +1,14 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="home"></ion-back-button>
+      <ion-back-button (click)="closePage()"></ion-back-button>
     </ion-buttons>
     <ion-title>Registro empresa</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-slides #slides pager="true" style="height: 100%;" *ngIf="showSlides" (ionSlideDidChange)="slideChanged()">
+  <ion-slides #slides pager="true" style="height: 100%;" lockSwipes="true">
     <ion-slide>
       <form [formGroup]="registerCompany">
         <ion-grid>
@@ -17,7 +17,7 @@
               <h1>Datos Empresa</h1>
               <ion-item>
                 <ion-label position="floating">CIF empresa</ion-label>
-                <ion-input formControlName="cif"></ion-input>
+                <ion-input #C formControlName="cif" (ionChange)="cif_check(C.value)"></ion-input>
                 <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="cif_.invalid && cif_.dirty">
                 </ion-icon>
                 <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
@@ -81,6 +81,10 @@
             DNI
           </ion-label>
           <ion-input formControlName="DNI"></ion-input>
+          <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="dni_.invalid && dni_.dirty">
+          </ion-icon>
+          <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="dni_.valid"></ion-icon>
         </ion-item>
         <ion-item>
           <ion-label position="floating">
@@ -105,15 +109,12 @@
           </ion-label>
           <ion-input formControlName="horasTrabajo"></ion-input>
         </ion-item>
-        <ion-button (click)="registerAdministrador()" expand="block" fill="clear" shape="round">
-          Registrar admin
-        </ion-button>
       </form>
     </ion-slide>
     <ion-slide>
       <ion-grid fixed>
         <ion-row>
-          <ion-col><ion-button expand="block" fill="clear" shape="round" [disabled]="registerAdmin.invalid || registerCompany.invalid">
+          <ion-col><ion-button expand="block" fill="clear" shape="round" [disabled]="registerAdmin.invalid || registerCompany.invalid"  (click)="registerAll()">
             Finalizar
           </ion-button></ion-col>
         </ion-row>
