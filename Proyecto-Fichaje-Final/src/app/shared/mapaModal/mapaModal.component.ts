@@ -1,14 +1,14 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ModalController } from "@ionic/angular";
 import L from "leaflet";
-import { map } from 'rxjs/operators';
 @Component({
-  selector: "app-mapaempresa",
-  templateUrl: "./mapaempresa.component.html",
-  styleUrls: ["./mapaempresa.component.scss"]
+  selector: "app-mapaModal",
+  templateUrl: "./mapaModal.component.html",
+  styleUrls: ["./mapaModal.component.scss"]
 })
-export class MapaempresaComponent implements OnInit {
+export class MapaModalComponent implements OnInit {
   @Input() latLon;
+  @Input() modalTitle;
   map: L.Map;
   center: L.PointTuple;
   markerLatLon;
@@ -41,5 +41,9 @@ export class MapaempresaComponent implements OnInit {
 
   closeModal() {
     this.modalCtrl.dismiss(this.marker._latlng);
+  }
+
+  cancelModal() {
+    this.modalCtrl.dismiss();
   }
 }

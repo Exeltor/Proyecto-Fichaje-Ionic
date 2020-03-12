@@ -6,7 +6,7 @@ import { PhoneValidator } from "../phone.validator";
 import { CIFValidator } from "../cif.validator";
 import { countryCodes } from "src/environments/environment";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { MapaempresaComponent } from './mapaempresa/mapaempresa.component'
+import { MapaModalComponent } from '../../shared/mapaModal/mapaModal.component';
 import { HttpClient } from '@angular/common/http';
 import { DNIValidator } from '../dni.validator';
 @Component({
@@ -98,11 +98,13 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
     const latLon = [jsonQ[0].lat, jsonQ[0].lon]
 
     let modal = await this.modalCtrl.create({
-      component: MapaempresaComponent,
-      componentProps: { latLon }
+      component: MapaModalComponent,
+      componentProps: { latLon, modalTitle: 'Encuentra tu empresa' }
     })
 
     modal.onDidDismiss().then((callback) => {
+      console.log(callback)
+      if (callback.data === undefined) return;
       this.latEmpresa = callback.data.lat;
       this.lonEmpresa = callback.data.lng;
     })
