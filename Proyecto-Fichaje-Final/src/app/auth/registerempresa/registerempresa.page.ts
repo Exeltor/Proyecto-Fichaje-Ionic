@@ -131,8 +131,10 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
   
   blockSwipeif() {
     if(this.registerCompany.get("cif").valid){
+      console.log('unlocked')
       this.slides.lockSwipes(false);
     } else{
+      console.log('blocked')
       this.slides.lockSwipes(true);
     }
   }

@@ -413,7 +413,9 @@ export class AuthService {
         .subscribe(user => {
           this.afs.doc(`users/${this.userUid}`).update({
             DNI: newData.DNI,
-            nombre: newData.nombre
+            nombre: newData.nombre,
+            countryCode: newData.country,
+            localizacionCasa: {lat: newData.latPersona, lon: newData.lonPersona }
           });
           this.changePhone(newData.telefono, newData.country);
           this.changeEmail(newData.email);
