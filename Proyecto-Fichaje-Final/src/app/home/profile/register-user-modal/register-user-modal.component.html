@@ -50,13 +50,26 @@
               <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-item>
-            <ion-label position="floating">
-              <ion-icon slot="start" name="call"></ion-icon>
-              Telefono
-            </ion-label>
-            <ion-input formControlName="telefono" ionChange="updateAll()"></ion-input>
-          </ion-item>
+          <ion-row>
+            <ion-col size="4">
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="globe"></ion-icon>
+                  País
+                </ion-label>
+                <ion-input value="+{{countryCode_.value}}" readonly="true"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="8">
+              <ion-item class="ion-no-padding">
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="call"></ion-icon>
+                  Telefono
+                </ion-label>
+                <ion-input formControlName="telefono"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="alarm"></ion-icon>
@@ -64,8 +77,20 @@
             </ion-label>
             <ion-input formControlName="horasTrabajo"></ion-input>
           </ion-item>
-          <ion-input formControlName="latPersona" hidden=true></ion-input>
-          <ion-input formControlName="lonPersona" hidden="true"></ion-input>
+          <ion-item>
+            <ion-label>
+              <ion-icon slot="start" name="map"></ion-icon>
+              Direccion:
+            </ion-label>
+            <ion-input type="text" formControlName="direccion"></ion-input>
+            <ion-button (click)="openMap()" vertical="bottom" horizontal="end" [disabled]="direccion_.invalid">
+              Abrir Mapa
+            </ion-button>
+            <ion-icon class="availability-icon" name="arrow-back" style="color: red" *ngIf="personaCoords_.invalid && direccion_.dirty"></ion-icon>
+            <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid"></ion-icon>
+          </ion-item>
+          <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
+          <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
         </ion-col>
       </ion-row>
     </ion-grid>

@@ -47,7 +47,9 @@ export class ProfilePage implements OnInit {
           'DNI': user.DNI,
           'email':  this.authService.getUserEmail(),
           'telefono': user.telefono,
-          'country': user.countryCode
+          'country': user.countryCode,
+          'latPersona': user.localizacionCasa.lat,
+          'lonPersona': user.localizacionCasa.lon
         }
       }).then(modalEl => {
         modalEl.present();

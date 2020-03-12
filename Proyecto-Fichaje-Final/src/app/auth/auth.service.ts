@@ -85,7 +85,9 @@ export class AuthService {
                 "",
                 datos.telefono,
                 datos.horasTrabajo,
-                false
+                false,
+                datos.latPersona,
+                datos.lonPersona
               );
               console.log("usuario y documento creados");
               this.presentAlertSinError(
@@ -150,7 +152,9 @@ export class AuthService {
                 datos.horasTrabajo,
                 cifEmpresa,
                 datos.country,
-                true
+                true,
+                datos.latPersona,
+                datos.lonPersona
               );
               loadingEl.dismiss();
               this.presentAlertSinError(
@@ -192,9 +196,11 @@ export class AuthService {
     empresa,
     telefono,
     hours,
-    admin
+    admin,
+    lat,
+    lon
   ) {
-    //TODO: change every uid to DNI
+    //TODO: change every uid to DNI, hay que pensarlo mejor bruh
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
       `users/${uid}`
     );
@@ -207,11 +213,12 @@ export class AuthService {
         uid,
         nombre: nameSurname,
         DNI,
-        admin: false,
+        admin,
         countryCode: country.toString(),
         telefono,
         empresa,
-        horasDiarias: hours
+        horasDiarias: hours,
+        localizacionCasa: { lat, lon }
       };
 
       if (admin == false) {

@@ -44,7 +44,6 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
   @ViewChild("slides") slides: IonSlides;
 
   ngOnInit() {
-    console.log('brah')
     this.registerCompany = this.fb.group({
       cif: [
         "",
