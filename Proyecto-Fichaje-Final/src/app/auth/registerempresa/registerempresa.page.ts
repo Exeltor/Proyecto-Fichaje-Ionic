@@ -20,6 +20,8 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
   @Input() latEmpresa: String;
   @Input() lonEmpresa: String;
   @Input() direccionEmpresa: String;
+  latPersona;
+  lonPersona;
 
   @Input() nombre: string;
   @Input() DNI: string;
@@ -64,6 +66,9 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
         "",
         Validators.compose([PhoneValidator.number_check(), Validators.required])
       ],
+      latPersona: ["", Validators.required],
+      lonPersona: ["", Validators.required],
+      direccionPersona: ["", Validators.required],
       nombre: ["", Validators.required],
       password: [
         "",
@@ -75,7 +80,15 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     console.log(this.slides)
-    this.slides.lockSwipes(true);
+    this.slides.lockSwipes(false);
+  }
+
+  get personaCoords_() {
+    return this.registerAdmin.get('latPersona')
+  }
+
+  get direccionPersona_() {
+    return this.registerAdmin.get('direccionPersona');
   }
 
   updateAll() {
@@ -112,6 +125,29 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
 
   }
 
+  async openMapRegister() {
+    let direccionEncoded = encodeURI(this.registerAdmin.value.direccionPersona);
+
+    let jsonQ = await this.http.get(`https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`).toPromise()
+
+    const latLon = [jsonQ[0].lat, jsonQ[0].lon]
+
+    let modal = await this.modalCtrl.create({
+      component: MapaModalComponent,
+      componentProps: { latLon, modalTitle: 'Marca la localizacion' }
+    })
+
+    modal.onDidDismiss().then((callback) => {
+      console.log(callback)
+      if (callback.data === undefined) return;
+      this.latPersona = callback.data.lat;
+      this.lonPersona = callback.data.lng;
+    })
+
+    await modal.present();
+
+  }
+
   get cif_() {
     return this.registerCompany.get("cif");
   }
@@ -125,7 +161,7 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
   }
 
   cif_check(data){
-    this.blockSwipeif()
+    //this.blockSwipeif()
     DNIValidator.cif_check(data);
   }
   

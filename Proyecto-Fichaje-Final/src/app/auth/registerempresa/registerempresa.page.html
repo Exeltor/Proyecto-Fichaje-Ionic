@@ -51,65 +51,85 @@
       </form>
     </ion-slide>
     <ion-slide>
-      <form [formGroup]="registerAdmin">
-        <h1>Admin</h1>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon slot="start" name="mail"></ion-icon>
-            Email
-          </ion-label>
-          <ion-input formControlName="email"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon slot="start" name="key"></ion-icon>
-            Contraseña
-          </ion-label>
-          <ion-input formControlName="password"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon name="person"></ion-icon>
-            Nombre y Apellidos
-          </ion-label>
-          <ion-input formControlName="nombre">
-          </ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon slot="start" name="clipboard"></ion-icon>
-            DNI
-          </ion-label>
-          <ion-input formControlName="DNI"></ion-input>
-          <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="dni_.invalid && dni_.dirty">
-          </ion-icon>
-          <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
-          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="dni_.valid"></ion-icon>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon slot="start" name="globe"></ion-icon>
-            País
-          </ion-label>
-          <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
-            <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon slot="start" name="call"></ion-icon>
-            Telefono
-          </ion-label>
-          <ion-input formControlName="telefono" ionChange="updateAll()"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">
-            <ion-icon slot="start" name="alarm"></ion-icon>
-            Horas de trabajo diarias
-          </ion-label>
-          <ion-input formControlName="horasTrabajo"></ion-input>
-        </ion-item>
-      </form>
+      <ion-grid fixed>
+        <ion-row>
+          <ion-col>
+            <form [formGroup]="registerAdmin">
+              <h1>Admin</h1>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="mail"></ion-icon>
+                  Email
+                </ion-label>
+                <ion-input formControlName="email"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="key"></ion-icon>
+                  Contraseña
+                </ion-label>
+                <ion-input formControlName="password"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon name="person"></ion-icon>
+                  Nombre y Apellidos
+                </ion-label>
+                <ion-input formControlName="nombre">
+                </ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="clipboard"></ion-icon>
+                  DNI
+                </ion-label>
+                <ion-input formControlName="DNI"></ion-input>
+                <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="dni_.invalid && dni_.dirty">
+                </ion-icon>
+                <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
+                <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="dni_.valid"></ion-icon>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="globe"></ion-icon>
+                  País
+                </ion-label>
+                <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
+                  <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="call"></ion-icon>
+                  Telefono
+                </ion-label>
+                <ion-input formControlName="telefono" ionChange="updateAll()"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">
+                  <ion-icon slot="start" name="alarm"></ion-icon>
+                  Horas de trabajo diarias
+                </ion-label>
+                <ion-input formControlName="horasTrabajo"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <ion-icon slot="start" name="map"></ion-icon>
+                  Direccion:
+                </ion-label>
+                <ion-input type="text" formControlName="direccionPersona"></ion-input>
+                <ion-button (click)="openMapRegister()" vertical="bottom" horizontal="end" [disabled]="direccionPersona_.invalid">
+                  Abrir Mapa
+                </ion-button>
+                <ion-icon class="availability-icon" name="arrow-back" style="color: red" *ngIf="personaCoords_.invalid && direccionPersona_.dirty"></ion-icon>
+                <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid"></ion-icon>
+              </ion-item>
+              <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
+              <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
+            </form>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-slide>
     <ion-slide>
       <ion-grid fixed>
