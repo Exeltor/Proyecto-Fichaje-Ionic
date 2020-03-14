@@ -161,6 +161,7 @@ export class AuthService {
                 "Admin Registrado",
                 `El administrador ${datos.nombre} ha sido creado`
               );
+              this.router.navigateByUrl("/auth")
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));

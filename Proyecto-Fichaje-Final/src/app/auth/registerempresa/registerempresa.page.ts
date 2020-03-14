@@ -98,10 +98,6 @@ export class RegisterempresaPage implements OnInit {
     PhoneValidator.country_check(this.registerAdmin.value.country);
   }
 
-  closePage() {
-    this.navCtrl.pop();
-  }
-
   async openMap() {
     let direccionEncoded = encodeURI(this.registerCompany.value.direccionEmpresa);
 
