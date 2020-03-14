@@ -23,6 +23,7 @@ export class RegisterUserModalComponent implements OnInit {
   country: string;
   password: string;
   horasTrabajo: number;
+  direccionPersona: string;
   admin = true;
   paises = countryCodes;
   registerForm: FormGroup;
@@ -44,7 +45,7 @@ export class RegisterUserModalComponent implements OnInit {
         "",
         Validators.compose([PhoneValidator.number_check(), Validators.required])
       ],
-      direccion: ["", Validators.required],
+      direccionPersona: ["", Validators.required],
       latPersona: ["", Validators.required],
       lonPersona: ["", Validators.required],
       nombre: ["", Validators.required],
@@ -58,7 +59,7 @@ export class RegisterUserModalComponent implements OnInit {
   }
 
   get direccion_() {
-    return this.registerForm.get('direccion');
+    return this.registerForm.get('direccionPersona');
   }
 
   get countryCode_(){

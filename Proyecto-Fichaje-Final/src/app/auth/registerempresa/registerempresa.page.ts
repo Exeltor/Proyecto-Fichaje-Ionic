@@ -94,6 +94,10 @@ export class RegisterempresaPage implements OnInit {
     return this.registerAdmin.get('direccionPersona');
   }
 
+  get countryCode_(){
+    return this.registerAdmin.get('country');
+  }
+
   updateAll() {
     PhoneValidator.country_check(this.registerAdmin.value.country);
   }
