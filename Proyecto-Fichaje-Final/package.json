@@ -13,11 +13,14 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "~9.0.1",
+    "@angular/cdk": "^9.1.2",
     "@angular/common": "~9.0.1",
     "@angular/compiler": "~9.0.1",
     "@angular/core": "~9.0.1",
     "@angular/fire": "^5.2.1",
     "@angular/forms": "~9.0.1",
+    "@angular/material": "^9.1.2",
     "@angular/platform-browser": "~9.0.1",
     "@angular/platform-browser-dynamic": "~9.0.1",
     "@angular/router": "~9.0.1",
@@ -37,8 +40,10 @@
     "firebase": "^7.4.0",
     "geolib": "^3.2.1",
     "google-libphonenumber": "^3.2.6",
+    "leaflet": "^1.6.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.9.0",
+    "x2js": "^3.4.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { take, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { UinfoPage } from './uinfo/uinfo.page';
 

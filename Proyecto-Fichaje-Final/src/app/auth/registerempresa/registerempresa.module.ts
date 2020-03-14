@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
+import { MatStepperModule } from '@angular/material/stepper';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -19,8 +20,10 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    MatStepperModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [RegisterempresaPage]
+  declarations: [RegisterempresaPage], 
 })
 export class RegisterempresaPageModule {}
