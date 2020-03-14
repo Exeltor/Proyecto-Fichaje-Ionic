@@ -9,27 +9,28 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { MapaModalComponent } from '../../shared/mapaModal/mapaModal.component';
 import { HttpClient } from '@angular/common/http';
 import { DNIValidator } from '../dni.validator';
+import { MatStepper } from '@angular/material/stepper';
 @Component({
   selector: "app-registerempresa",
   templateUrl: "./registerempresa.page.html",
   styleUrls: ["./registerempresa.page.scss"]
 })
-export class RegisterempresaPage implements OnInit, AfterViewInit {
-  @Input() cif: String;
-  @Input() nombreEmpresa: String;
-  @Input() latEmpresa: String;
-  @Input() lonEmpresa: String;
-  @Input() direccionEmpresa: String;
+export class RegisterempresaPage implements OnInit {
+  cif: String;
+  nombreEmpresa: String;
+  latEmpresa: String;
+  lonEmpresa: String;
+  direccionEmpresa: String;
   latPersona;
   lonPersona;
 
-  @Input() nombre: string;
-  @Input() DNI: string;
-  @Input() telefono: string;
-  @Input() email: string;
-  @Input() country: string;
-  @Input() password: string;
-  @Input() horasTrabajo: number;
+  nombre: string;
+  DNI: string;
+  telefono: string;
+  email: string;
+  country: string;
+  password: string;
+  horasTrabajo: number;
 
   activeIndex = 0;
   registerCompany: FormGroup;
@@ -43,7 +44,6 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
     private http: HttpClient,
     private navCtrl: NavController
   ) {}
-  @ViewChild("slides") slides: IonSlides;
 
   ngOnInit() {
     this.registerCompany = this.fb.group({
@@ -78,9 +78,12 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    console.log(this.slides)
-    this.slides.lockSwipes(false);
+  stepForward(stepper: MatStepper) {
+    stepper.next();
+  }
+
+  stepBackward(stepper: MatStepper) {
+    stepper.previous();
   }
 
   get personaCoords_() {
@@ -98,9 +101,6 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
   closePage() {
     this.navCtrl.pop();
   }
-
-
-
 
   async openMap() {
     let direccionEncoded = encodeURI(this.registerCompany.value.direccionEmpresa);
@@ -152,7 +152,7 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
     return this.registerCompany.get("cif");
   }
 
-  get direccion_(){
+  get direccionEmpresa_(){
     return this.registerCompany.get("direccionEmpresa");
   }
 
@@ -163,16 +163,6 @@ export class RegisterempresaPage implements OnInit, AfterViewInit {
   cif_check(data){
     //this.blockSwipeif()
     DNIValidator.cif_check(data);
-  }
-  
-  blockSwipeif() {
-    if(this.registerCompany.get("cif").valid){
-      console.log('unlocked')
-      this.slides.lockSwipes(false);
-    } else{
-      console.log('blocked')
-      this.slides.lockSwipes(true);
-    }
   }
 
 

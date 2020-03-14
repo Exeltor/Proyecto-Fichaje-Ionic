@@ -148,10 +148,10 @@ export class AuthService {
                 jsonResponse.uid,
                 datos.nombre,
                 datos.DNI,
+                datos.country,
+                cifEmpresa,
                 datos.telefono,
                 datos.horasTrabajo,
-                cifEmpresa,
-                datos.country,
                 true,
                 datos.latPersona,
                 datos.lonPersona
@@ -206,7 +206,7 @@ export class AuthService {
     );
 
     this.user.pipe(take(1)).subscribe(data => {
-      if ((admin = false)) {
+      if (admin == false) {
         empresa = data.empresa;
       }
       const userDoc: User = {
@@ -256,7 +256,9 @@ export class AuthService {
         id: data.cif,
         loc: [data.latEmpresa, data.lonEmpresa]
       })
-      .then(suc => {})
+      .then(() => {
+        this.afs.doc(`empresasPendientes/${data.cif}`).delete();
+      })
       .catch(error => {});
   }
 
