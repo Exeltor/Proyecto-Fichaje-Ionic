@@ -11,6 +11,7 @@ export class PhoneValidator {
   static number_check(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } => {
       var phone = control.value;
+      console.log(phone)
       if (phone.length > 1) {
         const regionCode = phoneUtil.getRegionCodeForCountryCode(this.pais);
         if (regionCode.toUpperCase() === "ZZ") {

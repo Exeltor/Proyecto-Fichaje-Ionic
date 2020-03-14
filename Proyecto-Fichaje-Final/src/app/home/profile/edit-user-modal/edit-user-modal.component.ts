@@ -36,6 +36,7 @@ export class EditUserModalComponent implements OnInit {
       lonPersona: [this.lonPersona, Validators.required],
       confirmPassword: ['']
     }, {validators : this.passwordMatchValidator});
+    this.updateAll();
   }
 
   async openMap() {

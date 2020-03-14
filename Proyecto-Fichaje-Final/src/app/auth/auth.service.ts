@@ -18,6 +18,7 @@ import { User } from "../models/user.model";
 import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
+import { AlertService } from '../services/alert.service';
 
 @Injectable({
   providedIn: "root"
@@ -38,7 +39,8 @@ export class AuthService {
     private loadingController: LoadingController,
     private modalController: ModalController,
     private logger: LoggingService,
-    private sendPush: SendPushService
+    private sendPush: SendPushService,
+    private alert: AlertService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -90,10 +92,10 @@ export class AuthService {
                 datos.lonPersona
               );
               console.log("usuario y documento creados");
-              this.presentAlertSinError(
+              /*this.presentAlertSinError(
                 "Creado",
                 `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`
-              );
+              );*/
               loadingEl.dismiss();
             },
             err => {
@@ -117,7 +119,7 @@ export class AuthService {
 
               loadingEl.dismiss();
               this.logger.logEvent(errorMessage, 5, "authService registerUser");
-              this.presentAlertError(errorMessage);
+              //this.presentAlertError(errorMessage);
             }
           );
       });
@@ -157,10 +159,10 @@ export class AuthService {
                 datos.lonPersona
               );
               loadingEl.dismiss();
-              this.presentAlertSinError(
-                "Admin Registrado",
-                `El administrador ${datos.nombre} ha sido creado`
-              );
+              // this.presentAlertSinError(
+              //   "Admin Registrado",
+              //   `El administrador ${datos.nombre} ha sido creado`
+              // );
               this.router.navigateByUrl("/auth")
             },
             err => {
@@ -183,7 +185,7 @@ export class AuthService {
               }
 
               loadingEl.dismiss();
-              this.presentAlertError(errorMessage);
+              //this.presentAlertError(errorMessage);
             }
           );
       });
@@ -425,10 +427,11 @@ export class AuthService {
           if (newData.password) {
             this.changePassword(newData.password);
           }
-          this.presentAlertSinError(
-            "Perfil editado",
-            `El perfil de ${newData.nombre} ha sido correctamente editado`
-          );
+           this.alert.presentAlertSinError(
+             "Perfil editado",
+             `El perfil de ${newData.nombre} ha sido correctamente editado`,
+             this.modalController.dismiss()
+           );
           this.updateHistory(newData, user);
           this.logger.logEvent(
             `User ${user.uid} updated profile`,
@@ -443,7 +446,7 @@ export class AuthService {
         4,
         "authService updateProfile"
       );
-      this.presentAlertError(error);
+      this.alert.presentAlertError(error, this.modalController.dismiss());
     }
   }
 
@@ -531,43 +534,5 @@ export class AuthService {
       .catch(err => {
         this.logger.logEvent(err, 4, "authService logout");
       });
-  }
-  async presentAlertError(message) {
-    const alert = await this.alertController.create({
-      header: "Error",
-      message: message,
-      buttons: [
-        {
-          text: "Cancel",
-          role: "cancel",
-          cssClass: "secondary",
-          handler: () => {
-            this.modalController.dismiss();
-          }
-        },
-        {
-          text: "Editar"
-        }
-      ]
-    });
-
-    await alert.present();
-  }
-
-  async presentAlertSinError(title, message) {
-    const alert = await this.alertController.create({
-      header: title,
-      message: message,
-      buttons: [
-        {
-          text: "OK",
-          handler: () => {
-            this.modalController.dismiss();
-          }
-        }
-      ]
-    });
-
-    await alert.present();
   }
 }
