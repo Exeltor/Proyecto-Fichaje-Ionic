@@ -37,6 +37,9 @@
     "firebase": "^7.4.0",
     "geolib": "^3.2.1",
     "google-libphonenumber": "^3.2.6",
+    "intl": "^1.2.5",
+    "ion2-calendar": "^3.0.0-rc.0",
+    "moment": "^2.24.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.9.0",
     "zone.js": "~0.10.2"
@@ -65,7 +68,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.7.5"
+    "typescript": "^3.7.5"
   },
   "config": {
     "ionic_enable_lint": false
