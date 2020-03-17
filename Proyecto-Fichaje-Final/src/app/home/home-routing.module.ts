@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { HomePage } from "./home.page";
+import { AdminGuard } from '../guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -39,7 +40,8 @@ const routes: Routes = [
         children: [
           {
             path: "",
-            loadChildren: "./trabajadores/trabajadores.module#TrabajadoresPageModule"
+            loadChildren: "./trabajadores/trabajadores.module#TrabajadoresPageModule",
+            canActivate: [AdminGuard]
           }
         ]
       },
