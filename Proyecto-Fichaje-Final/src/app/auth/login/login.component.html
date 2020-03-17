@@ -1,23 +1,31 @@
 <ion-grid>
     <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
         <ion-col>
+<!--LOGO-->
             <ion-img class="logo" src="../../assets/logof.png"></ion-img>
+<!--EMAIL-->
             <ion-row class="ion-justify-content-center ion-align-items-center">
                 <ion-item>
                     <ion-label position="floating">E-mail</ion-label>
                     <ion-input type="email" ngModel name="email" required email #emailCtrl="ngModel"></ion-input>
                 </ion-item>
             </ion-row>
+<!--PASSWORD-->
             <ion-row class="ion-justify-content-center ion-align-items-center">
                 <ion-item>
                     <ion-label position="floating">Password</ion-label>
                     <ion-input type="password" ngModel name="password" required minlength="6" #passwordCtrl="ngModel"></ion-input>
                 </ion-item>
             </ion-row>
+<!--BOTON LOGIN-->
             <ion-button expand="block" class="ion-margin" type="submit">Login</ion-button>
-            <ion-button (click)="navigateEmpresaRegister()" expand="block" class="ion-margin">Registrar empresa</ion-button>
+<!--RECUPERAR CONTRASEÑA-->
+            <div class="ion-text-center">
+                <ion-router-link>¿Has olvidado tu contraseña?</ion-router-link>
+            </div>
         </ion-col>
     </form>
+<!--FACEBOOK Y GOOGLE-->
     <ion-row class="ion-text-center">
         <ion-col size="6">
             <ion-button (click)="facebook()">
@@ -32,4 +40,14 @@
             </ion-button>
         </ion-col>
     </ion-row>
+<!--REGISTRO DE EMPRESA-->
+    <ion-footer style="margin-block-start: 70%;">
+        <ion-toolbar style="margin-bottom: 0%;">
+            <div class="ion-text-center" style="padding-top: 10px;">
+                <ion-label>¿Tienes una empresa? Regístrate 
+                    <ion-router-link (click)="navigateEmpresaRegister()">aquí</ion-router-link>.
+                </ion-label>
+            </div>
+        </ion-toolbar>
+      </ion-footer>
 </ion-grid>
