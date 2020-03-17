@@ -25,9 +25,9 @@ import { SendPushService } from "../services/send-push.service";
 export class AuthService {
   user: Observable<User>;
   empresa: Observable<Empresa>;
-  Nombre_Empresa: string;
+  Nombre: string;
   userUid;
-  ok: Boolean = false;
+  id;
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -57,7 +57,6 @@ export class AuthService {
   }
 
   registerUser(datos) {
-    this.ok = false;
     this.loadingController
       .create({
         keyboardClose: true,
@@ -124,7 +123,6 @@ export class AuthService {
   }
 
   registerAdmin(datos, cifEmpresa) {
-    this.ok = false;
     this.loadingController
       .create({
         keyboardClose: true,
@@ -406,7 +404,6 @@ export class AuthService {
   }
 
   updateProfile(newData) {
-    this.ok = false;
     // idFecha viejo -> nuevo
     try {
       this.afs
@@ -444,6 +441,26 @@ export class AuthService {
         "authService updateProfile"
       );
       this.presentAlertError(error);
+    }
+  }
+
+  updateBusiness(newData) {
+    try {
+      this.afs.doc<Empresa>(`empresas/${newData.CIF}`).valueChanges().pipe(take(1)).subscribe(empresa => {
+        this.afs.doc(`empresas/${newData.CIF}`).update({
+          
+          Nombre: newData.Nombre,
+          id: newData.CIF,
+          loc: [newData.loc1, newData.loc2]
+        })
+        this.modalController.dismiss();
+        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        // this.updateHistory(newData, user);
+        // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
+      })
+    } catch (error) {
+      console.log(error);
+      // this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
     }
   }
 
