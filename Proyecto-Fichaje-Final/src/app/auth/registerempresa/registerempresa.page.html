@@ -1,72 +1,168 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Registro empresa</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="exit()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="auth"></ion-back-button>
     </ion-buttons>
+    <ion-title>Registro empresa</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <form #form="ngForm" (ngSubmit)="onSubmit(form)" method="post">
+<ion-content>
+  <mat-vertical-stepper linear="true" #stepper>
+    <mat-step [stepControl]="registerCompany">
+      <form [formGroup]="registerCompany">
+        <ng-template matStepLabel>Registra tu empresa</ng-template>
 
-    <ion-item>
-      <ion-label position="floating">CIF empresa</ion-label>
-      <ion-input ngModel name="cif"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Nombre empresa</ion-label>
-      <ion-input ngModel name="nombre"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Localización</ion-label>
-      <ion-input ngModel name="loc1"></ion-input>
-      <ion-input ngModel name="loc2"></ion-input>
-    </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="business"></ion-icon> CIF empresa</ion-label>
+          <ion-input #C formControlName="cif" (ionChange)="cif_check(C.value)"></ion-input>
+          <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="cif_.invalid && cif_.dirty">
+          </ion-icon>
+          <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="cif_.valid"></ion-icon>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="briefcase"></ion-icon> Nombre empresa</ion-label>
+          <ion-input formControlName="nombreEmpresa"></ion-input>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input ngModel name="nameSurname"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" ngModel name="email"></ion-input>
-    </ion-item>
-  
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" ngModel name="password"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Horas semanales</ion-label>
-      <ion-input ngModel type="number" name="hours" min="1" max="40"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating"><nav>Código País</nav></ion-label>
-      <ion-input ngModel name="code"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating"><nav>Número de teléfono</nav></ion-label>
-      <ion-input ngModel name="tel"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">DNI</ion-label>
-      <ion-input ngModel name="dni"></ion-input>
-    </ion-item>
-
-    
-  
-    <ion-button type="submit" expand="full">Registrar empresa</ion-button>
-  </form>
- 
-</ion-content>  
-
+        <ion-item class="ion-margin-vertical">
+          <ion-label>
+            <ion-icon slot="start" name="map"></ion-icon>
+            Direccion:
+          </ion-label>
+          <ion-input type="text" formControlName="direccionEmpresa"></ion-input>
+          <ion-button (click)="openMap()" slot="end"
+            [disabled]="direccionEmpresa_.invalid" >
+            Abrir Mapa
+          </ion-button>
+          <ion-icon class="availability-icon" name="arrow-back" style="color: red"
+            *ngIf="personaCoords_.invalid && direccionPersona_.dirty"></ion-icon>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid">
+          </ion-icon>
+        </ion-item>
+        <ion-input formControlName="latEmpresa" [(ngModel)]="latEmpresa" hidden="true" readonly="true"></ion-input>
+        <ion-input formControlName="lonEmpresa" [(ngModel)]="lonEmpresa" hidden="true" readonly="true"></ion-input>
+        <ion-item lines="none">
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="registerCompany.invalid">
+            <ion-icon slot="icon-only" name="arrow-down" class="ion-padding"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="registerAdmin">
+      <form [formGroup]="registerAdmin">
+        <ng-template matStepLabel>Registra el administrador</ng-template>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="mail"></ion-icon>
+            Email
+          </ion-label>
+          <ion-input formControlName="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="key"></ion-icon>
+            Contraseña
+          </ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon name="person"></ion-icon>
+            Nombre y Apellidos
+          </ion-label>
+          <ion-input formControlName="nombre"> </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="clipboard"></ion-icon>
+            DNI
+          </ion-label>
+          <ion-input formControlName="DNI"></ion-input>
+          <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="dni_.invalid && dni_.dirty">
+          </ion-icon>
+          <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="dni_.valid"></ion-icon>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="globe"></ion-icon>
+            País
+          </ion-label>
+          <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
+            <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-row>
+          <ion-col size="4">
+            <ion-item>
+              <ion-label position="floating">
+                <ion-icon slot="start" name="globe"></ion-icon>
+                País
+              </ion-label>
+              <ion-input value="+{{countryCode_.value}}" readonly="true"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="8">
+            <ion-item class="ion-no-padding">
+              <ion-label position="floating">
+                <ion-icon slot="start" name="call"></ion-icon>
+                Telefono
+              </ion-label>
+              <ion-input formControlName="telefono"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="alarm"></ion-icon>
+            Horas de trabajo diarias
+          </ion-label>
+          <ion-input formControlName="horasTrabajo"></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-vertical">
+          <ion-label>
+            <ion-icon slot="start" name="map"></ion-icon>
+            Direccion:
+          </ion-label>
+          <ion-input type="text" formControlName="direccionPersona"></ion-input>
+          <ion-button (click)="openMapRegister()" slot="end"
+            [disabled]="direccionPersona_.invalid" >
+            Abrir Mapa
+          </ion-button>
+          <ion-icon class="availability-icon" name="arrow-back" style="color: red"
+            *ngIf="personaCoords_.invalid && direccionPersona_.dirty"></ion-icon>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid">
+          </ion-icon>
+        </ion-item>
+        <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
+        <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
+        <ion-item lines="none">
+          <ion-button (click)="stepBackward(stepper)" slot="start">
+            <ion-icon slot="icon-only" name="arrow-up" class="ion-padding"></ion-icon>
+          </ion-button>
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="registerAdmin.invalid">
+            <ion-icon slot="icon-only" name="arrow-down" class="ion-padding"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Final</ng-template>
+      <p>Has finalizado</p>
+      <ion-grid fixed>
+        <ion-row>
+          <ion-col>
+            <ion-button expand="block" fill="clear" shape="round"
+              [disabled]="registerAdmin.invalid || registerCompany.invalid" (click)="registerAll()">
+              Crear empresa y registro
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </mat-step>
+  </mat-vertical-stepper>
+</ion-content>

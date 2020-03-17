@@ -27,6 +27,8 @@ exports.register = functions.https.onRequest((request, response) => {
       .then(function(userRecord) {
         // See the UserRecord reference doc for the contents of userRecord.
         response.send({ uid: userRecord.uid });
+        
+        
         return 1;
       })
       .catch(function(error) {
@@ -46,6 +48,7 @@ exports.calculateHours = functions.firestore
     const horasPause: Array<Timestamp> = change.after.get("horasPausa");
     const horasResume: Array<Timestamp> = change.after.get("horasResume");
     const horaFin: Timestamp = change.after.get("horaFin");
+    
     let horaTotal = 0;
     if (horasResume.length === 0) {
       if (horasPause.length === 0) {
@@ -57,6 +60,7 @@ exports.calculateHours = functions.firestore
       }
     } else {
       if (horasPause.length > horasResume.length) {
+        
         for (let i = 0; i < horasPause.length; i++) {
           if (i === 0) {
             horaTotal += horasPause[i].seconds - horaInicio.seconds;
@@ -135,3 +139,18 @@ exports.calculateHours = functions.firestore
       return 1;
     });
   });
+
+  exports.sendPushNotifications = functions.firestore.document('pushNotifications/{notification}').onCreate((snapshot, context) => {
+    const targets = snapshot.get("uids");
+      admin.firestore().collection('devices').where('userId', 'in', targets).get().then(docSnapshots => {	
+        let deviceIds: Array<string> = []	
+        docSnapshots.forEach(doc => {	
+          deviceIds.push(doc.get("token"));	
+        });	
+        const message = {	
+          notification: {title: snapshot.get("title"), body: snapshot.get("body")},	
+          tokens: deviceIds	
+        }	
+        admin.messaging().sendMulticast(message)	
+      })
+  })

@@ -7,6 +7,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { take, switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { Observable, of } from 'rxjs';
+import { Plugins } from '@capacitor/core';
+const { LocalNotifications } = Plugins;
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +27,7 @@ export class FichajeService {
       if (userdata){
         return this.afs.doc(`users/${
           userdata.uid
-        }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`).valueChanges();
+        }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`).valueChanges();
       } else {
         return of(null);
       }
@@ -41,7 +43,7 @@ export class FichajeService {
         .doc(
           `users/${
             userData.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
@@ -50,7 +52,7 @@ export class FichajeService {
             const entryRef: AngularFirestoreDocument<any> = this.afs.doc(
               `users/${
                 userData.uid
-              }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+              }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
             );
             const data = {
               horaInicio: new Date(),
@@ -71,12 +73,22 @@ export class FichajeService {
         .doc(
           `users/${
             userData.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .ref.update(
           'horasPausa',
           firebase.firestore.FieldValue.arrayUnion(new Date())
         );
+    });
+    LocalNotifications.schedule({
+      notifications: [
+        {
+          title: "Vuelve al trabajo",
+          body: "Llevas 15 minutos descansando, vuelve al trabajo",
+          id: 1,
+          schedule: { at: new Date(Date.now() + 900000) }
+        }
+      ]
     });
   }
 
@@ -88,7 +100,7 @@ export class FichajeService {
         .doc(
           `users/${
             userData.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .ref.update(
           'horasResume',
@@ -103,7 +115,7 @@ export class FichajeService {
     const entryRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${
         userData.uid
-      }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+      }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
     );
     const data = {
       horaFin: new Date()
