@@ -1,5 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { CalendarComponentOptions } from 'ion2-calendar';
+import { AuthService } from 'src/app/auth/auth.service';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 
 @Component({
@@ -9,7 +11,7 @@ import { CalendarComponentOptions } from 'ion2-calendar';
 })
 export class HoraPage implements OnInit {
   dateMulti: string[];
-  type: 'string'; // 'string' | 'js-date' | 'moment' | 'time' | 'object'
+  type: 'string';
   optionsMulti: CalendarComponentOptions = {
     pickMode: 'multi',
     weekStart: 1,
@@ -20,7 +22,11 @@ export class HoraPage implements OnInit {
     to: new Date(Date.now())
   };
 
-  constructor() {
+  onSelect($event) {
+    console.log('onSelect', $event);
+  }
+
+  constructor(public authService: AuthService, public afs: AngularFirestore) {
   }
 
   ngOnInit() {

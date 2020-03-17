@@ -8,9 +8,23 @@
 </ion-header>
 
 <ion-content>
-    <ion-calendar [(ngModel)]="dateMulti"
-              [options]="optionsMulti"
-              [type]="type"
-              [format]="'YYYY-MM-DD'">
-    </ion-calendar>
+    <ion-card>
+        <ion-card-header>
+            <ion-card-title>Selecciona una fecha</ion-card-title>
+        </ion-card-header>
+        <ion-card-content> 
+            <ion-calendar [(ngModel)]="dateMulti"
+                [options]="optionsMulti"
+                (change)="onSelect($event)"
+                [type]="type"
+                [format]="'YYYY-MM-DD'">
+            </ion-calendar>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+        <ion-card-content>
+            
+        </ion-card-content>
+    </ion-card>
 </ion-content>
