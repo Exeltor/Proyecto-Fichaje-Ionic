@@ -71,7 +71,6 @@ export class RegisterUserModalComponent implements OnInit {
     let jsonQ = await this.http.get(`https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`).toPromise()
 
     const latLon = [jsonQ[0].lat, jsonQ[0].lon]
-
     let modal = await this.modalController.create({
       component: MapaModalComponent,
       componentProps: { latLon, modalTitle: 'Marca la localizacion' }

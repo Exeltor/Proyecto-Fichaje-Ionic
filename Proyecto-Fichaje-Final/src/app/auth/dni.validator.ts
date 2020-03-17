@@ -9,8 +9,7 @@ export class DNIValidator {
   }
   static dni_check(afs: AngularFirestore): ValidatorFn {
     return (control: AbstractControl) => {
-      const dni = control.value; //.toLowerCase();
-      console.log(this.cif);
+      const dni = control.value;
       return afs
         .collection("empresasPendientes", ref => ref.where("dni", "==", dni).where("cif", "==", this.cif))
         .valueChanges()
