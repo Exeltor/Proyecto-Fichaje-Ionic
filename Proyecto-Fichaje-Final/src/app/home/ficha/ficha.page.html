@@ -8,10 +8,11 @@
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <ion-grid *ngIf="!isLoading&&!locationBlocked">
-        
+    <ion-text>Location enabled: {{ locationEnabled }}</ion-text>
+    <ion-grid *ngIf="!isLoading&&locationEnabled">
         <ion-row>
             <ion-col>
+                <ion-text>In range: {{ isInRange }}</ion-text>
                 <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
                     <ion-card-header>
                         <ion-card-subtitle>Accion única por día</ion-card-subtitle>
@@ -70,11 +71,11 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-    <ion-grid *ngIf="locationBlocked">
+    <ion-grid *ngIf="!locationEnabled">
         <ion-row>
             <ion-col>
                 <p>Permite el uso de la localización a esta aplicación para usar la funcionalidad de fichar</p>
-                <ion-button (click)="activateLocation()" expand="block" fill="clear" shape="round">
+                <ion-button (click)="checkAndEnableLocation()" expand="block" fill="clear" shape="round">
                     Activar Geolocalización
                 </ion-button>
             </ion-col>

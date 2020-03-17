@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FichajeService } from "../../services/fichaje.service";
 import { ToastController, AlertController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
@@ -7,20 +7,24 @@ import { take } from "rxjs/operators";
 import { GeolocService } from '../../services/geoloc.service';
 import { Platform } from '@ionic/angular';
 import * as geolib from 'geolib';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: "app-ficha",
   templateUrl: "./ficha.page.html",
   styleUrls: ["./ficha.page.scss"]
 })
-export class FichaPage implements OnInit {
+export class FichaPage implements OnInit, OnDestroy {
   currentTimestamp: Date = new Date();
   comenzado;
   enPausa;
   masPauses;
   terminado;
   isLoading;
-  locationBlocked;
+  locationEnabled = false;
+  liveLocation: Subscription;
+  isInRange = false;
+  coordsEmpresa;
 
   constructor(
     private toastController: ToastController,
@@ -29,12 +33,28 @@ export class FichaPage implements OnInit {
     private authService: AuthService,
     private afs: AngularFirestore,
     private geoService: GeolocService,
-    private platform: Platform
+    public platform: Platform
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.checkAndEnableLocation();
+    await this.getCoordsEmpresa();
+    this.enableLiveLocation();
     this.getIfComenzado();
   }
+
+  ionViewDidLeave() {
+    if(this.liveLocation) {
+      this.liveLocation.unsubscribe();
+    }
+  }
+
+  ngOnDestroy() {
+    if(this.liveLocation) {
+      this.liveLocation.unsubscribe();
+    }
+  }
+
   calcTimeDiff(horaInicio: Date, horaFin: Date) {
     const diff = new Date(horaFin.getTime() - horaInicio.getTime());
 
@@ -70,27 +90,39 @@ export class FichaPage implements OnInit {
         toastEl.present();
       });
   }
+
+  async checkAndEnableLocation() {
+    this.locationEnabled = await this.geoService.activateLocation();
+    console.log('locationEnabled after CheckAndEnableLocation', this.locationEnabled)
+  }
+
+  enableLiveLocation() {
+    this.liveLocation = this.geoService.liveLocationObservable().subscribe(location => {
+      const currentPosition = location.coords;
+      if (geolib.isPointWithinRadius({latitude: currentPosition.latitude, longitude: currentPosition.longitude}, {latitude: this.coordsEmpresa[0], longitude: this.coordsEmpresa[1]}, 100)) {
+        this.isInRange = true;
+      } else {
+        this.isInRange = false;
+      }
+
+      console.log('in range', this.isInRange);
+    });
+  }
+
+  async getCoordsEmpresa() {
+    this.coordsEmpresa = await this.geoService.getEmpresaCoordinates();
+  }
   /*
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
-  async comenzarDia() {
+  comenzarDia() {
     if(this.platform.is('cordova')) {
-      this.locationBlocked = await this.geoService.activateLocation();
-      if(this.locationBlocked) return;
+      if(!this.locationEnabled) return;
     }
     this.isLoading = false;
-    let coords = await this.geoService.getLoc().catch(error => {
-      console.log(error);
-      this.isLoading = false;
-    });
-    
-    // Calculo de distancia en metros
-    let coordsEmpresa = await this.geoService.getEmpresaCoordinates()
-    this.isLoading = false;
-    console.log("Coordenadas de la empresa:  " + coordsEmpresa );
-    console.log("Coordenadas del usuario:  " + coords );
-    if (!this.comenzado && geolib.isPointWithinRadius({latitude: coords[0], longitude: coords[1]}, {latitude: coordsEmpresa[0], longitude: coordsEmpresa[1]}, 100)) {
+
+    if (this.isInRange && !this.comenzado) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
     } else {
@@ -130,21 +162,11 @@ export class FichaPage implements OnInit {
         });
     }
   }
-
-  getLocationPermission(){
-    this.geoService.getLoc().catch(err => {
-      console.log(err);
-      this.locationBlocked = true;
-      //hacer prompt para activar la localizacion
-
-    })
-  }
   /*
     Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
     Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
   */
   getIfComenzado() {
-    //this.getLocationPermission();
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {
@@ -152,7 +174,7 @@ export class FichaPage implements OnInit {
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
@@ -179,7 +201,7 @@ export class FichaPage implements OnInit {
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
@@ -205,7 +227,7 @@ export class FichaPage implements OnInit {
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
