@@ -1,9 +1,14 @@
-<ion-header>
-    <ion-toolbar>
-        <ion-title>Inicio de Sesión</ion-title>
-    </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
     <app-login></app-login>
 </ion-content>
+
+<ion-footer>
+    <ion-toolbar style="margin-bottom:10px;">
+        <div class="ion-text-center" style="padding-top: 10px;">
+            <ion-label>¿Tienes una empresa? Regístrate
+                <a [routerLink]="['/registerempresa']" >aquí</a>.
+                
+            </ion-label>
+        </div>
+    </ion-toolbar>
+</ion-footer>

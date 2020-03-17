@@ -252,7 +252,8 @@ export class AuthService {
       .set({
         Nombre: data.nombreEmpresa,
         id: data.cif,
-        loc: [data.latEmpresa, data.lonEmpresa]
+        loc: [data.latEmpresa, data.lonEmpresa],
+        distancia: data.distancia
       })
       .then(() => {
         this.afs.doc(`empresasPendientes/${data.cif}`).delete();
@@ -387,7 +388,7 @@ export class AuthService {
     return this.afAuth.auth.currentUser.providerData;
   }
 
-  updateProfile(newData) {
+  async updateProfile(newData) {
     // idFecha viejo -> nuevo
     const reauthentication = await this.alertService.reauthenticateAlert();
     if(!reauthentication) {
@@ -462,9 +463,10 @@ export class AuthService {
           
           Nombre: newData.Nombre,
           id: newData.CIF,
-          loc: [newData.loc1, newData.loc2]
+          loc: [newData.loc1, newData.loc2],
+          distancia:newData.distancia
         })
-        this.modalController.dismiss();
+
         //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
         // this.updateHistory(newData, user);
         // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
