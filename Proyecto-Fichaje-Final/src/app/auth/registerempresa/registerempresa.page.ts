@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, Input, AfterViewInit, AfterViewChecked } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../auth.service";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { IonSlides, ModalController, NavController } from "@ionic/angular";
+import { ModalController, NavController } from "@ionic/angular";
 import { PhoneValidator } from "../phone.validator";
 import { CIFValidator } from "../cif.validator";
 import { countryCodes } from "src/environments/environment";
@@ -23,6 +23,7 @@ export class RegisterempresaPage implements OnInit {
   direccionEmpresa: String;
   latPersona;
   lonPersona;
+  distancia: number;
 
   nombre: string;
   DNI: string;
@@ -41,8 +42,7 @@ export class RegisterempresaPage implements OnInit {
     private fb: FormBuilder,
     private afs: AngularFirestore,
     private modalCtrl: ModalController,
-    private http: HttpClient,
-    private navCtrl: NavController
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -55,7 +55,8 @@ export class RegisterempresaPage implements OnInit {
       nombreEmpresa: ["", Validators.required],
       latEmpresa: [null, Validators.required],
       lonEmpresa: [null, Validators.required],
-      direccionEmpresa: ["", Validators.required]
+      direccionEmpresa: ["", Validators.required],
+      distancia: [250, Validators.required]
     });
 
     this.registerAdmin = this.fb.group({
@@ -84,18 +85,6 @@ export class RegisterempresaPage implements OnInit {
 
   stepBackward(stepper: MatStepper) {
     stepper.previous();
-  }
-
-  get personaCoords_() {
-    return this.registerAdmin.get('latPersona')
-  }
-
-  get direccionPersona_() {
-    return this.registerAdmin.get('direccionPersona');
-  }
-
-  get countryCode_(){
-    return this.registerAdmin.get('country');
   }
 
   updateAll() {
@@ -145,23 +134,9 @@ export class RegisterempresaPage implements OnInit {
     })
 
     await modal.present();
-
-  }
-
-  get cif_() {
-    return this.registerCompany.get("cif");
-  }
-
-  get direccionEmpresa_(){
-    return this.registerCompany.get("direccionEmpresa");
-  }
-
-  get dni_(){
-    return this.registerAdmin.get("DNI");
   }
 
   cif_check(data){
-    //this.blockSwipeif()
     DNIValidator.cif_check(data);
   }
 
@@ -173,7 +148,37 @@ export class RegisterempresaPage implements OnInit {
       this.registerAdmin.value,
       this.registerCompany.value.cif
     );
+  }
 
-    
+
+  get distancia_(){
+    return this.registerCompany.get('distancia');
+  }
+  get personaCoords_() {
+    return this.registerAdmin.get('latPersona')
+  }
+
+  get direccionPersona_() {
+    return this.registerAdmin.get('direccionPersona');
+  }
+
+  get empresaCoords_() {
+    return this.registerCompany.get('latEmpresa')
+  }
+
+  get direccionEmpresa_() {
+    return this.registerCompany.get('direccionEmpresa');
+  }
+
+  get countryCode_(){
+    return this.registerAdmin.get('country');
+  }
+  
+  get cif_() {
+    return this.registerCompany.get("cif");
+  }
+
+  get dni_(){
+    return this.registerAdmin.get("DNI");
   }
 }

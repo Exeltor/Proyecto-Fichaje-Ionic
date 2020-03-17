@@ -68,8 +68,9 @@ export class ProfilePage implements OnInit {
         componentProps: {
           'Nombre': empresa.Nombre,
           'CIF': empresa.id,
-          'loc1':  empresa.loc[0],
-          'loc2': empresa.loc[1]
+          'latEmpresa':  empresa.loc[0],
+          'lonEmpresa': empresa.loc[1],
+          'distancia': empresa.distancia
         }
       }).then(modalEl => {  
         modalEl.present();
