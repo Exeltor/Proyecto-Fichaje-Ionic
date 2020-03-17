@@ -5,7 +5,7 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
 import { GeolocService } from '../../services/geoloc.service';
-import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { Platform } from '@ionic/angular';
 import * as geolib from 'geolib';
 
 @Component({
@@ -28,8 +28,8 @@ export class FichaPage implements OnInit {
     public fichajeService: FichajeService,
     private authService: AuthService,
     private afs: AngularFirestore,
-    private geo: GeolocService,
-    private locationAccuracy: LocationAccuracy,
+    private geoService: GeolocService,
+    private platform: Platform
   ) {}
 
   ngOnInit() {
@@ -70,40 +70,23 @@ export class FichaPage implements OnInit {
         toastEl.present();
       });
   }
-
-  activateLocation(){
-    this.locationAccuracy.canRequest().then((canRequest: boolean) => {
-      if(canRequest) {
-        // the accuracy option will be ignored by iOS
-        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
-          () => {
-            console.log('Request successful')
-            this.locationBlocked = false;
-          } ,
-          error => {
-            console.log('Error requesting location permissions', error)
-            this.locationBlocked = true;
-          }
-        );
-      }
-    });
-  }
   /*
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
   async comenzarDia() {
-    this.activateLocation();
-    if(this.locationBlocked) return;
+    if(this.platform.is('cordova')) {
+      this.locationBlocked = await this.geoService.activateLocation();
+      if(this.locationBlocked) return;
+    }
     this.isLoading = false;
-    let coords = await this.geo.getLoc().catch(error => {
+    let coords = await this.geoService.getLoc().catch(error => {
       console.log(error);
       this.isLoading = false;
     });
     
     // Calculo de distancia en metros
-    
-    let coordsEmpresa = await this.cogerCoordenadaEmpresa()
+    let coordsEmpresa = await this.geoService.getEmpresaCoordinates()
     this.isLoading = false;
     console.log("Coordenadas de la empresa:  " + coordsEmpresa );
     console.log("Coordenadas del usuario:  " + coords );
@@ -113,15 +96,6 @@ export class FichaPage implements OnInit {
     } else {
       this.toastPausaResume("Tienes que estar en el trabajo para empezar tu jornada laboral");
     }
-  }
-  
-  cogerCoordenadaEmpresa(){
-    return this.authService.user.pipe(take(1)).toPromise().then(user => {
-      return this.afs.doc(`empresas/` + user.empresa).get().toPromise().then(data => {
-        return data.get("loc");
-      })
-    })
-
   }
   /*
     Alerta de confirmacion de finalizacion del dia de trabajo, en el caso de que la persona haya presionado el boton erroneamente
@@ -158,7 +132,7 @@ export class FichaPage implements OnInit {
   }
 
   getLocationPermission(){
-    this.geo.getLoc().catch(err => {
+    this.geoService.getLoc().catch(err => {
       console.log(err);
       this.locationBlocked = true;
       //hacer prompt para activar la localizacion
@@ -170,7 +144,7 @@ export class FichaPage implements OnInit {
     Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
   */
   getIfComenzado() {
-    this.getLocationPermission();
+    //this.getLocationPermission();
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {

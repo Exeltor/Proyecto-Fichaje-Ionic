@@ -10,7 +10,7 @@
 <ion-content class="ion-text-center">
     <ion-grid *ngIf="!isLoading&&!locationBlocked">
         
-        <!-- <ion-row>
+        <ion-row>
             <ion-col>
                 <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
                     <ion-card-header>
@@ -61,7 +61,7 @@
                     </ion-card-content>
                 </ion-card>
             </ion-col>
-        </ion-row> -->
+        </ion-row>
     </ion-grid>
     <ion-grid *ngIf="isLoading">
         <ion-row>
