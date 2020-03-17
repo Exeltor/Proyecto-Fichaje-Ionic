@@ -8,7 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePage } from './profile.page';
 import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
 import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
-
+import { EditBusinessModalComponent } from './edit-business-modal/edit-business-modal.component';
 const routes: Routes = [
   {
     path: '',
@@ -17,7 +17,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  entryComponents: [RegisterUserModalComponent, EditUserModalComponent],
+  entryComponents: [RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -25,6 +25,6 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ProfilePage, RegisterUserModalComponent, EditUserModalComponent]
+  declarations: [ProfilePage, RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent]
 })
 export class ProfilePageModule {}
