@@ -1,13 +1,12 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CalendarComponent, CalendarComponentOptions } from 'ion2-calendar';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 
-
 @Component({
   selector: 'app-hora',
   templateUrl: './hora.page.html',
-  styleUrls: ['./hora.page.scss'],
+  styleUrls: ['./hora.page.scss']
 })
 export class HoraPage implements OnInit {
   calendarRef: CalendarComponent;
@@ -16,21 +15,45 @@ export class HoraPage implements OnInit {
   optionsMulti: CalendarComponentOptions = {
     pickMode: 'single',
     weekStart: 1,
-    weekdays:  ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
-    monthPickerFormat: ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'],
+    weekdays: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+    monthPickerFormat: [
+      'ENE',
+      'FEB',
+      'MAR',
+      'ABR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AGO',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DIC'
+    ],
     showToggleButtons: true,
     from: new Date(1),
     to: new Date(Date.now())
   };
 
+  fechaSelec: Date;
+  docTiempos;
+  fechaSelecTrans;
   onSelect($event) {
-    console.log($event['_d']);
+    this.fechaSelec = new Date($event['_d']);
+    this.fechaSelecTrans = `${this.fechaSelec.getDate()}-${this.fechaSelec.getMonth() +
+      1}-${this.fechaSelec.getFullYear()}`;
+    console.log(this.fechaSelecTrans);
+    this.docTiempos = this.afs
+      .doc(
+        '/users/' +
+          this.authService.afAuth.auth.currentUser.uid +
+          '/asistenciaTrabajo/' +
+          this.fechaSelecTrans
+      )
+      .valueChanges();
   }
 
-  constructor(public authService: AuthService, public afs: AngularFirestore) {
-  }
+  constructor(public authService: AuthService, public afs: AngularFirestore) {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

@@ -24,7 +24,11 @@
 
     <ion-card>
         <ion-card-content>
-            
+            <ion-card-subtitle>Has seleccionado el día {{fechaSelec | date: 'dd MMM yyyy'}}</ion-card-subtitle>
+            <ion-item>
+                <ion-label>
+                    {{ (docTiempos | async)?.horaInicio.toDate() | date: 'HH:mm' }}</ion-label>
+            </ion-item>
         </ion-card-content>
     </ion-card>
 </ion-content>
