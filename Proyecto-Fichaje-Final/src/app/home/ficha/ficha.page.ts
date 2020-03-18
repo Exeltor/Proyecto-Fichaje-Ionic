@@ -177,7 +177,7 @@ export class FichaPage implements OnInit {
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
