@@ -39,10 +39,9 @@ export class HoraPage implements OnInit {
   docTiempos;
   fechaSelecTrans;
   onSelect($event) {
-    this.fechaSelec = new Date($event['_d']);
+    this.fechaSelec = new Date($event['_d']); // Fecha seleccionada en el calendario sin parsear
     this.fechaSelecTrans = `${this.fechaSelec.getDate()}-${this.fechaSelec.getMonth() +
       1}-${this.fechaSelec.getFullYear()}`;
-    console.log(this.fechaSelecTrans);
     this.docTiempos = this.afs
       .doc(
         '/users/' +
@@ -50,7 +49,7 @@ export class HoraPage implements OnInit {
           '/asistenciaTrabajo/' +
           this.fechaSelecTrans
       )
-      .valueChanges();
+      .valueChanges(); // Query que busca el documento que tenga de id la fecha seleccionada ya parseada
   }
 
   constructor(public authService: AuthService, public afs: AngularFirestore) {}

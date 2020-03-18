@@ -27,7 +27,13 @@
             <ion-card-subtitle>Has seleccionado el día {{fechaSelec | date: 'dd MMM yyyy'}}</ion-card-subtitle>
             <ion-item>
                 <ion-label>
-                    {{ (docTiempos | async)?.horaInicio.toDate() | date: 'HH:mm' }}</ion-label>
+                    <ion-icon name="time-outline"></ion-icon>
+                    Hora de Inicio: {{ (docTiempos | async)?.horaInicio.toDate() | date: 'HH:mm' }}</ion-label>
+            </ion-item>
+            <ion-item>
+                <ion-label>
+                    <ion-icon name="timer-outline"></ion-icon>
+                    Hora de Salida: {{ (docTiempos | async)?.horaFin.toDate() | date: 'HH:mm' }}</ion-label>
             </ion-item>
         </ion-card-content>
     </ion-card>
