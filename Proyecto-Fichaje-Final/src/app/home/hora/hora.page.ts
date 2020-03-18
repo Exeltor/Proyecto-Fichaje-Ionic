@@ -3,6 +3,7 @@ import { CalendarComponent, CalendarComponentOptions } from 'ion2-calendar';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 
+
 @Component({
   selector: 'app-hora',
   templateUrl: './hora.page.html',
