@@ -7,7 +7,8 @@ import { take } from "rxjs/operators";
 import { GeolocService } from '../../services/geoloc.service';
 import { Platform } from '@ionic/angular';
 import * as geolib from 'geolib';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
   selector: "app-ficha",
@@ -21,10 +22,15 @@ export class FichaPage implements OnInit, OnDestroy {
   masPauses;
   terminado;
   isLoading;
+  dayDocument: Observable<any>
   locationEnabled = false;
   liveLocation: Subscription;
   isInRange = false;
   coordsEmpresa;
+  locationAccuracy = 5;
+  timer;
+  timeWorked;
+  locationStatus: { enabled: boolean, denied: boolean, deniedAlways: boolean } = { enabled: false, denied: true, deniedAlways: false };
 
   constructor(
     private toastController: ToastController,
@@ -38,7 +44,14 @@ export class FichaPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.checkAndEnableLocation();
-    await this.getCoordsEmpresa();
+    this.getDayDocument();
+  }
+
+  getDayDocument() {
+    this.dayDocument = this.afs.doc(`users/${this.authService.afAuth.auth.currentUser.uid}/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`).valueChanges();
+  }
+
+  ionViewDidEnter() {
     this.enableLiveLocation();
     this.getIfComenzado();
   }
@@ -46,12 +59,18 @@ export class FichaPage implements OnInit, OnDestroy {
   ionViewDidLeave() {
     if(this.liveLocation) {
       this.liveLocation.unsubscribe();
+      console.log('unsubscribed location')
+    }
+    if(this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
     }
   }
 
   ngOnDestroy() {
     if(this.liveLocation) {
       this.liveLocation.unsubscribe();
+      console.log('unsubscribed location')
     }
   }
 
@@ -75,6 +94,8 @@ export class FichaPage implements OnInit, OnDestroy {
       this.toastPausaResume("Acabas de resumir");
       this.fichajeService.resumeWorkDay();
     }
+
+    this.setTimer();
   }
 
   // Toast informativo sobre el correcto cambio de estado del descanso y continuacion de trabajo
@@ -92,13 +113,16 @@ export class FichaPage implements OnInit, OnDestroy {
   }
 
   async checkAndEnableLocation() {
-    this.locationEnabled = await this.geoService.activateLocation();
-    console.log('locationEnabled after CheckAndEnableLocation', this.locationEnabled)
+    this.locationStatus = await this.geoService.activateLocation();
+    console.log('locationEnabled after CheckAndEnableLocation', this.locationStatus.enabled)
   }
 
   enableLiveLocation() {
-    this.liveLocation = this.geoService.liveLocationObservable().subscribe(location => {
+    this.liveLocation = this.geoService.liveLocationObservable().subscribe(async location => {
       const currentPosition = location.coords;
+      this.locationAccuracy = currentPosition.accuracy;
+      console.log(currentPosition)
+      await this.getCoordsEmpresa();
       if (geolib.isPointWithinRadius({latitude: currentPosition.latitude, longitude: currentPosition.longitude}, {latitude: this.coordsEmpresa[0], longitude: this.coordsEmpresa[1]}, 100)) {
         this.isInRange = true;
       } else {
@@ -118,7 +142,7 @@ export class FichaPage implements OnInit, OnDestroy {
   */
   comenzarDia() {
     if(this.platform.is('cordova')) {
-      if(!this.locationEnabled) return;
+      if(!this.locationStatus.enabled) return;
     }
     this.isLoading = false;
 
@@ -146,6 +170,7 @@ export class FichaPage implements OnInit, OnDestroy {
                 this.comenzado = !this.comenzado;
                 this.terminado = true;
                 this.fichajeService.endWorkDay();
+                this.setTimer();
               }
             },
             {
@@ -177,17 +202,63 @@ export class FichaPage implements OnInit, OnDestroy {
           }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
-        .then(docSnapshot => {
+        .then(async docSnapshot => {
           if (!docSnapshot.exists) {
             this.comenzado = false;
             this.isLoading = false;
           } else {
             this.comenzado = true;
-            this.getMenosPauses();
-            this.getIfTerminado();
+            await this.getMenosPauses();
+            await this.getIfTerminado();
           }
         });
     });
+  }
+
+  private async setTimer() {
+    const startedDoc = await this.dayDocument.pipe(take(1)).toPromise();
+    const startedTime = startedDoc.horaInicio.toDate();
+    const horaTotal = startedDoc.horaTotal.toDate().getTime();
+    const momentTotal = moment(horaTotal)
+    const momentNow = moment(new Date())
+    console.log('hours total', momentTotal.hours() - 1)
+    console.log('minutes total', momentTotal.minutes())
+    console.log('hours total', momentNow.hours())
+    console.log('minutes total', momentNow.minutes())
+
+    if(this.terminado) {
+      this.timeWorked = horaTotal;
+      return
+    }
+
+    if(this.comenzado) {
+      console.log('entered comenzado')
+      if(this.masPauses) {
+        console.log('entered masPauses')
+        if(this.timer) {
+          clearInterval(this.timer)
+          this.timer = null
+          console.log('timer parado')
+        }
+        // need to subtract 1 hour
+        this.timeWorked = horaTotal
+      } else if (horaTotal > 0 && !this.masPauses) {
+        console.log('entered horaTotal > 0 && !this.masPauses')
+        this.timer = setInterval(() => {
+          const totalDiff = moment(new Date().getTime() - startedTime);
+          totalDiff.subtract(1, 'hours')
+          const restingTime = moment.duration(momentTotal.diff(totalDiff))
+          const totalWorked = totalDiff.subtract(restingTime.hours(), 'hours').subtract(restingTime.minutes(), 'minutes').subtract(restingTime.seconds(), 'seconds');
+          this.timeWorked = totalWorked.toDate();
+        }, 1000)
+      } else {
+        console.log('entered else block')
+        this.timer = setInterval(() => {
+          this.timeWorked = new Date().getTime() - startedTime;
+          console.log(this.timeWorked);
+        }, 1000)
+      }
+    }
   }
 
   /*
@@ -196,7 +267,7 @@ export class FichaPage implements OnInit, OnDestroy {
   */
   getIfTerminado() {
     // Cogemos el uid del usuario de la sesion
-    this.authService.user.pipe(take(1)).subscribe(userdata => {
+    return this.authService.user.pipe(take(1)).subscribe(userdata => {
       this.afs.firestore
         .doc(
           `users/${
@@ -210,7 +281,8 @@ export class FichaPage implements OnInit, OnDestroy {
           } else {
             this.terminado = true;
           }
-
+          console.log('getIfTerminado')
+          this.setTimer();
           this.isLoading = false;
         });
     });
@@ -222,7 +294,7 @@ export class FichaPage implements OnInit, OnDestroy {
   */
   getMenosPauses() {
     // Cogemos el uid del usuario de la sesion
-    this.authService.user.pipe(take(1)).subscribe(userdata => {
+    return this.authService.user.pipe(take(1)).subscribe(userdata => {
       this.afs.firestore
         .doc(
           `users/${
@@ -240,6 +312,7 @@ export class FichaPage implements OnInit, OnDestroy {
           } else {
             this.masPauses = false;
           }
+          console.log('getMenosPauses')
         });
     });
   }

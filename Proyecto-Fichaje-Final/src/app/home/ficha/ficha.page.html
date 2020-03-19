@@ -8,11 +8,18 @@
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <ion-text>Location enabled: {{ locationEnabled }}</ion-text>
-    <ion-grid *ngIf="!isLoading&&locationEnabled">
+    <ion-grid *ngIf="!isLoading&&locationStatus.enabled">
+        <ion-row>
+            <ng-container *ngIf="dayDocument | async as document; else noDayDocument">
+                <ion-col size="4">
+                    {{ document.horaInicio.toDate() | date:'HH:mm'}}
+                </ion-col>
+                <ion-col size="4">{{ timeWorked | date:'HH:mm' }}</ion-col>
+                <ion-col size="4"></ion-col>
+            </ng-container>
+        </ion-row>
         <ion-row>
             <ion-col>
-                <ion-text>In range: {{ isInRange }}</ion-text>
                 <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
                     <ion-card-header>
                         <ion-card-subtitle>Accion única por día</ion-card-subtitle>
@@ -71,14 +78,41 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-    <ion-grid *ngIf="!locationEnabled">
+    <ion-grid *ngIf="!locationStatus.enabled && locationStatus.deniedAlways">
         <ion-row>
             <ion-col>
                 <p>Permite el uso de la localización a esta aplicación para usar la funcionalidad de fichar</p>
-                <ion-button (click)="checkAndEnableLocation()" expand="block" fill="clear" shape="round">
-                    Activar Geolocalización
-                </ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>
 </ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+        <ion-item slot="start" lines="none" class="ion-text-center">
+            <ion-list>
+                <small style="margin: 0">Precisión Localización</small>
+                <ng-container *ngIf="locationAccuracy === 1">
+                    <p style="margin: 0; color: green">Excelente<ion-icon name="checkmark" style="margin-left: 2px;"></ion-icon></p>
+                </ng-container>
+                <ng-container *ngIf="locationAccuracy < 5 && locationAccuracy > 2">
+                    <p style="margin: 0; color: orange">Mediocre<ion-icon name="help" style="margin-left: 2px"></ion-icon></p>
+                </ng-container>
+                <ng-container *ngIf="locationAccuracy > 4">
+                    <p style="margin: 0; color: red">Mala<ion-icon name="close" style="margin-left: 2px"></ion-icon></p>
+                </ng-container>
+            </ion-list>
+        </ion-item>
+        <ion-item slot="end" lines="none">
+            <ion-label>Awesome Label</ion-label>
+        </ion-item>
+    </ion-toolbar>
+</ion-footer>
+
+<ng-template #noDayDocument>
+    <ion-col size="12">
+        <ion-text color="primary" class="ion-text-center">
+            <h1>Aun no has comenzado tu dia</h1>
+        </ion-text>
+    </ion-col>
+</ng-template>

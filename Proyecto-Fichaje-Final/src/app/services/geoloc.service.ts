@@ -13,7 +13,6 @@ import { Platform } from "@ionic/angular";
 export class GeolocService {
   constructor(
     private geolocation: Geolocation,
-    private locationAccuracy: LocationAccuracy,
     private authService: AuthService,
     private afs: AngularFirestore,
     private diagnostic: Diagnostic,
@@ -32,40 +31,48 @@ export class GeolocService {
   }
 
   async activateLocation() {
-    return await new Promise<boolean>(async resolve => {
+    return await new Promise<{ enabled: boolean, denied: boolean, deniedAlways: boolean }>(async resolve => {
       if (this.platform.is("cordova")) {
-        const permission = await this.isLocationEnabled();
-        console.log(permission);
+        const permissions = await this.isLocationEnabled();
+        console.log(permissions, 'before location request');
 
-        if (!permission) {
-          this.locationAccuracy.canRequest().then((canRequest: boolean) => {
-            if (canRequest) {
-              // the accuracy option will be ignored by iOS
-              this.locationAccuracy
-                .request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY)
-                .then(
-                  () => {
-                    console.log("Request successful");
-                    resolve(true);
-                  },
-                  error => {
-                    console.log("Error requesting location permissions", error);
-                    resolve(false);
-                  }
-                );
-            }
-          });
-        } else {
-          resolve(true);
+        if (!permissions.enabled && !permissions.deniedAlways) {
+          this.diagnostic
+            .requestLocationAuthorization()
+            .then(async response => {
+              console.log("success requesting", response);
+              const locationStatus = await this.isLocationEnabled();
+              resolve(locationStatus);
+            })
+            .catch(error => {
+              console.log("Error requesting", error), resolve({ enabled: false, denied: true, deniedAlways: false });
+            });
+        } else if (permissions.deniedAlways) {
+          resolve({ enabled: false, denied: true, deniedAlways: true });
+        } else if (permissions.enabled) {
+          resolve({ enabled: true, denied: false, deniedAlways: false })
         }
       } else {
-        resolve(true);
+        resolve({ enabled: true, denied: false, deniedAlways: false });
       }
     });
   }
 
-  async isLocationEnabled() {
-    return this.diagnostic.isLocationAuthorized();
+  async isLocationEnabled(): Promise<{ enabled: boolean, denied: boolean, deniedAlways: boolean }> {
+    return this.diagnostic.getLocationAuthorizationStatus().then(status => {
+      switch (status) {
+        case this.diagnostic.permissionStatus.NOT_REQUESTED:
+          return { enabled: false, denied: false, deniedAlways: false }
+        case this.diagnostic.permissionStatus.GRANTED:
+          return { enabled: true, denied: false, deniedAlways: false };
+        case this.diagnostic.permissionStatus.DENIED_ONCE:
+          return { enabled: false, denied: true, deniedAlways: false };
+        case this.diagnostic.permissionStatus.DENIED_ALWAYS:
+          return { enabled: false, denied: true, deniedAlways: true }
+        case this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
+          return { enabled: true, denied: false, deniedAlways: false }
+      }
+    });
   }
 
   getEmpresaCoordinates() {
