@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar datos de empresa</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button fill="clear" (click)="log()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="horarioForm">
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label>Hora Entrada</ion-label>
+            <ion-datetime display-format="H:mm" picker-format="H:mm" value="1990-02-19T07:00Z"
+              formControlName="horaEntrada"></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label>Hora Salida</ion-label>
+            <ion-datetime display-format="H:mm" picker-format="H:mm" value="1990-02-19T15:00Z"
+              formControlName="horaSalida"></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Número de pausas máximo</ion-label>
+            <ion-input type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Tiempo máximo</ion-label>
+            <ion-input type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { take, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { PushNotificationsService } from '../../services/push-notifications.service';
+import { AddHorarioModalComponent } from './add-horario-modal/add-horario-modal.component';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -38,6 +39,14 @@ export class ProfilePage implements OnInit {
     });
   }
 
+  addHorario(){
+    this.modalController.create({
+      component:AddHorarioModalComponent,
+    }).then(modalEl=>{
+      modalEl.present();
+    });
+  }
+  
   editProfile() {
     this.authService.user.pipe(take(1)).subscribe(user => {
       this.modalController.create({
