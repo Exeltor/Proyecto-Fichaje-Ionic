@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -17,6 +17,7 @@ import { UinfoPage } from './uinfo/uinfo.page';
     IonicModule,
     TrabajadoresPageRoutingModule
   ],
-  declarations: [TrabajadoresPage, UinfoPage]
+  declarations: [TrabajadoresPage, UinfoPage],
+  providers: [FormBuilder]
 })
 export class TrabajadoresPageModule {}

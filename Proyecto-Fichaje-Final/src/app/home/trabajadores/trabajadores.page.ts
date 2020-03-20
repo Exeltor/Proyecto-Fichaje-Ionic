@@ -25,14 +25,17 @@ export class TrabajadoresPage implements OnInit {
    }));
  }
 
- async presentModal(nombre, telefono, dni, horasDiarias) {
+ async presentModal(uid, nombre, empresaCode, horarioCode, dni, telefono, photoURL) {
    const modal = await this.modalCtrl.create({
      component: UinfoPage,
      componentProps: {
-       nombreU : nombre,
-       telf: telefono,
-       DNI: dni,
-       horasD: horasDiarias
+       uid,
+       nombre,
+       empresaCode,
+       horarioCode,
+       dni,
+       telefono,
+       photoURL
      }
    });
    return await modal.present();

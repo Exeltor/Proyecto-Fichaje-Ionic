@@ -50,6 +50,16 @@ export class AuthService {
         }
       })
     );
+
+    this.empresa = this.user.pipe(
+      switchMap(user => {
+        if(user){
+          return this.afs.doc<Empresa>(`empresas/${user.empresa}`).valueChanges();
+        }else{
+          return of(null)
+        }
+      })
+    )
   }
 
   getUserEmail() {
