@@ -84,18 +84,25 @@ export class FichaPage implements OnInit, OnDestroy {
     Flipper del estado de pausa (descanso)
     Realiza llamada a fichajeService para comunicacion con backend
   */
-  flipPausa() {
+  async flipPausa() {
+    const currentDoc = await this.dayDocument.pipe(take(1)).toPromise();
     this.enPausa = !this.enPausa;
     this.masPauses = !this.masPauses;
     if (this.enPausa) {
-      this.toastPausaResume("Acabas de pausar");
-      this.fichajeService.pauseWorkDay();
+      if(currentDoc.pausasRestantes > 0) {
+        this.toastPausaResume("Acabas de pausar");
+        this.fichajeService.pauseWorkDay();
+      } else {
+        this.toastPausaResume("No te quedan pausas");
+        this.enPausa = !this.enPausa;
+        this.masPauses = !this.masPauses;
+      }
     } else {
       this.toastPausaResume("Acabas de resumir");
       this.fichajeService.resumeWorkDay();
     }
 
-    this.setTimer();
+    //this.setTimer();
   }
 
   // Toast informativo sobre el correcto cambio de estado del descanso y continuacion de trabajo
@@ -170,7 +177,7 @@ export class FichaPage implements OnInit, OnDestroy {
                 this.comenzado = !this.comenzado;
                 this.terminado = true;
                 this.fichajeService.endWorkDay();
-                this.setTimer();
+                //this.setTimer();
               }
             },
             {
@@ -220,11 +227,6 @@ export class FichaPage implements OnInit, OnDestroy {
     const startedTime = startedDoc.horaInicio.toDate();
     const horaTotal = startedDoc.horaTotal.toDate().getTime();
     const momentTotal = moment(horaTotal)
-    const momentNow = moment(new Date())
-    console.log('hours total', momentTotal.hours() - 1)
-    console.log('minutes total', momentTotal.minutes())
-    console.log('hours total', momentNow.hours())
-    console.log('minutes total', momentNow.minutes())
 
     if(this.terminado) {
       this.timeWorked = horaTotal;
@@ -232,30 +234,33 @@ export class FichaPage implements OnInit, OnDestroy {
     }
 
     if(this.comenzado) {
-      console.log('entered comenzado')
       if(this.masPauses) {
-        console.log('entered masPauses')
         if(this.timer) {
           clearInterval(this.timer)
           this.timer = null
-          console.log('timer parado')
         }
-        // need to subtract 1 hour
-        this.timeWorked = horaTotal
+        const horaTotalMoment = moment(horaTotal).subtract(1, 'hours');
+        this.timeWorked = horaTotalMoment.toDate()
       } else if (horaTotal > 0 && !this.masPauses) {
-        console.log('entered horaTotal > 0 && !this.masPauses')
-        this.timer = setInterval(() => {
-          const totalDiff = moment(new Date().getTime() - startedTime);
-          totalDiff.subtract(1, 'hours')
-          const restingTime = moment.duration(momentTotal.diff(totalDiff))
-          const totalWorked = totalDiff.subtract(restingTime.hours(), 'hours').subtract(restingTime.minutes(), 'minutes').subtract(restingTime.seconds(), 'seconds');
-          this.timeWorked = totalWorked.toDate();
-        }, 1000)
+         // Aqui literalmente muere, ayuda
+          const currentTimestamp = new Date();
+          const currentMoment = moment(currentTimestamp);
+          const startedMoment = moment(startedTime)
+          console.log('stated time', startedMoment)
+          const totalDiff = moment.duration(currentMoment.diff(startedMoment, 'minutes'));
+          console.log('total Diff', totalDiff)
+          const restingTime = totalDiff.subtract(momentTotal.hours(), 'hours').subtract(momentTotal.minutes(), 'minutes').subtract(momentTotal.seconds(), 'seconds')
+          console.log('resting time', restingTime)
+        //   const restingTime = moment.duration(momentTotal.diff(totalDiff))
+        //   console.log(restingTime);
+        // this.timer = setInterval(() => {
+        //   const totalWorked = totalDiff.subtract(restingTime.hours(), 'hours').subtract(restingTime.minutes(), 'minutes').subtract(restingTime.seconds(), 'seconds');
+        //   this.timeWorked = totalWorked.toDate();
+        //   console.log('time worked', this.timeWorked)
+        // }, 1000)
       } else {
-        console.log('entered else block')
         this.timer = setInterval(() => {
-          this.timeWorked = new Date().getTime() - startedTime;
-          console.log(this.timeWorked);
+          this.timeWorked = moment(new Date().getTime() - startedTime).subtract(1, 'hours').toDate();
         }, 1000)
       }
     }
@@ -282,7 +287,7 @@ export class FichaPage implements OnInit, OnDestroy {
             this.terminado = true;
           }
           console.log('getIfTerminado')
-          this.setTimer();
+          //this.setTimer();
           this.isLoading = false;
         });
     });

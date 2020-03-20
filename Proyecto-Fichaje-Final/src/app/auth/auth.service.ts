@@ -219,6 +219,7 @@ export class AuthService {
         telefono,
         empresa,
         horasDiarias: hours,
+        horario: null,
         localizacionCasa: { lat, lon }
       };
 
