@@ -3,10 +3,10 @@ import { ModalController, NavParams } from "@ionic/angular";
 import { Observable } from "rxjs";
 import { AuthService } from "src/app/auth/auth.service";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { switchMap } from "rxjs/operators";
 import { Horario } from "src/app/models/horario.model";
 import { User } from "src/app/models/user.model";
 import { Empresa } from "src/app/models/empresa.model";
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: "app-uinfo",
@@ -26,11 +26,18 @@ export class UinfoPage implements OnInit {
   @Input() telefono;
   @Input() photoURL;
 
+  nombreEdit;
+  horarioEdit;
+  photoEdit;
+
+  editBool:Boolean;
+  editWorker: FormGroup;
   constructor(
     public mdlCtrl: ModalController,
     public navParams: NavParams,
     public authService: AuthService,
-    public afs: AngularFirestore
+    public afs: AngularFirestore,
+    private fb: FormBuilder,
   ) {}
 
   public closeModal() {
@@ -38,13 +45,51 @@ export class UinfoPage implements OnInit {
   }
 
   ngOnInit() {
+    this.nombreEdit = this.nombre;
+    this.horarioEdit = this.horarioCode;
+    this.editBool = false;
+
     this.horario = this.afs
       .doc<Horario>(`empresas/${this.empresaCode}/horarios/${this.horarioCode}`)
       .valueChanges();
+
     this.empresa = this.afs
       .doc<Empresa>(`empresas/${this.empresaCode}`)
       .valueChanges();
+    this.editWorker = this.fb.group({
+
+    });
   }
 
-  editWorker() {}
+  edit() {
+    this.editBool = true;
+  }
+  submit(){
+    this.editBool = false;
+    if(this.nombreEdit !== this.nombre){
+      this.editNombre();
+    } 
+    if(this.horarioEdit !== this.horario){
+      this.editHorario();
+    }
+  }
+
+  private editNombre(){
+    this.afs.doc(`users/${this.uid}`).update({
+      nombre: this.nombreEdit,
+    });
+    this.nombre = this.nombreEdit;
+  }
+  private editHorario(){
+    this.afs.doc(`users/${this.uid}`).update({
+      horario: this.horarioEdit,
+    });
+    this.horarioCode = this.horarioEdit;
+    this.refreshHorario();
+  }
+  private refreshHorario(){
+    this.horario = this.afs
+      .doc<Horario>(`empresas/${this.empresaCode}/horarios/${this.horarioCode}`)
+      .valueChanges();
+  }
 }

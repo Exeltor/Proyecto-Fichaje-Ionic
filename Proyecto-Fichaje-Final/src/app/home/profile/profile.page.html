@@ -81,7 +81,7 @@
         </ion-grid>
     </ion-card>
     
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-right: -1.7em; margin-bottom: -1.7em;" *ngIf="(authService.user | async)?.admin">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="(authService.user | async)?.admin">
         <ion-fab-button (click)="registerUser()">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>

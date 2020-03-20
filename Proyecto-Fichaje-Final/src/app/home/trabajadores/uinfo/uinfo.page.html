@@ -10,8 +10,8 @@
     <ion-row style="margin-top: 1em;">
       <ion-col size="3"></ion-col>
       <ion-col size="6" style="padding-left: 2em;padding-right: 2em;">
-        <ion-buttons style="position: absolute; top: 0; right: 0;">
-          <ion-button (click)="editWorker()">
+        <ion-buttons style="position: absolute; top: 0; right: 0;" *ngIf="!editBool">
+          <ion-button (click)="edit()">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -25,7 +25,10 @@
     </ion-row>
     <ion-row>
       <ion-col style="text-align: center;">
-        <p style="margin:0; font-size: larger;">{{ nombre }}</p>
+        <p style="margin:0; font-size: larger;" *ngIf="!editBool">{{ nombre }}</p>
+        <ion-item style="font-size: larger; text-align: center; margin-left: 2em; margin-right: 2em;" *ngIf="editBool">
+          <ion-input type="text" [(ngModel)]="nombreEdit" placeholder="{{nombre}}" ></ion-input>
+        </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -63,10 +66,16 @@
         <ion-col size="9">
           <ion-item lines="none">
             <ion-icon name="time" slot="start"></ion-icon>
-            <ion-label>{{ ( horario | async )?.horaEntrada }} - {{ ( horario | async )?.horaSalida }}</ion-label>
+            <ion-label *ngIf="!editBool">{{ ( horario | async )?.horaEntrada }} - {{ ( horario | async )?.horaSalida }}</ion-label>
+            <ion-input type="text" [(ngModel)]="horarioEdit" placeholder="{{horarioCode}}" *ngIf="editBool"></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-card>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="editBool">
+    <ion-fab-button>
+      <ion-icon name="checkmark" (click)="submit()"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
