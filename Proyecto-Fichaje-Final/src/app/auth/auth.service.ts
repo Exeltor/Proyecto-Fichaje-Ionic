@@ -6,10 +6,7 @@ import {
   AngularFirestoreDocument
 } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
-import {
-  AlertController,
-  LoadingController
-} from "@ionic/angular";
+import { AlertController, LoadingController } from "@ionic/angular";
 import { Observable, of } from "rxjs";
 import { switchMap, take } from "rxjs/operators";
 import { Empresa } from "../models/empresa.model";
@@ -17,7 +14,8 @@ import { User } from "../models/user.model";
 import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
-import { AlertService } from '../services/alert.service';
+import { AlertService } from "../services/alert.service";
+import { Horario } from "../models/horario.model";
 
 @Injectable({
   providedIn: "root"
@@ -53,13 +51,15 @@ export class AuthService {
 
     this.empresa = this.user.pipe(
       switchMap(user => {
-        if(user){
-          return this.afs.doc<Empresa>(`empresas/${user.empresa}`).valueChanges();
-        }else{
-          return of(null)
+        if (user) {
+          return this.afs
+            .doc<Empresa>(`empresas/${user.empresa}`)
+            .valueChanges();
+        } else {
+          return of(null);
         }
       })
-    )
+    );
   }
 
   getUserEmail() {
@@ -169,7 +169,7 @@ export class AuthService {
                 `El administrador ${datos.nombre} ha sido creado`,
                 "registrarEmpresa"
               );
-              this.router.navigateByUrl("/auth")
+              this.router.navigateByUrl("/auth");
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
@@ -401,35 +401,44 @@ export class AuthService {
   async updateProfile(newData) {
     // idFecha viejo -> nuevo
     const reauthentication = await this.alertService.reauthenticateAlert();
-    if(!reauthentication) {
-      this.alertService.loginError('Contraseña incorrecta');
+    if (!reauthentication) {
+      this.alertService.loginError("Contraseña incorrecta");
       return;
     }
 
-    const user = await this.afs.doc<User>(`users/${this.userUid}`).valueChanges().pipe(take(1)).toPromise();
+    const user = await this.afs
+      .doc<User>(`users/${this.userUid}`)
+      .valueChanges()
+      .pipe(take(1))
+      .toPromise();
 
     this.afs.doc(`users/${this.userUid}`).update({
       DNI: newData.DNI,
       nombre: newData.nombre,
       countryCode: newData.country,
-      localizacionCasa: {lat: newData.latPersona, lon: newData.lonPersona }
+      localizacionCasa: { lat: newData.latPersona, lon: newData.lonPersona }
     });
-      
-    const phoneStatus = await this.changePhone(newData.telefono, newData.country).catch(err => {
+
+    const phoneStatus = await this.changePhone(
+      newData.telefono,
+      newData.country
+    ).catch(err => {
       if (err.error.text === "Done") {
         this.afs.doc(`users/${this.userUid}`).update({
           telefono: newData.telefono,
           countryCode: newData.country
         });
 
-        return 'success'
-      } else if(err.error.text === "Error: Error: The user with the provided phone number already exists."){
-        this.alertService.presentAlertError('Telefono en uso', 'modal');
-        return 'error';
+        return "success";
+      } else if (
+        err.error.text ===
+        "Error: Error: The user with the provided phone number already exists."
+      ) {
+        this.alertService.presentAlertError("Telefono en uso", "modal");
+        return "error";
       }
     });
-    if(phoneStatus === 'error') return;
-
+    if (phoneStatus === "error") return;
 
     const emailStatus = await this.changeEmail(newData.email).catch(err => {
       if (err.error.text === "Done") {
@@ -438,14 +447,13 @@ export class AuthService {
           countryCode: newData.country
         });
 
-        return 'success'
-      } else if(err.error.code === "auth/email-already-exists"){
-        this.alertService.presentAlertError('Correo en uso', 'modal');
-        return 'error'
+        return "success";
+      } else if (err.error.code === "auth/email-already-exists") {
+        this.alertService.presentAlertError("Correo en uso", "modal");
+        return "error";
       }
     });
-    if(emailStatus === 'error') return;
-    
+    if (emailStatus === "error") return;
 
     if (newData.password) {
       this.changePassword(newData.password);
@@ -464,23 +472,25 @@ export class AuthService {
       "authService updateProfile"
     );
   }
-    
 
   updateBusiness(newData) {
     try {
-      this.afs.doc<Empresa>(`empresas/${newData.CIF}`).valueChanges().pipe(take(1)).subscribe(empresa => {
-        this.afs.doc(`empresas/${newData.CIF}`).update({
-          
-          Nombre: newData.Nombre,
-          id: newData.CIF,
-          loc: [newData.loc1, newData.loc2],
-          distancia:newData.distancia
-        })
+      this.afs
+        .doc<Empresa>(`empresas/${newData.CIF}`)
+        .valueChanges()
+        .pipe(take(1))
+        .subscribe(empresa => {
+          this.afs.doc(`empresas/${newData.CIF}`).update({
+            Nombre: newData.Nombre,
+            id: newData.CIF,
+            loc: [newData.loc1, newData.loc2],
+            distancia: newData.distancia
+          });
 
-        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
-        // this.updateHistory(newData, user);
-        // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
-      })
+          //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+          // this.updateHistory(newData, user);
+          // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
+        });
     } catch (error) {
       console.log(error);
       // this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
@@ -542,7 +552,30 @@ export class AuthService {
         tel: newPhone,
         country: newCountry,
         uid: this.afAuth.auth.currentUser.uid
-      }).toPromise();
+      })
+      .toPromise();
+  }
+
+  createHorario(data) {
+    let stringId =
+      data.horaEntrada.replace(":", "") +
+      "_" +
+      data.horaSalida.replace(":", "") +
+      "_" +
+      data.numPausas +
+      "_" +
+      data.timePausa;
+
+    this.user.pipe(take(1)).subscribe(user => {
+      this.afs.doc(`empresas/${user.empresa}/horarios/${stringId}`).set({
+        horaEntrada: data.horaEntrada,
+        horaSalida: data.horaSalida,
+        pausas: {
+          num: data.numPausas,
+          tiempo: data.timePausa
+        }
+      });
+    });
   }
 
   logout() {

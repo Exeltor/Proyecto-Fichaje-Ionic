@@ -2,14 +2,13 @@
   <ion-toolbar>
     <ion-title>Editar datos de empresa</ion-title>
     <ion-buttons slot="primary">
-      <ion-button fill="clear" (click)="log()">Cancelar</ion-button>
+      <ion-button fill="clear" (click)="modalDismiss()">Cancelar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form [formGroup]="horarioForm">
-
     <ion-grid>
       <ion-row>
         <ion-col>
@@ -33,7 +32,7 @@
         <ion-col>
           <ion-item>
             <ion-label position="floating">Número de pausas máximo</ion-label>
-            <ion-input type="text"></ion-input>
+            <ion-input type="text" formControlName="numPausas"></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -41,10 +40,15 @@
         <ion-col>
           <ion-item>
             <ion-label position="floating">Tiempo máximo</ion-label>
-            <ion-input type="text"></ion-input>
+            <ion-input type="text" formControlName="timePausa"></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
     </ion-grid>
   </form>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="create()" [disabled]="horarioForm.invalid">
+      <ion-icon name="checkmark"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
