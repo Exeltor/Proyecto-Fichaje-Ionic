@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
+import { ValidateBusinessModalComponent } from './validate-business-modal/validate-business-modal.component';
+import { ModalController } from "@ionic/angular";
 
 @Component({
   selector: 'app-root',
@@ -8,7 +10,8 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent implements OnInit {
   constructor(
-    private authService: AuthService
+    private authService: AuthService, 
+    private modalController: ModalController
   ) {
     this.initializeApp();
   }
@@ -22,5 +25,13 @@ export class AppComponent implements OnInit {
 
   onLogout() {
     this.authService.logout();
+  }
+
+  validarEmpresa() {
+    this.modalController.create({
+      component: ValidateBusinessModalComponent,
+    }).then(modalEl => {
+      modalEl.present();
+    });
   }
 }

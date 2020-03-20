@@ -24,6 +24,7 @@ export class EditUserModalComponent implements OnInit {
 
   constructor(private modalController: ModalController, private fb: FormBuilder, public authService: AuthService) { }
 
+  
   ngOnInit() {
     this.editingForm = this.fb.group({
       email: [this.email, Validators.compose([Validators.email, Validators.required])],

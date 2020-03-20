@@ -1,0 +1,75 @@
+ <ion-header>
+    <ion-toolbar>
+      <ion-title>Introduce los Datos</ion-title>
+      <ion-buttons slot="primary">
+        <ion-button fill="clear" (click)="modalDismiss()">Cancelar</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content fullscreen scroll-y="false">
+    <form [formGroup]="registerForm">
+      <ion-grid>
+
+
+        <ion-row>
+
+
+          <ion-col>
+
+
+            <ion-item>
+              <ion-label position="floating">
+                <ion-icon slot="start" name="cifname"></ion-icon>
+                CIF de empresa
+              </ion-label>
+              <ion-input formControlName="CIF"></ion-input>
+            </ion-item>
+
+
+            <ion-item>
+              <ion-label position="floating">
+                <ion-icon slot="start" name="dniname"></ion-icon>
+                DNI del administrador
+              </ion-label>
+              <ion-input formControlName="DNI"></ion-input>
+            </ion-item>
+
+
+            
+
+
+            
+
+           
+
+
+
+            
+
+
+
+            
+
+
+            
+
+
+          </ion-col>
+
+
+        </ion-row>
+
+
+      </ion-grid>
+    </form>
+
+      <!-- fab placed to the bottom end -->
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="onSubmit()" [disabled]="!registerForm.valid">
+          <ion-icon name="checkmark"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    
+  </ion-content>
+
