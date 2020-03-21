@@ -33,9 +33,16 @@ export class RegisterempresaPage implements OnInit {
   password: string;
   horasTrabajo: number;
 
+  horaEntrada;
+  horaSalida;
+  numPausas;
+  timePausa;
+
   activeIndex = 0;
   registerCompany: FormGroup;
   registerAdmin: FormGroup;
+  horarioForm: FormGroup;
+  horarios=[];
   paises = countryCodes;
   constructor(
     private authService: AuthService,
@@ -58,7 +65,6 @@ export class RegisterempresaPage implements OnInit {
       direccionEmpresa: ["", Validators.required],
       distancia: [250, Validators.required]
     });
-
     this.registerAdmin = this.fb.group({
       email: ["", Validators.compose([Validators.email, Validators.required])],
       DNI: ["", Validators.required, DNIValidator.dni_check(this.afs)],
@@ -76,6 +82,12 @@ export class RegisterempresaPage implements OnInit {
         Validators.compose([Validators.required, Validators.minLength(6)])
       ],
       horasTrabajo: ["", Validators.max(24)]
+    });
+    this.horarioForm = this.fb.group({
+      horaEntrada: ["08:00", Validators.required],
+      horaSalida: ["17:00", Validators.required],
+      numPausas: ["", Validators.required],
+      timePausa: ["", Validators.required]
     });
   }
 
@@ -150,6 +162,27 @@ export class RegisterempresaPage implements OnInit {
     );
   }
 
+  otroHorario(){
+    this.horarios.push(this.horarioForm.value);
+    this.horaEntrada_.setValue('08:00');
+    this.horaSalida_.setValue('17:00');
+    this.numPausas_.setValue('');
+    this.timePausa_.setValue('');
+    console.log(this.horarios);
+
+  }
+  get horaEntrada_(){
+    return this.horarioForm.get("horaEntrada")
+  }
+  get horaSalida_(){
+    return this.horarioForm.get("horaSalida")
+  }
+  get numPausas_(){
+    return this.horarioForm.get("numPausas")
+  }
+  get timePausa_(){
+    return this.horarioForm.get("timePausa")
+  }
 
   get distancia_(){
     return this.registerCompany.get('distancia');
