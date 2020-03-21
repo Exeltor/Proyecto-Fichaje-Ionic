@@ -1,4 +1,10 @@
-<ion-list>
+<ion-list inset="true">
   <ion-list-header>Descansos</ion-list-header>
-  <ion-item *ngFor="let item of content">{{ item.startTime | date:'HH:mm' }} - {{ item.endTime ? (item.endTime | date: 'HH:mm') : 'en curso' }}</ion-item>
+  <ng-container *ngIf="content.length > 0; else noDescansos">
+    <ion-item *ngFor="let item of content">{{ item.startTime | date:'HH:mm' }} - {{ item.endTime ? (item.endTime | date: 'HH:mm') : 'en curso' }}</ion-item>
+  </ng-container>
 </ion-list>
+
+<ng-template #noDescansos>
+  <ion-item>Ningun descanso</ion-item>
+</ng-template>
