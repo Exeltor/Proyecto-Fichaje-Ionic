@@ -126,7 +126,7 @@ export class FichajeService {
     entryRef.update(data);
     });
   }
-
+  
   getServerDate() {
     return firebase.firestore.FieldValue.serverTimestamp();
   }

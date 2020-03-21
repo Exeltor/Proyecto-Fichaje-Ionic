@@ -9,6 +9,8 @@ export interface User {
     horasDiarias: number;
     horario: number;
     localizacionCasa: {lat: any, lon: any}
+    photoUrl?: string;
+    horario?:number;
 }
 // un usuario no necesita mas campos pero hay que relacionarle un horario
 // o al menos las horas a las que entra

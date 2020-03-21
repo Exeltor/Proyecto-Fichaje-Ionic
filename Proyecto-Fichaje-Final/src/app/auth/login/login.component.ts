@@ -17,10 +17,6 @@ export class LoginComponent implements OnInit {
   onSubmit(form: NgForm) {
     this.authService.login(form.value.email, form.value.password);
   }
-
-  navigateEmpresaRegister(){
-    this.router.navigate(['/registerempresa'])
-  }
   
   google() {
     this.authService.signInWithGoogle();

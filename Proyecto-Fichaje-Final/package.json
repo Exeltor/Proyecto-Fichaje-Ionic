@@ -38,12 +38,16 @@
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-plugin-request-location-accuracy": "^2.3.0",
     "cordova.plugins.diagnostic": "^5.0.1",
-    "core-js": "^2.5.4",
+    "core-js": "^3.6.4",
     "firebase": "^7.4.0",
     "geolib": "^3.2.1",
     "google-libphonenumber": "^3.2.6",
+    "intl": "^1.2.5",
+    "ion2-calendar": "^3.0.0-rc.0",
+    "moment": "^2.24.0",
     "leaflet": "^1.6.0",
     "moment": "^2.24.0",
+    "minimist": "^1.2.5",
     "rxjs": "~6.5.4",
     "tslib": "^1.9.0",
     "x2js": "^3.4.0",
@@ -63,7 +67,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.9.5",
     "codelyzer": "^5.0.0",
-    "jasmine-core": "~3.4.0",
+    "jasmine-core": "^3.5.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "^4.4.1",
     "karma-chrome-launcher": "~2.2.0",
@@ -73,7 +77,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.7.5"
+    "typescript": "^3.7.5"
   },
   "config": {
     "ionic_enable_lint": false

@@ -8,8 +8,7 @@ import {
 import { Router } from "@angular/router";
 import {
   AlertController,
-  LoadingController,
-  ModalController
+  LoadingController
 } from "@ionic/angular";
 import { Observable, of } from "rxjs";
 import { switchMap, take } from "rxjs/operators";
@@ -18,6 +17,7 @@ import { User } from "../models/user.model";
 import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
+import { AlertService } from '../services/alert.service';
 
 @Injectable({
   providedIn: "root"
@@ -25,9 +25,9 @@ import { SendPushService } from "../services/send-push.service";
 export class AuthService {
   user: Observable<User>;
   empresa: Observable<Empresa>;
-  Nombre_Empresa: string;
+  Nombre: string;
   userUid;
-  ok: Boolean = false;
+  id;
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -36,9 +36,9 @@ export class AuthService {
     private alertController: AlertController,
     private http: HttpClient,
     private loadingController: LoadingController,
-    private modalController: ModalController,
     private logger: LoggingService,
-    private sendPush: SendPushService
+    private sendPush: SendPushService,
+    private alertService: AlertService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -50,6 +50,16 @@ export class AuthService {
         }
       })
     );
+
+    this.empresa = this.user.pipe(
+      switchMap(user => {
+        if(user){
+          return this.afs.doc<Empresa>(`empresas/${user.empresa}`).valueChanges();
+        }else{
+          return of(null)
+        }
+      })
+    )
   }
 
   getUserEmail() {
@@ -57,7 +67,6 @@ export class AuthService {
   }
 
   registerUser(datos) {
-    this.ok = false;
     this.loadingController
       .create({
         keyboardClose: true,
@@ -89,17 +98,16 @@ export class AuthService {
                 datos.latPersona,
                 datos.lonPersona
               );
-              console.log("usuario y documento creados");
-              this.presentAlertSinError(
+              this.alertService.presentToastSinError(
                 "Creado",
-                `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`
+                `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`,
+                "modal"
               );
               loadingEl.dismiss();
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
               const error = jsonError.error.text;
-              console.log(err);
               let errorMessage;
               if (
                 error ===
@@ -117,14 +125,13 @@ export class AuthService {
 
               loadingEl.dismiss();
               this.logger.logEvent(errorMessage, 5, "authService registerUser");
-              this.presentAlertError(errorMessage);
+              this.alertService.presentAlertError(errorMessage, "modal");
             }
           );
       });
   }
 
   registerAdmin(datos, cifEmpresa) {
-    this.ok = false;
     this.loadingController
       .create({
         keyboardClose: true,
@@ -157,16 +164,16 @@ export class AuthService {
                 datos.lonPersona
               );
               loadingEl.dismiss();
-              this.presentAlertSinError(
+              this.alertService.presentToastSinError(
                 "Admin Registrado",
-                `El administrador ${datos.nombre} ha sido creado`
+                `El administrador ${datos.nombre} ha sido creado`,
+                "registrarEmpresa"
               );
               this.router.navigateByUrl("/auth")
             },
             err => {
               const jsonError = JSON.parse(JSON.stringify(err));
               const error = jsonError.error.text;
-              console.log(err);
               let errorMessage;
               if (
                 error ===
@@ -183,7 +190,7 @@ export class AuthService {
               }
 
               loadingEl.dismiss();
-              this.presentAlertError(errorMessage);
+              //this.presentAlertError(errorMessage);
             }
           );
       });
@@ -256,7 +263,8 @@ export class AuthService {
       .set({
         Nombre: data.nombreEmpresa,
         id: data.cif,
-        loc: [data.latEmpresa, data.lonEmpresa]
+        loc: [data.latEmpresa, data.lonEmpresa],
+        distancia: data.distancia
       })
       .then(() => {
         this.afs.doc(`empresasPendientes/${data.cif}`).delete();
@@ -284,7 +292,6 @@ export class AuthService {
             this.router.navigateByUrl("/home");
           })
           .catch(err => {
-            console.log(err.code, "No funciona");
             let error;
 
             if (
@@ -303,21 +310,7 @@ export class AuthService {
               4,
               "authService login"
             );
-
-            this.alertController
-              .create({
-                header: "No se pudo iniciar sesion",
-                message: error,
-                buttons: [
-                  {
-                    text: "Aceptar",
-                    role: "cancel"
-                  }
-                ]
-              })
-              .then(alertEl => {
-                alertEl.present();
-              });
+            this.alertService.loginError(error);
           });
       });
   }
@@ -406,45 +399,92 @@ export class AuthService {
     return this.afAuth.auth.currentUser.providerData;
   }
 
-  updateProfile(newData) {
-    this.ok = false;
+  async updateProfile(newData) {
     // idFecha viejo -> nuevo
-    try {
-      this.afs
-        .doc<User>(`users/${this.userUid}`)
-        .valueChanges()
-        .pipe(take(1))
-        .subscribe(user => {
-          this.afs.doc(`users/${this.userUid}`).update({
-            DNI: newData.DNI,
-            nombre: newData.nombre,
-            countryCode: newData.country,
-            localizacionCasa: {lat: newData.latPersona, lon: newData.lonPersona }
-          });
-          this.changePhone(newData.telefono, newData.country);
-          this.changeEmail(newData.email);
-          if (newData.password) {
-            this.changePassword(newData.password);
-          }
-          this.presentAlertSinError(
-            "Perfil editado",
-            `El perfil de ${newData.nombre} ha sido correctamente editado`
-          );
-          this.updateHistory(newData, user);
-          this.logger.logEvent(
-            `User ${user.uid} updated profile`,
-            3,
-            "authService updateProfile"
-          );
+    const reauthentication = await this.alertService.reauthenticateAlert();
+    if(!reauthentication) {
+      this.alertService.loginError('Contraseña incorrecta');
+      return;
+    }
+
+    const user = await this.afs.doc<User>(`users/${this.userUid}`).valueChanges().pipe(take(1)).toPromise();
+
+    this.afs.doc(`users/${this.userUid}`).update({
+      DNI: newData.DNI,
+      nombre: newData.nombre,
+      countryCode: newData.country,
+      localizacionCasa: {lat: newData.latPersona, lon: newData.lonPersona }
+    });
+      
+    const phoneStatus = await this.changePhone(newData.telefono, newData.country).catch(err => {
+      if (err.error.text === "Done") {
+        this.afs.doc(`users/${this.userUid}`).update({
+          telefono: newData.telefono,
+          countryCode: newData.country
         });
+
+        return 'success'
+      } else if(err.error.text === "Error: Error: The user with the provided phone number already exists."){
+        this.alertService.presentAlertError('Telefono en uso', 'modal');
+        return 'error';
+      }
+    });
+    if(phoneStatus === 'error') return;
+
+
+    const emailStatus = await this.changeEmail(newData.email).catch(err => {
+      if (err.error.text === "Done") {
+        this.afs.doc(`users/${this.userUid}`).update({
+          telefono: newData.telefono,
+          countryCode: newData.country
+        });
+
+        return 'success'
+      } else if(err.error.code === "auth/email-already-exists"){
+        this.alertService.presentAlertError('Correo en uso', 'modal');
+        return 'error'
+      }
+    });
+    if(emailStatus === 'error') return;
+    
+
+    if (newData.password) {
+      this.changePassword(newData.password);
+    }
+
+    this.alertService.presentToastSinError(
+      "Perfil editado",
+      `El perfil de ${newData.nombre} ha sido correctamente editado`,
+      "modal"
+    );
+
+    this.updateHistory(newData, user);
+    this.logger.logEvent(
+      `User ${user.uid} updated profile`,
+      3,
+      "authService updateProfile"
+    );
+  }
+    
+
+  updateBusiness(newData) {
+    try {
+      this.afs.doc<Empresa>(`empresas/${newData.CIF}`).valueChanges().pipe(take(1)).subscribe(empresa => {
+        this.afs.doc(`empresas/${newData.CIF}`).update({
+          
+          Nombre: newData.Nombre,
+          id: newData.CIF,
+          loc: [newData.loc1, newData.loc2],
+          distancia:newData.distancia
+        })
+
+        //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
+        // this.updateHistory(newData, user);
+        // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
+      })
     } catch (error) {
       console.log(error);
-      this.logger.logEvent(
-        `${this.userUid}: ${error}`,
-        4,
-        "authService updateProfile"
-      );
-      this.presentAlertError(error);
+      // this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
     }
   }
 
@@ -494,34 +534,22 @@ export class AuthService {
   }
 
   private changeEmail(newEmail: string) {
-    this.afAuth.auth.currentUser.updateEmail(newEmail);
+    return this.afAuth.auth.currentUser.updateEmail(newEmail);
   }
 
   private changePhone(newPhone: string, newCountry: string) {
-    this.http
+    return this.http
       .post("https://us-central1-fichaje-uni.cloudfunctions.net/updatePhone", {
         tel: newPhone,
         country: newCountry,
         uid: this.afAuth.auth.currentUser.uid
-      })
-      .subscribe(
-        response => {},
-        err => {
-          if (err.error.text === "Done") {
-            this.afs.doc(`users/${this.userUid}`).update({
-              telefono: newPhone,
-              countryCode: newCountry
-            });
-          }
-        }
-      );
+      }).toPromise();
   }
 
   logout() {
     this.afAuth.auth
       .signOut()
       .then(val => {
-        console.log("Logged out");
         this.router.navigateByUrl("auth");
         this.logger.logEvent(
           `User ${this.userUid} logged out`,
@@ -532,43 +560,5 @@ export class AuthService {
       .catch(err => {
         this.logger.logEvent(err, 4, "authService logout");
       });
-  }
-  async presentAlertError(message) {
-    const alert = await this.alertController.create({
-      header: "Error",
-      message: message,
-      buttons: [
-        {
-          text: "Cancel",
-          role: "cancel",
-          cssClass: "secondary",
-          handler: () => {
-            this.modalController.dismiss();
-          }
-        },
-        {
-          text: "Editar"
-        }
-      ]
-    });
-
-    await alert.present();
-  }
-
-  async presentAlertSinError(title, message) {
-    const alert = await this.alertController.create({
-      header: title,
-      message: message,
-      buttons: [
-        {
-          text: "OK",
-          handler: () => {
-            this.modalController.dismiss();
-          }
-        }
-      ]
-    });
-
-    await alert.present();
   }
 }

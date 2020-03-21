@@ -123,7 +123,6 @@ export class FichaPage implements OnInit, OnDestroy {
   toastPausaResume(message: string) {
     this.toastController
       .create({
-        color: "dark",
         message,
         duration: 2000,
         position: "top"
