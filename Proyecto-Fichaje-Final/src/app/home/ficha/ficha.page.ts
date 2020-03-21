@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FichajeService } from "../../services/fichaje.service";
-import { ToastController, AlertController } from "@ionic/angular";
+import { ToastController, AlertController, PopoverController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import * as geolib from 'geolib';
 import { Subscription, Observable } from 'rxjs';
 import * as moment from 'moment';
+import { DescansosPopoverComponent } from './descansos-popover/descansos-popover.component';
 
 @Component({
   selector: "app-ficha",
@@ -39,7 +40,8 @@ export class FichaPage implements OnInit, OnDestroy {
     private authService: AuthService,
     private afs: AngularFirestore,
     private geoService: GeolocService,
-    public platform: Platform
+    public platform: Platform,
+    private popoverCtrl: PopoverController
   ) {}
 
   async ngOnInit() {
@@ -72,6 +74,18 @@ export class FichaPage implements OnInit, OnDestroy {
       this.liveLocation.unsubscribe();
       console.log('unsubscribed location')
     }
+  }
+
+  async showRestingPopover() {
+    const popover = await this.popoverCtrl.create({
+      component: DescansosPopoverComponent,
+      translucent: true,
+      componentProps: {
+        dayDocument: await this.dayDocument.pipe(take(1)).toPromise()
+      }
+    })
+
+    return await popover.present();
   }
 
   calcTimeDiff(horaInicio: Date, horaFin: Date) {
@@ -171,6 +185,13 @@ export class FichaPage implements OnInit, OnDestroy {
           message: "¿Estas seguro que quieres finalizar el dia?",
           buttons: [
             {
+              text: "No",
+              role: "cancel",
+              handler: () => {
+                console.log("cancelado");
+              }
+            },
+            {
               text: "Si",
               handler: () => {
                 console.log("Dia finalizado");
@@ -178,13 +199,6 @@ export class FichaPage implements OnInit, OnDestroy {
                 this.terminado = true;
                 this.fichajeService.endWorkDay();
                 //this.setTimer();
-              }
-            },
-            {
-              text: "No",
-              role: "cancel",
-              handler: () => {
-                console.log("cancelado");
               }
             }
           ]
