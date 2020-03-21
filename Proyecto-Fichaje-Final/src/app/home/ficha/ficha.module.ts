@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { FichaPage } from './ficha.page';
+import { DescansosPopoverComponent } from './descansos-popover/descansos-popover.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [FichaPage]
+  declarations: [FichaPage, DescansosPopoverComponent]
 })
 export class FichaPageModule {}
