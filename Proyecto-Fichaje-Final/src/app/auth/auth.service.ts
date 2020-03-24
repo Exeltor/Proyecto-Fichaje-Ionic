@@ -555,7 +555,27 @@ export class AuthService {
       })
       .toPromise();
   }
-
+  crearHorario(dataHorario, cif){
+    dataHorario.forEach(horario => {
+      let stringId =
+        horario.horaEntrada.replace(":", "") +
+        "_" +
+        horario.horaSalida.replace(":", "") +
+        "_" +
+        horario.numPausas +
+        "_" +
+        horario.timePausa;
+        this.afs.doc(`empresas/${cif}/horarios/${stringId}`).set({
+          horaEntrada: horario.horaEntrada,
+          horaSalida: horario.horaSalida,
+          pausas: {
+            num: horario.numPausas,
+            tiempo: horario.timePausa
+          }
+        })
+    });
+      
+  }
   createHorario(data) {
     let stringId =
       data.horaEntrada.replace(":", "") +

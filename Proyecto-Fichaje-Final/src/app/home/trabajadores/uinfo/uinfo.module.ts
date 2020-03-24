@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { UinfoPage } from './uinfo.page';
 
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+
 const routes: Routes = [
   {
     path: '',
@@ -20,7 +22,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    FormBuilder
+    FormBuilder,
+    AccordionModule.forRoot()
   ],
   declarations: [UinfoPage],
   providers:[ FormBuilder]
