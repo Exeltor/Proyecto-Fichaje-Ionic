@@ -120,56 +120,17 @@
             Añadir otro horario
           </ion-button>
         </ion-item>
-        <!--
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <ion-item>
-                <ion-label>Hora Entrada</ion-label>
-                <ion-datetime display-format="H:mm" picker-format="H:mm" value="1990-02-19T07:00Z"
-                  formControlName="horaEntrada"></ion-datetime>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-item>
-                <ion-label>Hora Salida</ion-label>
-                <ion-datetime display-format="H:mm" picker-format="H:mm" value="1990-02-19T15:00Z"
-                  formControlName="horaSalida"></ion-datetime>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-item>
-                <ion-label position="floating">Número de pausas máximo</ion-label>
-                <ion-input type="text" formControlName="numPausas"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-item>
-                <ion-label position="floating">Tiempo máximo</ion-label>
-                <ion-input type="text" formControlName="timePausa"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-item lines="none">
-                <ion-button (click)="otroHorario()" expand="block" fill="clear" shape="round" [disabled]="horarioForm.invalid">
-                  Añadir otro horario
-                </ion-button>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
--->
+
+        <ion-item lines="none">
+          <ion-button (click)="stepBackward(stepper)" slot="start">
+            Atrás
+          </ion-button>
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="horarioForm.invalid">
+            Siguiente
+          </ion-button>
+        </ion-item>
       </form>
     </mat-step>
-
     <mat-step [stepControl]="registerAdmin">
       <form [formGroup]="registerAdmin">
         <ng-template matStepLabel>Registra el administrador</ng-template>
