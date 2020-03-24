@@ -12,7 +12,6 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-
           <ion-item>
             <ion-label position="floating">
               <ion-icon name="people"></ion-icon>
@@ -20,7 +19,10 @@
             </ion-label>
             <ion-input formControlName="Nombre"></ion-input>
           </ion-item>
-
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="card"></ion-icon>
@@ -29,34 +31,44 @@
             <ion-input formControlName="CIF" readonly="true">
             </ion-input>
           </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
           <ion-item>
             <ion-label position="floating">
               <ion-icon slot="start" name="map"></ion-icon>
               Direccion
             </ion-label>
             <ion-input type="text" formControlName="direccion"></ion-input>
-            <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="empresaCoords_.invalid && empresaDireccion_.dirty" ></ion-icon>
-            <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="empresaCoords_.valid"></ion-icon>
+            <ion-icon class="availability-icon" name="close" style="color: red"
+              *ngIf="empresaCoords_.invalid && empresaDireccion_.dirty"></ion-icon>
+            <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="empresaCoords_.valid">
+            </ion-icon>
           </ion-item>
-
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
           <ion-button (click)="openMap()" expand="block" fill="clear" shape="round">
             Abrir Mapa
           </ion-button>
-          <ion-item lines="none">
-            <ion-label position="floating"> Distancia para fichar: {{distancia_.value}} metros
-            </ion-label>
-
-            <ion-range min="100" max="1000" formControlName="distancia" style="background-color: none;"></ion-range>
-          </ion-item>
-          <!-- Se introduciría por mapa en un futuro -->
-          <ion-input formControlName="latEmpresa" hidden="true" readonly="true"></ion-input>
-          <ion-input formControlName="lonEmpresa" hidden="true" readonly="true"></ion-input>
-
         </ion-col>
       </ion-row>
-     
-     
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none">
+            <ion-label position="floating"> Distancia para fichar: {{distancia_.value}} metros</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-range min="100" max="1000" formControlName="distancia" style="background-color: none;"></ion-range>
+          </ion-item>
+        </ion-col>
+      </ion-row>
     </ion-grid>
+
+    <ion-input formControlName="latEmpresa" hidden="true" readonly="true"></ion-input>
+    <ion-input formControlName="lonEmpresa" hidden="true" readonly="true"></ion-input>
     <!-- fab placed to the bottom end -->
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
       <ion-fab-button (click)="onSubmit()" [disabled]="!editingForm.valid">
