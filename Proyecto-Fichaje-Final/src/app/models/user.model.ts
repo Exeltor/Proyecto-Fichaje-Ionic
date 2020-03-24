@@ -4,6 +4,7 @@ export interface User {
     DNI: string;
     empresa: string;
     admin: boolean;
+    superadmin: boolean;
     telefono: string;
     countryCode: string;
     horasDiarias: number;

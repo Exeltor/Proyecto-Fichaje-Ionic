@@ -18,12 +18,18 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx'
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ValidateBusinessModalComponent } from './validate-business-modal/validate-business-modal.component';
+
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, 
+    ValidateBusinessModalComponent],
+  entryComponents: [
+    ValidateBusinessModalComponent
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -34,7 +40,10 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
     AngularFireStorageModule,
     AngularFireMessagingModule,
     HttpClientModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    
   ],
   providers: [
     AngularFireAuth,

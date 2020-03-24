@@ -17,6 +17,7 @@ import { SendPushService } from "../services/send-push.service";
 import { AlertService } from "../services/alert.service";
 import { Horario } from "../models/horario.model";
 
+
 @Injectable({
   providedIn: "root"
 })
@@ -95,6 +96,7 @@ export class AuthService {
                 datos.telefono,
                 datos.horasTrabajo,
                 false,
+                false,
                 datos.latPersona,
                 datos.lonPersona
               );
@@ -160,6 +162,7 @@ export class AuthService {
                 datos.telefono,
                 datos.horasTrabajo,
                 true,
+                false,
                 datos.latPersona,
                 datos.lonPersona
               );
@@ -205,6 +208,7 @@ export class AuthService {
     telefono,
     hours,
     admin,
+    superadmin,
     lat,
     lon
   ) {
@@ -222,6 +226,7 @@ export class AuthService {
         nombre: nameSurname,
         DNI,
         admin,
+        superadmin,
         countryCode: country.toString(),
         telefono,
         empresa,
@@ -271,6 +276,22 @@ export class AuthService {
       })
       .catch(error => {});
   }
+
+  validateBusiness(data) {
+
+    console.log(data.CIF)
+    console.log(data.DNI)
+
+    this.afs
+    .collection(`empresasPendientes`)
+    .doc(data.CIF)
+    .set({
+      cif: data.CIF,
+      dni: data.DNI
+    })
+    .catch(error => {});
+  }
+
 
   login(email: string, password: string) {
     this.loadingController
