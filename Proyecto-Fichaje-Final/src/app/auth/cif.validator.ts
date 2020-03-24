@@ -5,7 +5,7 @@ import { ValidatorFn, AbstractControl } from "@angular/forms";
 export class CIFValidator {
   static cif_check(afs: AngularFirestore): ValidatorFn {
     return (control: AbstractControl) => {
-      const cif = control.value; //.toLowerCase();
+      const cif = control.value;
       return afs
         .collection("empresasPendientes", ref => ref.where("cif", "==", cif))
         .valueChanges()

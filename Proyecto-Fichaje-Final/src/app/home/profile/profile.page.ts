@@ -1,32 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { RegisterUserModalComponent } from './register-user-modal/register-user-modal.component';
+import { EditBusinessModalComponent } from './edit-business-modal/edit-business-modal.component';
 import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
+import { Horario } from '../../models/horario.model'
 import { Observable } from 'rxjs';
 import { take, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { PushNotificationsService } from '../../services/push-notifications.service';
+import { AddHorarioModalComponent } from './add-horario-modal/add-horario-modal.component';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  admin = true;
-  empresa: Observable<any>;
-  constructor(public authService: AuthService, private modalController: ModalController, private afs: AngularFirestore, private pushNotifications: PushNotificationsService, private platform: Platform) { }
+  horario: Observable<any>
+  constructor(public authService: AuthService, private modalController: ModalController, private pushNotifications: PushNotificationsService, private afs: AngularFirestore) { }
+
 
   ngOnInit() {
-    this.empresa = this.authService.user.pipe(switchMap(user=>{
-      return this.afs.doc(
-        `empresas/` + user.empresa
-      ).valueChanges();
-    }))
-
     this.pushNotifications.getToken();
+    this.horario = this.authService.user.pipe(
+      switchMap(user=>{
+        return this.afs.doc<Horario>(`empresas/${user.empresa}/horarios/${user.horario}`).valueChanges();
+      })
+    )
 
-    
   }
 
   // Apertura modal para introduccion de datos de la persona a registrar
@@ -38,6 +39,14 @@ export class ProfilePage implements OnInit {
     });
   }
 
+  addHorario(){
+    this.modalController.create({
+      component:AddHorarioModalComponent,
+    }).then(modalEl=>{
+      modalEl.present();
+    });
+  }
+  
   editProfile() {
     this.authService.user.pipe(take(1)).subscribe(user => {
       this.modalController.create({
@@ -57,5 +66,23 @@ export class ProfilePage implements OnInit {
     });
     
   }
+
+  editBusiness() {
+   this.authService.empresa.pipe(take(1)).subscribe(empresa => {
+      this.modalController.create({
+        component: EditBusinessModalComponent,
+        componentProps: {
+          'Nombre': empresa.Nombre,
+          'CIF': empresa.id,
+          'latEmpresa':  empresa.loc[0],
+          'lonEmpresa': empresa.loc[1],
+          'distancia': empresa.distancia
+        }
+      }).then(modalEl => {  
+        modalEl.present();
+      });
+    });
+  }
+
 
 }

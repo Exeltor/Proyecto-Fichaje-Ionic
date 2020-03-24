@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ModalController, AlertController } from "@ionic/angular";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { AuthService } from "src/app/auth/auth.service";
@@ -66,12 +66,11 @@ export class RegisterUserModalComponent implements OnInit {
     return this.registerForm.get('country');
   }
   async openMap() {
-    let direccionEncoded = encodeURI(this.registerForm.value.direccion);
+    let direccionEncoded = encodeURI(this.registerForm.value.direccionPersona);
 
     let jsonQ = await this.http.get(`https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`).toPromise()
 
     const latLon = [jsonQ[0].lat, jsonQ[0].lon]
-
     let modal = await this.modalController.create({
       component: MapaModalComponent,
       componentProps: { latLon, modalTitle: 'Marca la localizacion' }

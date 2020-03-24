@@ -64,14 +64,15 @@
             </ion-col>
           </ion-row>
           <ion-item>
-            <ion-label>
+            <ion-label position="floating">
               <ion-icon slot="start" name="map"></ion-icon>
               Direccion
             </ion-label>
-            <ion-button (click)="openMap()" color="primary">Abrir Mapa</ion-button>
+            <ion-input formControlName="direccion"></ion-input>
           </ion-item>
-          <ion-input hidden="true" formControlName="latPersona" [value]="latPersona"></ion-input>
-          <ion-input hidden="true" formControlName="lonPersona" [value]="lonPersona"></ion-input>
+          <ion-button (click)="openMap()" expand="block" fill="clear" shape="round">Abrir Mapa</ion-button>
+          <ion-input hidden="true" readonly="true" formControlName="latPersona" [value]="latPersona"></ion-input>
+          <ion-input hidden="true" readonly="true" formControlName="lonPersona" [value]="lonPersona"></ion-input>
         </ion-col>
       </ion-row>
       <ion-row>

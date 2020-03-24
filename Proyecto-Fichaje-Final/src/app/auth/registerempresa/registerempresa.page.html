@@ -15,7 +15,8 @@
 
         <ion-item>
           <ion-label position="floating">
-            <ion-icon slot="start" name="business"></ion-icon> CIF empresa</ion-label>
+            <ion-icon slot="start" name="business"></ion-icon> CIF empresa
+          </ion-label>
           <ion-input #C formControlName="cif" (ionChange)="cif_check(C.value)"></ion-input>
           <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="cif_.invalid && cif_.dirty">
           </ion-icon>
@@ -24,30 +25,108 @@
         </ion-item>
         <ion-item>
           <ion-label position="floating">
-            <ion-icon slot="start" name="briefcase"></ion-icon> Nombre empresa</ion-label>
+            <ion-icon slot="start" name="briefcase"></ion-icon> Nombre empresa
+          </ion-label>
           <ion-input formControlName="nombreEmpresa"></ion-input>
         </ion-item>
-
-        <ion-item class="ion-margin-vertical">
-          <ion-label>
+        <ion-item>
+          <ion-label position="floating">
             <ion-icon slot="start" name="map"></ion-icon>
-            Direccion:
+            Direccion
           </ion-label>
           <ion-input type="text" formControlName="direccionEmpresa"></ion-input>
-          <ion-button (click)="openMap()" slot="end"
-            [disabled]="direccionEmpresa_.invalid" >
-            Abrir Mapa
-          </ion-button>
-          <ion-icon class="availability-icon" name="arrow-back" style="color: red"
-            *ngIf="personaCoords_.invalid && direccionPersona_.dirty"></ion-icon>
-          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid">
+          <ion-icon class="availability-icon" name="close" style="color: red"
+            *ngIf="empresaCoords_.invalid && direccionEmpresa_.dirty"></ion-icon>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="empresaCoords_.valid">
           </ion-icon>
         </ion-item>
+        <ion-button (click)="openMap()" expand="block" fill="clear" shape="round"
+          [disabled]="direccionEmpresa_.invalid">
+          Abrir Mapa
+        </ion-button>
+        <ion-list lines="none" class="ion-text-center">
+          <ion-label> Distancia para fichar: {{distancia_.value}} metros
+          </ion-label>
+
+          <ion-range min="100" max="1000" formControlName="distancia" style="background-color: none;"></ion-range>
+        </ion-list>
         <ion-input formControlName="latEmpresa" [(ngModel)]="latEmpresa" hidden="true" readonly="true"></ion-input>
         <ion-input formControlName="lonEmpresa" [(ngModel)]="lonEmpresa" hidden="true" readonly="true"></ion-input>
+
         <ion-item lines="none">
           <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="registerCompany.invalid">
-            <ion-icon slot="icon-only" name="arrow-down" class="ion-padding"></ion-icon>
+            Siguiente
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="horarioForm">
+      <form [formGroup]="horarioForm">
+        <ng-template matStepLabel>Crea un horario para los trabajadores</ng-template>
+        <div formArrayName="horarios">
+          <mat-expansion-panel *ngFor="let horario of horarioFormGetter.controls; let i = index" [formGroupName]="i">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Horario {{ i + 1 }}
+              </mat-panel-title>
+              <mat-panel-description class="ion-justify-content-end">
+                <ion-buttons>
+                  <ion-button (click)="removeHorario(i)" fill="clear">
+                    <ion-icon slot="icon-only" name="trash" style="color:red"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label>Hora Entrada</ion-label>
+                    <ion-datetime display-format="H:mm" picker-format="H:mm" value="1990-02-19T07:00Z"
+                      formControlName="horaEntrada"></ion-datetime>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label>Hora Salida</ion-label>
+                    <ion-datetime display-format="H:mm" picker-format="H:mm" value="1990-02-19T15:00Z"
+                      formControlName="horaSalida"></ion-datetime>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating">Número de pausas máximo</ion-label>
+                    <ion-input type="text" formControlName="numPausas"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating">Tiempo máximo</ion-label>
+                    <ion-input type="text" formControlName="timePausa"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </mat-expansion-panel>
+        </div>
+        <ion-item lines="none">
+          <ion-button (click)="addHorario()" expand="block" fill="clear" shape="round" [disabled]="horarioForm.invalid">
+            Añadir otro horario
+          </ion-button>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-button (click)="stepBackward(stepper)" slot="start">
+            Atrás
+          </ion-button>
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="horarioForm.invalid">
+            Siguiente
           </ion-button>
         </ion-item>
       </form>
@@ -123,29 +202,29 @@
           </ion-label>
           <ion-input formControlName="horasTrabajo"></ion-input>
         </ion-item>
-        <ion-item class="ion-margin-vertical">
-          <ion-label>
+        <ion-item>
+          <ion-label position="floating">
             <ion-icon slot="start" name="map"></ion-icon>
-            Direccion:
+            Direccion
           </ion-label>
           <ion-input type="text" formControlName="direccionPersona"></ion-input>
-          <ion-button (click)="openMapRegister()" slot="end"
-            [disabled]="direccionPersona_.invalid" >
-            Abrir Mapa
-          </ion-button>
-          <ion-icon class="availability-icon" name="arrow-back" style="color: red"
+          <ion-icon class="availability-icon" name="cross" style="color: red"
             *ngIf="personaCoords_.invalid && direccionPersona_.dirty"></ion-icon>
           <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid">
           </ion-icon>
         </ion-item>
+        <ion-button (click)="openMapRegister()" expand="block" fill="clear" shape="round"
+          [disabled]="direccionEmpresa_.invalid">
+          Abrir Mapa
+        </ion-button>
         <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
         <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
         <ion-item lines="none">
           <ion-button (click)="stepBackward(stepper)" slot="start">
-            <ion-icon slot="icon-only" name="arrow-up" class="ion-padding"></ion-icon>
+            Atrás
           </ion-button>
           <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="registerAdmin.invalid">
-            <ion-icon slot="icon-only" name="arrow-down" class="ion-padding"></ion-icon>
+            Siguiente
           </ion-button>
         </ion-item>
       </form>

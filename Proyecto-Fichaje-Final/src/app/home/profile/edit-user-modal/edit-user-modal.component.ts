@@ -6,6 +6,7 @@ import { from } from 'rxjs';
 import { countryCodes } from 'src/environments/environment' 
 import { PhoneValidator } from 'src/app/auth/phone.validator'
 import { MapaModalComponent } from 'src/app/shared/mapaModal/mapaModal.component';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-edit-user-modal',
   templateUrl: './edit-user-modal.component.html',
@@ -22,7 +23,7 @@ export class EditUserModalComponent implements OnInit {
   paises = countryCodes;
   editingForm: FormGroup;
 
-  constructor(private modalController: ModalController, private fb: FormBuilder, public authService: AuthService) { }
+  constructor(private modalController: ModalController, private fb: FormBuilder, public authService: AuthService, private http: HttpClient) { }
 
   
   ngOnInit() {
@@ -33,14 +34,27 @@ export class EditUserModalComponent implements OnInit {
       telefono: [this.telefono, Validators.compose([PhoneValidator.number_check(), Validators.required])],
       nombre: [this.nombre, Validators.required],
       password: ['', Validators.minLength(6)],
+      direccion:['', null],
       latPersona: [this.latPersona, Validators.required],
       lonPersona: [this.lonPersona, Validators.required],
       confirmPassword: ['']
     }, {validators : this.passwordMatchValidator});
+    this.updateAll();
   }
 
+ 
   async openMap() {
-    const latLon = [this.latPersona, this.lonPersona]
+    let latLon = [];
+    if(this.editingForm.value.direccion == ''){
+      latLon = [this.latPersona, this.lonPersona]
+    } else{
+      let direccionEncoded = encodeURI(this.editingForm.value.direccion);
+
+      let jsonQ = await this.http.get(`https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`).toPromise()
+
+      latLon = [jsonQ[0].lat, jsonQ[0].lon]
+    }
+    
 
     let modal = await this.modalController.create({
       component: MapaModalComponent,
@@ -55,9 +69,16 @@ export class EditUserModalComponent implements OnInit {
 
     await modal.present();
   }
+
   get countryCode_(){
     return this.editingForm.get('country');
   }
+
+  get direccion_(){
+    return this.editingForm.get("direccion");
+  }
+
+
   updateAll(){
     PhoneValidator.country_check(this.editingForm.value.country);
   }

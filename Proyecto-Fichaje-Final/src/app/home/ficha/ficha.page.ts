@@ -1,26 +1,37 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FichajeService } from "../../services/fichaje.service";
-import { ToastController, AlertController } from "@ionic/angular";
+import { ToastController, AlertController, PopoverController } from "@ionic/angular";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AuthService } from "src/app/auth/auth.service";
 import { take } from "rxjs/operators";
 import { GeolocService } from '../../services/geoloc.service';
-import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { Platform } from '@ionic/angular';
 import * as geolib from 'geolib';
+import { Subscription, Observable } from 'rxjs';
+import * as moment from 'moment';
+import { DescansosPopoverComponent } from './descansos-popover/descansos-popover.component';
 
 @Component({
   selector: "app-ficha",
   templateUrl: "./ficha.page.html",
   styleUrls: ["./ficha.page.scss"]
 })
-export class FichaPage implements OnInit {
+export class FichaPage implements OnInit, OnDestroy {
   currentTimestamp: Date = new Date();
   comenzado;
   enPausa;
   masPauses;
   terminado;
   isLoading;
-  locationBlocked;
+  dayDocument: Observable<any>
+  locationEnabled = false;
+  liveLocation: Subscription;
+  isInRange = false;
+  coordsEmpresa;
+  locationAccuracy = 5;
+  timer;
+  timeWorked;
+  locationStatus: { enabled: boolean, denied: boolean, deniedAlways: boolean } = { enabled: false, denied: true, deniedAlways: false };
 
   constructor(
     private toastController: ToastController,
@@ -28,13 +39,55 @@ export class FichaPage implements OnInit {
     public fichajeService: FichajeService,
     private authService: AuthService,
     private afs: AngularFirestore,
-    private geo: GeolocService,
-    private locationAccuracy: LocationAccuracy,
+    private geoService: GeolocService,
+    public platform: Platform,
+    private popoverCtrl: PopoverController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.checkAndEnableLocation();
+    this.getDayDocument();
+  }
+
+  getDayDocument() {
+    this.dayDocument = this.afs.doc(`users/${this.authService.afAuth.auth.currentUser.uid}/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`).valueChanges();
+  }
+
+  ionViewDidEnter() {
+    this.enableLiveLocation();
     this.getIfComenzado();
   }
+
+  ionViewDidLeave() {
+    if(this.liveLocation) {
+      this.liveLocation.unsubscribe();
+      console.log('unsubscribed location')
+    }
+    if(this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  ngOnDestroy() {
+    if(this.liveLocation) {
+      this.liveLocation.unsubscribe();
+      console.log('unsubscribed location')
+    }
+  }
+
+  async showRestingPopover() {
+    const popover = await this.popoverCtrl.create({
+      component: DescansosPopoverComponent,
+      translucent: true,
+      componentProps: {
+        dayDocument: await this.dayDocument.pipe(take(1)).toPromise()
+      }
+    })
+
+    return await popover.present();
+  }
+
   calcTimeDiff(horaInicio: Date, horaFin: Date) {
     const diff = new Date(horaFin.getTime() - horaInicio.getTime());
 
@@ -45,23 +98,31 @@ export class FichaPage implements OnInit {
     Flipper del estado de pausa (descanso)
     Realiza llamada a fichajeService para comunicacion con backend
   */
-  flipPausa() {
+  async flipPausa() {
+    const currentDoc = await this.dayDocument.pipe(take(1)).toPromise();
     this.enPausa = !this.enPausa;
     this.masPauses = !this.masPauses;
     if (this.enPausa) {
-      this.toastPausaResume("Acabas de pausar");
-      this.fichajeService.pauseWorkDay();
+      if(currentDoc.pausasRestantes > 0) {
+        this.toastPausaResume("Acabas de pausar");
+        this.fichajeService.pauseWorkDay();
+      } else {
+        this.toastPausaResume("No te quedan pausas");
+        this.enPausa = !this.enPausa;
+        this.masPauses = !this.masPauses;
+      }
     } else {
       this.toastPausaResume("Acabas de resumir");
       this.fichajeService.resumeWorkDay();
     }
+
+    //this.setTimer();
   }
 
   // Toast informativo sobre el correcto cambio de estado del descanso y continuacion de trabajo
   toastPausaResume(message: string) {
     this.toastController
       .create({
-        color: "dark",
         message,
         duration: 2000,
         position: "top"
@@ -71,57 +132,46 @@ export class FichaPage implements OnInit {
       });
   }
 
-  activateLocation(){
-    this.locationAccuracy.canRequest().then((canRequest: boolean) => {
-      if(canRequest) {
-        // the accuracy option will be ignored by iOS
-        this.locationAccuracy.request(this.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY).then(
-          () => {
-            console.log('Request successful')
-            this.locationBlocked = false;
-          } ,
-          error => {
-            console.log('Error requesting location permissions', error)
-            this.locationBlocked = true;
-          }
-        );
+  async checkAndEnableLocation() {
+    this.locationStatus = await this.geoService.activateLocation();
+    console.log('locationEnabled after CheckAndEnableLocation', this.locationStatus.enabled)
+  }
+
+  enableLiveLocation() {
+    this.liveLocation = this.geoService.liveLocationObservable().subscribe(async location => {
+      const currentPosition = location.coords;
+      this.locationAccuracy = currentPosition.accuracy;
+      console.log(currentPosition)
+      await this.getCoordsEmpresa();
+      if (geolib.isPointWithinRadius({latitude: currentPosition.latitude, longitude: currentPosition.longitude}, {latitude: this.coordsEmpresa[0], longitude: this.coordsEmpresa[1]}, 100)) {
+        this.isInRange = true;
+      } else {
+        this.isInRange = false;
       }
+
+      console.log('in range', this.isInRange);
     });
+  }
+
+  async getCoordsEmpresa() {
+    this.coordsEmpresa = await this.geoService.getEmpresaCoordinates();
   }
   /*
     Flipper del comienzo de dia. Se realiza doble comprobacion si la interfaz no esta mostrada correctamente
     Realiza llamada a fichajeService para comunicacion con backend
   */
-  async comenzarDia() {
-    this.activateLocation();
-    if(this.locationBlocked) return;
+  comenzarDia() {
+    if(this.platform.is('cordova')) {
+      if(!this.locationStatus.enabled) return;
+    }
     this.isLoading = false;
-    let coords = await this.geo.getLoc().catch(error => {
-      console.log(error);
-      this.isLoading = false;
-    });
-    
-    // Calculo de distancia en metros
-    
-    let coordsEmpresa = await this.cogerCoordenadaEmpresa()
-    this.isLoading = false;
-    console.log("Coordenadas de la empresa:  " + coordsEmpresa );
-    console.log("Coordenadas del usuario:  " + coords );
-    if (!this.comenzado && geolib.isPointWithinRadius({latitude: coords[0], longitude: coords[1]}, {latitude: coordsEmpresa[0], longitude: coordsEmpresa[1]}, 100)) {
+
+    if (this.isInRange && !this.comenzado) {
       this.comenzado = !this.comenzado;
       this.fichajeService.startWorkDay();
     } else {
       this.toastPausaResume("Tienes que estar en el trabajo para empezar tu jornada laboral");
     }
-  }
-  
-  cogerCoordenadaEmpresa(){
-    return this.authService.user.pipe(take(1)).toPromise().then(user => {
-      return this.afs.doc(`empresas/` + user.empresa).get().toPromise().then(data => {
-        return data.get("loc");
-      })
-    })
-
   }
   /*
     Alerta de confirmacion de finalizacion del dia de trabajo, en el caso de que la persona haya presionado el boton erroneamente
@@ -134,19 +184,20 @@ export class FichaPage implements OnInit {
           message: "¿Estas seguro que quieres finalizar el dia?",
           buttons: [
             {
+              text: "No",
+              role: "cancel",
+              handler: () => {
+                console.log("cancelado");
+              }
+            },
+            {
               text: "Si",
               handler: () => {
                 console.log("Dia finalizado");
                 this.comenzado = !this.comenzado;
                 this.terminado = true;
                 this.fichajeService.endWorkDay();
-              }
-            },
-            {
-              text: "No",
-              role: "cancel",
-              handler: () => {
-                console.log("cancelado");
+                //this.setTimer();
               }
             }
           ]
@@ -156,21 +207,11 @@ export class FichaPage implements OnInit {
         });
     }
   }
-
-  getLocationPermission(){
-    this.geo.getLoc().catch(err => {
-      console.log(err);
-      this.locationBlocked = true;
-      //hacer prompt para activar la localizacion
-
-    })
-  }
   /*
     Funcion de comunicacion implementada aqui de forma temporal (para su posterior exportacion a fichajeService)
     Comprueba si el dia de trabajo ya ha sido comenzado para mostrar la interfaz de forma correcta en un reinicio de la aplicacion
   */
   getIfComenzado() {
-    this.getLocationPermission();
     this.isLoading = true;
     // Cogemos el uid del usuario de la sesion
     this.authService.user.pipe(take(1)).subscribe(userdata => {
@@ -178,20 +219,64 @@ export class FichaPage implements OnInit {
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
-        .then(docSnapshot => {
+        .then(async docSnapshot => {
           if (!docSnapshot.exists) {
             this.comenzado = false;
             this.isLoading = false;
           } else {
             this.comenzado = true;
-            this.getMenosPauses();
-            this.getIfTerminado();
+            await this.getMenosPauses();
+            await this.getIfTerminado();
           }
         });
     });
+  }
+
+  private async setTimer() {
+    const startedDoc = await this.dayDocument.pipe(take(1)).toPromise();
+    const startedTime = startedDoc.horaInicio.toDate();
+    const horaTotal = startedDoc.horaTotal.toDate().getTime();
+    const momentTotal = moment(horaTotal)
+
+    if(this.terminado) {
+      this.timeWorked = horaTotal;
+      return
+    }
+
+    if(this.comenzado) {
+      if(this.masPauses) {
+        if(this.timer) {
+          clearInterval(this.timer)
+          this.timer = null
+        }
+        const horaTotalMoment = moment(horaTotal).subtract(1, 'hours');
+        this.timeWorked = horaTotalMoment.toDate()
+      } else if (horaTotal > 0 && !this.masPauses) {
+         // Aqui literalmente muere, ayuda
+          const currentTimestamp = new Date();
+          const currentMoment = moment(currentTimestamp);
+          const startedMoment = moment(startedTime)
+          console.log('stated time', startedMoment)
+          const totalDiff = moment.duration(currentMoment.diff(startedMoment, 'minutes'));
+          console.log('total Diff', totalDiff)
+          const restingTime = totalDiff.subtract(momentTotal.hours(), 'hours').subtract(momentTotal.minutes(), 'minutes').subtract(momentTotal.seconds(), 'seconds')
+          console.log('resting time', restingTime)
+        //   const restingTime = moment.duration(momentTotal.diff(totalDiff))
+        //   console.log(restingTime);
+        // this.timer = setInterval(() => {
+        //   const totalWorked = totalDiff.subtract(restingTime.hours(), 'hours').subtract(restingTime.minutes(), 'minutes').subtract(restingTime.seconds(), 'seconds');
+        //   this.timeWorked = totalWorked.toDate();
+        //   console.log('time worked', this.timeWorked)
+        // }, 1000)
+      } else {
+        this.timer = setInterval(() => {
+          this.timeWorked = moment(new Date().getTime() - startedTime).subtract(1, 'hours').toDate();
+        }, 1000)
+      }
+    }
   }
 
   /*
@@ -200,12 +285,12 @@ export class FichaPage implements OnInit {
   */
   getIfTerminado() {
     // Cogemos el uid del usuario de la sesion
-    this.authService.user.pipe(take(1)).subscribe(userdata => {
+    return this.authService.user.pipe(take(1)).subscribe(userdata => {
       this.afs.firestore
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
@@ -214,7 +299,8 @@ export class FichaPage implements OnInit {
           } else {
             this.terminado = true;
           }
-
+          console.log('getIfTerminado')
+          //this.setTimer();
           this.isLoading = false;
         });
     });
@@ -226,12 +312,12 @@ export class FichaPage implements OnInit {
   */
   getMenosPauses() {
     // Cogemos el uid del usuario de la sesion
-    this.authService.user.pipe(take(1)).subscribe(userdata => {
+    return this.authService.user.pipe(take(1)).subscribe(userdata => {
       this.afs.firestore
         .doc(
           `users/${
             userdata.uid
-          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()}-${this.currentTimestamp.getFullYear()}`
+          }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
         .get()
         .then(docSnapshot => {
@@ -244,6 +330,7 @@ export class FichaPage implements OnInit {
           } else {
             this.masPauses = false;
           }
+          console.log('getMenosPauses')
         });
     });
   }

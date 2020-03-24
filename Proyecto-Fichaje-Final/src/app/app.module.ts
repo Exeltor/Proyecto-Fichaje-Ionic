@@ -21,6 +21,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValidateBusinessModalComponent } from './validate-business-modal/validate-business-modal.component';
 
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { ValidateBusinessModalComponent } from './validate-business-modal/valida
     AngularFirestoreModule,
     Geolocation,
     LocationAccuracy,
+    Diagnostic,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

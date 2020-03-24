@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
 import { UinfoPage } from './uinfo.page';
+
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 
 const routes: Routes = [
   {
@@ -19,8 +21,11 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    FormBuilder,
+    AccordionModule.forRoot()
   ],
-  declarations: [UinfoPage]
+  declarations: [UinfoPage],
+  providers:[ FormBuilder]
 })
 export class UinfoPageModule {}
