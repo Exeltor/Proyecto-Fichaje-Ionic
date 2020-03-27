@@ -593,7 +593,8 @@ export class AuthService {
           pausas: {
             num: horario.numPausas,
             tiempo: horario.timePausa
-          }
+          },
+          code: stringId
         })
     });
       
@@ -615,7 +616,8 @@ export class AuthService {
         pausas: {
           num: data.numPausas,
           tiempo: data.timePausa
-        }
+        },
+        code: stringId
       });
     });
   }

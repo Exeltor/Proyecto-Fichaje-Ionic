@@ -8,33 +8,45 @@
 </ion-header>
 
 <ion-content>
-    <ion-card>
-        <ion-card-header>
-            <ion-card-title>Selecciona una fecha</ion-card-title>
-        </ion-card-header>
-        <ion-card-content> 
-            <ion-calendar [(ngModel)]="dateMulti"
-                [options]="optionsMulti"
-                (change)="onSelect($event)"
-                [type]="type"
-                [format]="'YYYY-MM-DD'">
-            </ion-calendar>
-        </ion-card-content>
-    </ion-card>
+    <ion-grid>
+        <ion-row>
+            <ion-col size-lg="6" offset-lg="3">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-card-title>Selecciona una fecha</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-calendar [(ngModel)]="dateMulti" [options]="optionsMulti" (change)="onSelect($event)"
+                            [type]="type" [format]="'YYYY-MM-DD'">
+                        </ion-calendar>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 
-    <ion-card>
-        <ion-card-content>
-            <ion-card-subtitle>Has seleccionado el día {{fechaSelec | date: 'dd MMM yyyy'}}</ion-card-subtitle>
-            <ion-item>
-                <ion-label>
-                    <ion-icon name="time-outline"></ion-icon>
-                    Hora de Inicio: {{ (docTiempos | async)?.horaInicio.toDate() | date: 'HH:mm' }}</ion-label>
-            </ion-item>
-            <ion-item>
-                <ion-label>
-                    <ion-icon name="timer-outline"></ion-icon>
-                    Hora de Salida: {{ (docTiempos | async)?.horaFin.toDate() | date: 'HH:mm' }}</ion-label>
-            </ion-item>
-        </ion-card-content>
-    </ion-card>
+    <ion-grid>
+        <ion-row>
+            <ion-col size-lg="6" offset-lg="3">
+                <ion-card>
+                    <ion-card-content>
+                        <ion-card-subtitle>Has seleccionado el día {{fechaSelec | date: 'dd MMM yyyy'}}
+                        </ion-card-subtitle>
+                        <ion-item>
+                            <ion-label>
+                                <ion-icon name="time-outline"></ion-icon>
+                                Hora de Inicio: {{ (docTiempos | async)?.horaInicio.toDate() | date: 'HH:mm' }}
+                            </ion-label>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>
+                                <ion-icon name="timer-outline"></ion-icon>
+                                Hora de Salida: {{ (docTiempos | async)?.horaFin.toDate() | date: 'HH:mm' }}
+                            </ion-label>
+                        </ion-item>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>
