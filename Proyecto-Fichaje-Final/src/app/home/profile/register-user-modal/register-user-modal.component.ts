@@ -1,24 +1,24 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { ModalController, AlertController } from "@ionic/angular";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { AuthService } from "src/app/auth/auth.service";
-import { countryCodes } from "src/environments/environment";
-import { PhoneValidator } from "src/app/auth/phone.validator";
-import { MapaModalComponent } from "../../../shared/mapaModal/mapaModal.component"
+import { Component, OnInit, Input } from '@angular/core';
+import { ModalController, AlertController } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/auth/auth.service';
+import { countryCodes } from 'src/environments/environment';
+import { PhoneValidator } from 'src/app/auth/phone.validator';
+import { MapaModalComponent } from '../../../shared/mapaModal/mapaModal.component';
 import { HttpClient } from '@angular/common/http';
 import { Horario } from 'src/app/models/horario.model';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
-  selector: "app-register-user-modal",
-  templateUrl: "./register-user-modal.component.html",
-  styleUrls: ["./register-user-modal.component.scss"]
+  selector: 'app-register-user-modal',
+  templateUrl: './register-user-modal.component.html',
+  styleUrls: ['./register-user-modal.component.scss']
 })
 export class RegisterUserModalComponent implements OnInit {
   latPersona;
   lonPersona;
   horariosEmpresas: any = [];
-  @Input () empresaCode: string;
+  @Input() empresaCode: string;
   nombre: string;
   DNI: string;
   telefono: string;
@@ -42,20 +42,23 @@ export class RegisterUserModalComponent implements OnInit {
 
   ngOnInit() {
     this.registerForm = this.fb.group({
-      email: ["", Validators.compose([Validators.email, Validators.required])],
-      DNI: ["", Validators.required],
+      email: ['', Validators.compose([Validators.email, Validators.required])],
+      DNI: ['', Validators.required],
       country: [this.country, Validators.required],
       telefono: [
-        "",
+        '',
         Validators.compose([PhoneValidator.number_check(), Validators.required])
       ],
-      direccionPersona: ["", Validators.required],
-      latPersona: ["", Validators.required],
-      lonPersona: ["", Validators.required],
-      nombre: ["", Validators.required],
-      horarioCF: ["", null],
-      password: ["", Validators.compose([Validators.required,Validators.minLength(6)])],
-      horasTrabajo: ["", Validators.max(24)]
+      direccionPersona: ['', Validators.required],
+      latPersona: ['', Validators.required],
+      lonPersona: ['', Validators.required],
+      nombre: ['', Validators.required],
+      horarioCF: ['', null],
+      password: [
+        '',
+        Validators.compose([Validators.required, Validators.minLength(6)])
+      ],
+      horasTrabajo: ['', Validators.max(24)]
     });
 
     // Listado de horarios de la empresa a la que pertenece el usuario logeado
@@ -65,39 +68,43 @@ export class RegisterUserModalComponent implements OnInit {
   }
 
   get personaCoords_() {
-    return this.registerForm.get('latPersona')
+    return this.registerForm.get('latPersona');
   }
 
   get direccion_() {
     return this.registerForm.get('direccionPersona');
   }
 
-  get countryCode_(){
+  get countryCode_() {
     return this.registerForm.get('country');
   }
   async openMap() {
     let direccionEncoded = encodeURI(this.registerForm.value.direccionPersona);
 
-    let jsonQ = await this.http.get(`https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`).toPromise()
+    let jsonQ = await this.http
+      .get(
+        `https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`
+      )
+      .toPromise();
 
-    const latLon = [jsonQ[0].lat, jsonQ[0].lon]
+    const latLon = [jsonQ[0].lat, jsonQ[0].lon];
     let modal = await this.modalController.create({
       component: MapaModalComponent,
       componentProps: { latLon, modalTitle: 'Marca la localizacion' }
-    })
+    });
 
-    modal.onDidDismiss().then((callback) => {
+    modal.onDidDismiss().then(callback => {
       if (callback.data === undefined) return;
       this.latPersona = callback.data.lat;
       this.lonPersona = callback.data.lng;
-    })
+    });
 
     await modal.present();
   }
 
-  updateAll(){
+  updateAll() {
     PhoneValidator.country_check(this.registerForm.value.country);
-  };
+  }
 
   modalDismiss() {
     this.modalController.dismiss();
@@ -106,6 +113,4 @@ export class RegisterUserModalComponent implements OnInit {
   onSubmit() {
     this.authService.registerUser(this.registerForm.value);
   }
-
-
 }

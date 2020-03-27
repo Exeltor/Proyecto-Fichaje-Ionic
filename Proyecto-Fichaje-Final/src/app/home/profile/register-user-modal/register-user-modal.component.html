@@ -43,7 +43,6 @@
                 </ion-label>
                 <ion-input formControlName="DNI"></ion-input>
               </ion-item>
-
               <ion-item>
                 <ion-label positon="floating">
                   <ion-icon slot="start" name="calendar-outline"></ion-icon>
@@ -53,8 +52,6 @@
                   <ion-select-option [value]="horarioEm.code" *ngFor="let horarioEm of horariosEmpresas | async">{{ horarioEm.horaEntrada}} - {{ horarioEm.horaSalida }}</ion-select-option>
                 </ion-select>
               </ion-item>
-
-
               <ion-item>
                 <ion-label position="floating">
                   <ion-icon slot="start" name="globe"></ion-icon>

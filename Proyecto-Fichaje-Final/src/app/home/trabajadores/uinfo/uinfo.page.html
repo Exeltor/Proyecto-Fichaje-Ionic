@@ -67,7 +67,9 @@
           <ion-item lines="none">
             <ion-icon name="time" slot="start"></ion-icon>
             <ion-label *ngIf="!editBool">{{ ( horario | async )?.horaEntrada }} - {{ ( horario | async )?.horaSalida }}</ion-label>
-            <ion-input type="text" [(ngModel)]="horarioEdit" placeholder="{{horarioCode}}" *ngIf="editBool"></ion-input>
+            <ion-select placeholder="Selecciona un horario" [(ngModel)]="horarioEdit" *ngIf="editBool">
+              <ion-select-option [value]="horarioEm.code" *ngFor="let horarioEm of horariosEmpresas | async">{{ horarioEm.horaEntrada}} - {{ horarioEm.horaSalida }}</ion-select-option>
+            </ion-select>
           </ion-item>
         </ion-col>
       </ion-row>

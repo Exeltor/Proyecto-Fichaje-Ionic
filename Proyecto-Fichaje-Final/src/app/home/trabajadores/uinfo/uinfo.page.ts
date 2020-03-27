@@ -17,7 +17,7 @@ export class UinfoPage implements OnInit {
   horario: Observable<Horario>;
   empresa: Observable<Empresa>;
   user: Observable<User>;
-
+  horariosEmpresas: any = [];
   @Input() uid;
   @Input() nombre;
   @Input() empresaCode;
@@ -59,6 +59,11 @@ export class UinfoPage implements OnInit {
     this.editWorker = this.fb.group({
 
     });
+
+    // Listado de horarios de la empresa a la que pertenece el usuario logeado
+    this.horariosEmpresas = this.afs
+      .collection<Horario>(`empresas/${this.empresaCode}/horarios/`)
+      .valueChanges();
   }
 
   edit() {
