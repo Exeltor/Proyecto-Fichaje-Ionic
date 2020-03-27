@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { ModalController, AlertController } from "@ionic/angular";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { AuthService } from "src/app/auth/auth.service";
@@ -6,6 +6,8 @@ import { countryCodes } from "src/environments/environment";
 import { PhoneValidator } from "src/app/auth/phone.validator";
 import { MapaModalComponent } from "../../../shared/mapaModal/mapaModal.component"
 import { HttpClient } from '@angular/common/http';
+import { Horario } from 'src/app/models/horario.model';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: "app-register-user-modal",
@@ -15,7 +17,8 @@ import { HttpClient } from '@angular/common/http';
 export class RegisterUserModalComponent implements OnInit {
   latPersona;
   lonPersona;
-
+  horariosEmpresas: any = [];
+  @Input () empresaCode: string;
   nombre: string;
   DNI: string;
   telefono: string;
@@ -33,7 +36,8 @@ export class RegisterUserModalComponent implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     public alertController: AlertController,
-    private http: HttpClient
+    private http: HttpClient,
+    public afs: AngularFirestore
   ) {}
 
   ngOnInit() {
@@ -49,9 +53,15 @@ export class RegisterUserModalComponent implements OnInit {
       latPersona: ["", Validators.required],
       lonPersona: ["", Validators.required],
       nombre: ["", Validators.required],
+      horarioCF: ["", null],
       password: ["", Validators.compose([Validators.required,Validators.minLength(6)])],
       horasTrabajo: ["", Validators.max(24)]
     });
+
+    // Listado de horarios de la empresa a la que pertenece el usuario logeado
+    this.horariosEmpresas = this.afs
+      .collection<Horario>(`empresas/${this.empresaCode}/horarios/`)
+      .valueChanges();
   }
 
   get personaCoords_() {
@@ -97,6 +107,5 @@ export class RegisterUserModalComponent implements OnInit {
     this.authService.registerUser(this.registerForm.value);
   }
 
-  
 
 }

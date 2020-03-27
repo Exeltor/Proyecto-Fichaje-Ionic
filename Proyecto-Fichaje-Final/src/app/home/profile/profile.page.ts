@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { take, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { PushNotificationsService } from '../../services/push-notifications.service';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -31,10 +32,15 @@ export class ProfilePage implements OnInit {
 
   // Apertura modal para introduccion de datos de la persona a registrar
   registerUser() {
-    this.modalController.create({
-      component: RegisterUserModalComponent,
-    }).then(modalEl => {
-      modalEl.present();
+    this.authService.user.pipe(take(1)).subscribe(user => {
+      this.modalController.create({
+        component: RegisterUserModalComponent,
+        componentProps: {
+          'empresaCode': user.empresa
+        }
+        }).then(modalEl => {
+          modalEl.present();
+        });
     });
   }
 
