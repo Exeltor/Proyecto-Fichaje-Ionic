@@ -19,13 +19,6 @@
                 <ion-card-content>
                   <ion-item>
                     <ion-label position="floating">
-                      <ion-icon slot="start" name="mail"></ion-icon>
-                      Correo Electrónico
-                    </ion-label>
-                    <ion-input formControlName="email"></ion-input>
-                  </ion-item>
-                  <ion-item>
-                    <ion-label position="floating">
                       <ion-icon name="person"></ion-icon>
                       Nombre y Apellidos
                     </ion-label>
@@ -34,10 +27,26 @@
                   </ion-item>
                   <ion-item>
                     <ion-label position="floating">
+                      <ion-icon slot="start" name="mail"></ion-icon>
+                      Correo Electrónico
+                    </ion-label>
+                    <ion-input formControlName="email"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="floating">
                       <ion-icon slot="start" name="card"></ion-icon>
                       DNI
                     </ion-label>
                     <ion-input formControlName="DNI"></ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="(authService.user | async)?.admin">
+                    <ion-label positon="floating">
+                      <ion-icon slot="start" name="calendar-outline"></ion-icon>
+                      Horario Laboral
+                    </ion-label>
+                    <ion-select placeholder="Selecciona un horario" formControlName="horarioCF">
+                      <ion-select-option [value]="horarioEm.code" *ngFor="let horarioEm of horariosEmpresas | async">{{ horarioEm.horaEntrada}} - {{ horarioEm.horaSalida }}</ion-select-option>
+                    </ion-select>
                   </ion-item>
                   <ion-item>
                     <ion-label position="floating">

@@ -412,6 +412,7 @@ export class AuthService {
       DNI: newData.DNI,
       nombre: newData.nombre,
       countryCode: newData.country,
+      horario: newData.horarioCF,
       localizacionCasa: {lat: newData.latPersona, lon: newData.lonPersona }
     });
       

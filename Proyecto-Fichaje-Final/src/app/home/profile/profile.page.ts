@@ -48,6 +48,8 @@ export class ProfilePage implements OnInit {
           'email':  this.authService.getUserEmail(),
           'telefono': user.telefono,
           'country': user.countryCode,
+          'horarioCode': user.horario,
+          'empresaCode': user.empresa,
           'latPersona': user.localizacionCasa.lat,
           'lonPersona': user.localizacionCasa.lon
         }
