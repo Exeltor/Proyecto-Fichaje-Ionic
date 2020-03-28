@@ -42,6 +42,11 @@ export class EditUserModalComponent implements OnInit {
       .doc<Horario>(`empresas/${this.empresaCode}/horarios/${this.horarioCode}`)
       .valueChanges();
 
+    // Listado de horarios de la empresa a la que pertenece el usuario logeado
+    this.horariosEmpresas = this.afs
+      .collection<Horario>(`empresas/${this.empresaCode}/horarios/`)
+      .valueChanges();
+      
     this.editingForm = this.fb.group(
       {
         email: [
@@ -69,10 +74,6 @@ export class EditUserModalComponent implements OnInit {
     );
     this.updateAll();
 
-    // Listado de horarios de la empresa a la que pertenece el usuario logeado
-    this.horariosEmpresas = this.afs
-      .collection<Horario>(`empresas/${this.empresaCode}/horarios/`)
-      .valueChanges();
   }
 
   async openMap() {
