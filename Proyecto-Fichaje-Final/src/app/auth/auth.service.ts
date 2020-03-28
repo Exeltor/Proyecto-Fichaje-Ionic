@@ -27,6 +27,7 @@ export class AuthService {
   Nombre: string;
   userUid;
   id;
+  photoUrl;
 
   constructor(
     public afAuth: AngularFireAuth,
