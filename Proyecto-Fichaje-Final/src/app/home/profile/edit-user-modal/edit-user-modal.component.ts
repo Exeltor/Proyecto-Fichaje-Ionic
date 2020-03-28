@@ -37,6 +37,7 @@ export class EditUserModalComponent implements OnInit {
     public afs: AngularFirestore
   ) {}
 
+  
   ngOnInit() {
     this.horario = this.afs
       .doc<Horario>(`empresas/${this.empresaCode}/horarios/${this.horarioCode}`)

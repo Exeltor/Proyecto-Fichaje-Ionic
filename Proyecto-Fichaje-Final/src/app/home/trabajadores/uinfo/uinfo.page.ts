@@ -70,13 +70,14 @@ export class UinfoPage implements OnInit {
     this.editBool = true;
   }
   submit(){
-    this.editBool = false;
+    
     if(this.nombreEdit !== this.nombre){
       this.editNombre();
     } 
     if(this.horarioEdit !== this.horario){
       this.editHorario();
     }
+    this.editBool = false;
   }
 
   private editNombre(){
