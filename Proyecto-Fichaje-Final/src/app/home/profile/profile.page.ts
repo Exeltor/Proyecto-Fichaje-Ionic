@@ -10,6 +10,7 @@ import { take, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { PushNotificationsService } from '../../services/push-notifications.service';
 import { AddHorarioModalComponent } from './add-horario-modal/add-horario-modal.component';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -32,10 +33,15 @@ export class ProfilePage implements OnInit {
 
   // Apertura modal para introduccion de datos de la persona a registrar
   registerUser() {
-    this.modalController.create({
-      component: RegisterUserModalComponent,
-    }).then(modalEl => {
-      modalEl.present();
+    this.authService.user.pipe(take(1)).subscribe(user => {
+      this.modalController.create({
+        component: RegisterUserModalComponent,
+        componentProps: {
+          'empresaCode': user.empresa
+        }
+        }).then(modalEl => {
+          modalEl.present();
+        });
     });
   }
 
@@ -57,6 +63,8 @@ export class ProfilePage implements OnInit {
           'email':  this.authService.getUserEmail(),
           'telefono': user.telefono,
           'country': user.countryCode,
+          'horarioCode': user.horario,
+          'empresaCode': user.empresa,
           'latPersona': user.localizacionCasa.lat,
           'lonPersona': user.localizacionCasa.lon
         }

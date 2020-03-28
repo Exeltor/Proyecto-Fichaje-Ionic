@@ -98,7 +98,8 @@ export class AuthService {
                 false,
                 false,
                 datos.latPersona,
-                datos.lonPersona
+                datos.lonPersona,
+                datos.horarioCF
               );
               this.alertService.presentToastSinError(
                 "Creado",
@@ -164,7 +165,8 @@ export class AuthService {
                 true,
                 false,
                 datos.latPersona,
-                datos.lonPersona
+                datos.lonPersona,
+                datos.horarioCF
               );
               loadingEl.dismiss();
               this.alertService.presentToastSinError(
@@ -210,7 +212,8 @@ export class AuthService {
     admin,
     superadmin,
     lat,
-    lon
+    lon,
+    horarioCF
   ) {
     //TODO: change every uid to DNI, hay que pensarlo mejor bruh
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(
@@ -230,6 +233,7 @@ export class AuthService {
         countryCode: country.toString(),
         telefono,
         empresa,
+        horario: horarioCF,
         horasDiarias: hours,
         horario: null,
         localizacionCasa: { lat, lon }
@@ -438,6 +442,7 @@ export class AuthService {
       DNI: newData.DNI,
       nombre: newData.nombre,
       countryCode: newData.country,
+      horario: newData.horarioCF,
       localizacionCasa: { lat: newData.latPersona, lon: newData.lonPersona }
     });
 
