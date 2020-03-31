@@ -236,7 +236,6 @@ export class AuthService {
         empresa,
         horario: horarioCF,
         horasDiarias: hours,
-        horario: null,
         localizacionCasa: { lat, lon }
       };
 

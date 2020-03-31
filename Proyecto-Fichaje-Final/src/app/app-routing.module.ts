@@ -10,6 +10,10 @@ const routes: Routes = [
   { path: 'home', loadChildren: './home/home.module#HomePageModule', canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLanding }},
   { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule', canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectAuthorizedToHome } },
   { path: 'registerempresa', loadChildren: './auth/registerempresa/registerempresa.module#RegisterempresaPageModule' },
+  {
+    path: 'camara',
+    loadChildren: () => import('./pruebas/camara/camara.module').then( m => m.CamaraPageModule)
+  },
 
 ];
 

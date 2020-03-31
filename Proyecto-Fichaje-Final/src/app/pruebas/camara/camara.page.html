@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>camara</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <p>pathaco </p>
+  <ion-button (click)="getCordovaAvailable()" expand="block" shape="round">
+    Take Photo
+  </ion-button>
+  <input #fileInput type="file" (change)="handleFileSelect($event)" placeholder="Profile Picture" type="file" accept='image/*' style="display:none;">
+ 
+  <img [src]="path">
+  <ion-button (click)="crop()" expand="block" shape="round">
+    Crop
+  </ion-button>
+</ion-content>
