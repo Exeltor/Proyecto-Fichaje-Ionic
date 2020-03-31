@@ -5,14 +5,25 @@
 </ion-header>
 
 <ion-content>
-  <p>pathaco </p>
   <ion-button (click)="getCordovaAvailable()" expand="block" shape="round">
     Take Photo
   </ion-button>
-  <input #fileInput type="file" (change)="handleFileSelect($event)" placeholder="Profile Picture" type="file" accept='image/*' style="display:none;">
- 
-  <img [src]="path">
-  <ion-button (click)="crop()" expand="block" shape="round">
-    Crop
+  <input #fileInput type="file" (change)=" addFile($event)" placeholder="Profile Picture" type="file" accept='image/*'
+    style="display:none;">
+
+  
+  <image-cropper [imageBase64]="myImage" 
+  [maintainAspectRatio]="true" 
+  [aspectRatio]="1 / 1" 
+  format="jpeg"
+  (imageCropped)="imageCropped($event)"
+  [autoCrop]="false"
+  >
+  </image-cropper>
+
+  <img *ngIf="myFinalImage" [src]="myFinalImage">
+
+  <ion-button (click)="submit()" expand="block" fill="clear" shape="round">
+    submit
   </ion-button>
 </ion-content>

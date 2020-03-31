@@ -16,6 +16,7 @@ import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
 import { AlertService } from "../services/alert.service";
 import { Horario } from "../models/horario.model";
+import { AngularFireStorage } from '@angular/fire/storage';
 
 
 @Injectable({
@@ -38,12 +39,15 @@ export class AuthService {
     private loadingController: LoadingController,
     private logger: LoggingService,
     private sendPush: SendPushService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private storage: AngularFireStorage
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
         if (user) {
           this.userUid = user.uid;
+          const ref = this.storage.ref(`profile/${this.userUid}`);
+          this.photoUrl = ref.getDownloadURL().toPromise();
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
         } else {
           return of(null);

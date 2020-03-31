@@ -17,10 +17,10 @@
                         <ion-icon slot="icon-only" name="create-outline"></ion-icon>
                     </ion-button>
                 </ion-buttons>
-                <ion-img *ngIf="(authService.user | async)?.photoUrl" [src]="(authService.user | async)?.photoUrl"
+                <ion-img *ngIf="(authService.photoUrl | async)" [src]="(authService.photoUrl | async)"
                     class="profileimg">
                 </ion-img>
-                <ion-img *ngIf="!(authService.user | async)?.photoUrl" src="../../../assets/res/avatar.svg"
+                <ion-img *ngIf="!(authService.photoUrl | async)" src="../../../assets/res/avatar.svg"
                     class="profileimg">
                 </ion-img>
             </ion-col>
