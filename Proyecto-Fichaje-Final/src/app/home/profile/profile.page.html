@@ -18,10 +18,10 @@
                     </ion-button>
                 </ion-buttons>
                 <ion-img *ngIf="(authService.photoUrl | async)" [src]="(authService.photoUrl | async)"
-                    class="profileimg">
+                    class="profileimg" (click)="getCordovaAvailable()">
                 </ion-img>
                 <ion-img *ngIf="!(authService.photoUrl | async)" src="../../../assets/res/avatar.svg"
-                    class="profileimg">
+                    class="profileimg" (click)="getCordovaAvailable()">
                 </ion-img>
             </ion-col>
         </ion-row>
@@ -94,7 +94,8 @@
             </ion-fab-button>
         </ion-fab-list>
     </ion-fab>
-
+    <input #fileInput type="file" (change)=" addFile($event)" placeholder="Profile Picture" type="file" accept='image/*'
+    style="display:none;">
     <ion-label>
         <a [routerLink]="['/camara']">Go to Gallery</a>
     </ion-label>

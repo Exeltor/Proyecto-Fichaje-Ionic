@@ -2,9 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { Platform } from "@ionic/angular";
 import { Plugins, CameraResultType } from "@capacitor/core";
 import { ActionSheetController } from "@ionic/angular";
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
-import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UploadService } from 'src/app/uploads/shared/upload.service';
 import { AuthService } from 'src/app/auth/auth.service';
 
@@ -26,7 +24,6 @@ export class CamaraPage implements OnInit {
     private uploadservice: UploadService,
     public authService: AuthService
   ) {
-    this.myImage = "assets/res/avatar.svg";
   }
 
   ngOnInit() {}

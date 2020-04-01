@@ -41,7 +41,7 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [
     AngularFireAuth,

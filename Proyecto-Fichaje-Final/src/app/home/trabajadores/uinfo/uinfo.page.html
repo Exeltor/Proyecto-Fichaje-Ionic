@@ -15,10 +15,9 @@
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <!--<ion-img *ngIf="(user | async)?.photoUrl" [src]="(user | async)?.photoUrl"
-          class="profileimg">
-        </ion-img>-->
-        <ion-img src="../../../assets/res/avatar.svg" class="profileimg">
+        <ion-img *ngIf="(photoUrl | async)" [src]="(photoUrl | async)" class="profileimg">
+        </ion-img>
+        <ion-img *ngIf="!(photoUrl | async)" src="../../../assets/res/avatar.svg" class="profileimg">
         </ion-img>
       </ion-col>
       <ion-col size="3"></ion-col>
@@ -27,7 +26,7 @@
       <ion-col style="text-align: center;">
         <p style="margin:0; font-size: larger;" *ngIf="!editBool">{{ nombre }}</p>
         <ion-item style="font-size: larger; text-align: center; margin-left: 2em; margin-right: 2em;" *ngIf="editBool">
-          <ion-input type="text" [(ngModel)]="nombreEdit" placeholder="{{nombre}}" ></ion-input>
+          <ion-input type="text" [(ngModel)]="nombreEdit" placeholder="{{nombre}}"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -66,9 +65,11 @@
         <ion-col size="9">
           <ion-item lines="none">
             <ion-icon name="time" slot="start"></ion-icon>
-            <ion-label *ngIf="!editBool">{{ ( horario | async )?.horaEntrada }} - {{ ( horario | async )?.horaSalida }}</ion-label>
+            <ion-label *ngIf="!editBool">{{ ( horario | async )?.horaEntrada }} - {{ ( horario | async )?.horaSalida }}
+            </ion-label>
             <ion-select placeholder="Selecciona un horario" [(ngModel)]="horarioEdit" *ngIf="editBool">
-              <ion-select-option [value]="horarioEm.code" *ngFor="let horarioEm of horariosEmpresas | async">{{ horarioEm.horaEntrada}} - {{ horarioEm.horaSalida }}</ion-select-option>
+              <ion-select-option [value]="horarioEm.code" *ngFor="let horarioEm of horariosEmpresas | async">
+                {{ horarioEm.horaEntrada}} - {{ horarioEm.horaSalida }}</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>

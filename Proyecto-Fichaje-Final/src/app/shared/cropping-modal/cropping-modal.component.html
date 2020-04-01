@@ -1,0 +1,20 @@
+<ion-content>
+<img [src]="myImage"/>
+  <image-cropper
+  [imageBase64]="myImage" 
+  [maintainAspectRatio]="true" 
+  [aspectRatio]="1 / 1" 
+  format="jpeg"
+  (imageCropped)="imageCropped($event)"
+  [autoCrop]="false"
+  >
+  </image-cropper>
+
+
+<ion-fab vertical="bottom" horizontal="center" slot="fixed">
+  <ion-fab-button (click)="submit()">
+    <ion-icon name="valid"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+</ion-content>

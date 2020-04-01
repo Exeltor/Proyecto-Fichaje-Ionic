@@ -6,7 +6,8 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { Horario } from "src/app/models/horario.model";
 import { User } from "src/app/models/user.model";
 import { Empresa } from "src/app/models/empresa.model";
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder } from "@angular/forms";
+import { AngularFireStorage } from "@angular/fire/storage";
 
 @Component({
   selector: "app-uinfo",
@@ -18,19 +19,19 @@ export class UinfoPage implements OnInit {
   empresa: Observable<Empresa>;
   user: Observable<User>;
   horariosEmpresas: any = [];
-  @Input() uid;
+  @Input() uid = '';
   @Input() nombre;
   @Input() empresaCode;
   @Input() horarioCode;
   @Input() dni;
   @Input() telefono;
-  @Input() photoURL;
+  photoUrl;
 
   nombreEdit;
   horarioEdit;
   photoEdit;
 
-  editBool:Boolean;
+  editBool: Boolean;
   editWorker: FormGroup;
   constructor(
     public mdlCtrl: ModalController,
@@ -38,11 +39,16 @@ export class UinfoPage implements OnInit {
     public authService: AuthService,
     public afs: AngularFirestore,
     private fb: FormBuilder,
-  ) {}
+    private storage: AngularFireStorage
+  ) {
+    
+  }
 
   public closeModal() {
     this.mdlCtrl.dismiss();
   }
+
+
 
   ngOnInit() {
     this.nombreEdit = this.nombre;
@@ -56,44 +62,43 @@ export class UinfoPage implements OnInit {
     this.empresa = this.afs
       .doc<Empresa>(`empresas/${this.empresaCode}`)
       .valueChanges();
-    this.editWorker = this.fb.group({
-
-    });
+    this.editWorker = this.fb.group({});
 
     // Listado de horarios de la empresa a la que pertenece el usuario logeado
     this.horariosEmpresas = this.afs
       .collection<Horario>(`empresas/${this.empresaCode}/horarios/`)
       .valueChanges();
+    const ref = this.storage.ref(`profile/${this.uid}`);
+    this.photoUrl = ref.getDownloadURL().toPromise();
   }
 
   edit() {
     this.editBool = true;
   }
-  submit(){
-    
-    if(this.nombreEdit !== this.nombre){
+  submit() {
+    if (this.nombreEdit !== this.nombre) {
       this.editNombre();
-    } 
-    if(this.horarioEdit !== this.horario){
+    }
+    if (this.horarioEdit !== this.horario) {
       this.editHorario();
     }
     this.editBool = false;
   }
 
-  private editNombre(){
+  private editNombre() {
     this.afs.doc(`users/${this.uid}`).update({
-      nombre: this.nombreEdit,
+      nombre: this.nombreEdit
     });
     this.nombre = this.nombreEdit;
   }
-  private editHorario(){
+  private editHorario() {
     this.afs.doc(`users/${this.uid}`).update({
-      horario: this.horarioEdit,
+      horario: this.horarioEdit
     });
     this.horarioCode = this.horarioEdit;
     this.refreshHorario();
   }
-  private refreshHorario(){
+  private refreshHorario() {
     this.horario = this.afs
       .doc<Horario>(`empresas/${this.empresaCode}/horarios/${this.horarioCode}`)
       .valueChanges();

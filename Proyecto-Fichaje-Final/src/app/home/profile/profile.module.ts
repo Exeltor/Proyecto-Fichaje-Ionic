@@ -10,6 +10,7 @@ import { RegisterUserModalComponent } from './register-user-modal/register-user-
 import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
 import { EditBusinessModalComponent } from './edit-business-modal/edit-business-modal.component';
 import { AddHorarioModalComponent } from './add-horario-modal/add-horario-modal.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
 const routes: Routes = [
   {
     path: '',
@@ -24,7 +25,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ImageCropperModule
   ],
   declarations: [ProfilePage, RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent, AddHorarioModalComponent]
 })
