@@ -7,11 +7,6 @@
   </feature>
 
 
-  <feature name="RequestLocationAccuracy">
-    <param name="ios-package" value="RequestLocationAccuracy"/>
-  </feature>
-
-
   <feature name="Diagnostic">
     <param name="ios-package" value="Diagnostic"/>
     <param name="onload" value="true"/>

@@ -12,15 +12,20 @@
         <ion-row>
             <ion-col size-lg="6" offset-lg="3">
                 <ion-card>
-                    <ion-list *ngIf="(authService.user | async)?.admin">
+                    <ion-list>
                         <ion-list-header>{{ (empresa | async)?.Nombre }}</ion-list-header>
-                        <ion-item-sliding *ngFor="let user of fireList | async">
+                        <ion-item-sliding *ngFor="let user of listaWorkers">
                             <ion-item *ngIf="(authService.user | async)?.DNI != user.DNI">
                                 <ion-avatar slot="start">
-                                    <img src="../../../assets/res/avatar.svg" />
+                                    <ion-img *ngIf="(user.photoUrl | async)"
+                                        [src]="(user.photoUrl | async)">
+                                    </ion-img>
+                                    <ion-img *ngIf="!(user.photoUrl | async)"
+                                        src="../../../assets/res/avatar.svg">
+                                    </ion-img>
                                 </ion-avatar>
                                 <ion-label
-                                    (click)="presentModal(user.uid, user.nombre, user.empresa, user.horario, user.DNI, user.telefono, user.photoURL)">
+                                    (click)="presentModal(user.uid, user.nombre, user.empresa, user.horario, user.DNI, user.telefono)">
                                     <h2>{{ user.nombre }}</h2>
                                     <p>DNI: {{ user.DNI }}</p>
                                 </ion-label>

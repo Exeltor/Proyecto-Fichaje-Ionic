@@ -17,11 +17,11 @@
                         <ion-icon slot="icon-only" name="create-outline"></ion-icon>
                     </ion-button>
                 </ion-buttons>
-                <ion-img *ngIf="(authService.user | async)?.photoUrl" [src]="(authService.user | async)?.photoUrl"
-                    class="profileimg">
+                <ion-img *ngIf="(photoUrl | async)" [src]="(photoUrl | async)" class="profileimg"
+                    (click)="getCordovaAvailable()">
                 </ion-img>
-                <ion-img *ngIf="!(authService.user | async)?.photoUrl" src="../../../assets/res/avatar.svg"
-                    class="profileimg">
+                <ion-img *ngIf="!(photoUrl | async)" src="../../../assets/res/avatar.svg" class="profileimg"
+                    (click)="getCordovaAvailable()">
                 </ion-img>
             </ion-col>
         </ion-row>
@@ -94,5 +94,5 @@
             </ion-fab-button>
         </ion-fab-list>
     </ion-fab>
-
+    <input #fileInput type="file" (change)=" addFile($event)" type="file" accept='image/*' style="display:none;">
 </ion-content>

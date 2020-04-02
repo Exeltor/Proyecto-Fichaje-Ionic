@@ -15,7 +15,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx'
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -43,7 +42,6 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    
   ],
   providers: [
     AngularFireAuth,
@@ -51,7 +49,6 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
     AngularFireAuthGuard,
     AngularFirestoreModule,
     Geolocation,
-    LocationAccuracy,
     Diagnostic,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

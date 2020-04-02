@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
-import { LocationAccuracy } from "@ionic-native/location-accuracy/ngx";
 import { AuthService } from "../auth/auth.service";
 import { take } from "rxjs/operators";
 import { AngularFirestore } from "@angular/fire/firestore";
