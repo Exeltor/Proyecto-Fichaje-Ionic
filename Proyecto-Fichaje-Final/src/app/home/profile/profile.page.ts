@@ -1,6 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { AuthService } from "src/app/auth/auth.service";
-import { ModalController, Platform, ActionSheetController } from "@ionic/angular";
+import {
+  ModalController,
+  Platform,
+  ActionSheetController
+} from "@ionic/angular";
 import { RegisterUserModalComponent } from "./register-user-modal/register-user-modal.component";
 import { EditBusinessModalComponent } from "./edit-business-modal/edit-business-modal.component";
 import { EditUserModalComponent } from "./edit-user-modal/edit-user-modal.component";
@@ -11,7 +15,8 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { PushNotificationsService } from "../../services/push-notifications.service";
 import { AddHorarioModalComponent } from "./add-horario-modal/add-horario-modal.component";
 import { Plugins, CameraResultType } from "@capacitor/core";
-import { CroppingModalComponent } from 'src/app/shared/cropping-modal/cropping-modal.component';
+import { CroppingModalComponent } from "src/app/shared/cropping-modal/cropping-modal.component";
+import { AngularFireStorage } from "@angular/fire/storage";
 
 const { Camera } = Plugins;
 @Component({
@@ -21,6 +26,7 @@ const { Camera } = Plugins;
 })
 export class ProfilePage implements OnInit {
   horario: Observable<any>;
+  photoUrl;
   myImage;
   @ViewChild("fileInput") inputRef: ElementRef;
   constructor(
@@ -30,12 +36,15 @@ export class ProfilePage implements OnInit {
     private afs: AngularFirestore,
     private platform: Platform,
     public actionSheetController: ActionSheetController,
+    private storage: AngularFireStorage
   ) {}
 
   ngOnInit() {
     this.pushNotifications.getToken();
     this.horario = this.authService.user.pipe(
       switchMap(user => {
+        const ref = this.storage.ref(`profile/${user.uid}`);
+        this.photoUrl = ref.getDownloadURL().toPromise();
         return this.afs
           .doc<Horario>(`empresas/${user.empresa}/horarios/${user.horario}`)
           .valueChanges();
@@ -122,11 +131,10 @@ export class ProfilePage implements OnInit {
     // You can access the original file using image.path, which can be
     // passed to the Filesystem API to read the raw data of the image,
     // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-    console.log(image);
     // Can be set to the src of an image now
     this.myImage = image.dataUrl;
 
-    this.openCropperModal()
+    this.openCropperModal();
     //this.path = this.getImgContent(image.webPath);
   }
 
@@ -135,10 +143,10 @@ export class ProfilePage implements OnInit {
       const reader = new FileReader();
       reader.onload = (event: any) => {
         this.myImage = event.target.result;
+        this.openCropperModal();
       };
-      this.openCropperModal();
+      reader.readAsDataURL(event.target.files[0]);
     }
-    
   }
 
   getCordovaAvailable() {
@@ -171,25 +179,28 @@ export class ProfilePage implements OnInit {
           text: "Cancel",
           icon: "close",
           role: "cancel",
-          handler: () => {
-            console.log("Cancel clicked");
-          }
+          handler: () => {}
         }
       ]
     });
     await actionSheet.present();
   }
 
-  openCropperModal(){
+  openCropperModal() {
     this.modalController
-        .create({
-          component: CroppingModalComponent,
-          componentProps: {
-            myImage: this.myImage
-          }
-        })
-        .then(modalEl => {
-          modalEl.present();
+      .create({
+        component: CroppingModalComponent,
+        componentProps: {
+          myImage: this.myImage,
+          userUid: this.authService.userUid
+        }
+      })
+      .then(modalEl => {
+        modalEl.present();
+        modalEl.onDidDismiss().then(() => {
+          const ref = this.storage.ref(`profile/${this.authService.userUid}`);
+          this.photoUrl = ref.getDownloadURL();
         });
+      });
   }
 }

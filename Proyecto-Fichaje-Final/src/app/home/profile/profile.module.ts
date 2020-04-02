@@ -11,6 +11,7 @@ import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.compon
 import { EditBusinessModalComponent } from './edit-business-modal/edit-business-modal.component';
 import { AddHorarioModalComponent } from './add-horario-modal/add-horario-modal.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { CroppingModalComponent } from 'src/app/shared/cropping-modal/cropping-modal.component';
 const routes: Routes = [
   {
     path: '',
@@ -19,7 +20,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  entryComponents: [RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent, AddHorarioModalComponent],
+  entryComponents: [RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent, AddHorarioModalComponent, CroppingModalComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -28,6 +29,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ImageCropperModule
   ],
-  declarations: [ProfilePage, RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent, AddHorarioModalComponent]
+  declarations: [ProfilePage, RegisterUserModalComponent, EditUserModalComponent, EditBusinessModalComponent, AddHorarioModalComponent, CroppingModalComponent]
 })
 export class ProfilePageModule {}

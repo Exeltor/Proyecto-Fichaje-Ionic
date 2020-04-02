@@ -15,9 +15,6 @@ import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
 import { AlertService } from "../services/alert.service";
-import { Horario } from "../models/horario.model";
-import { AngularFireStorage } from '@angular/fire/storage';
-
 
 @Injectable({
   providedIn: "root"
@@ -27,9 +24,6 @@ export class AuthService {
   empresa: Observable<Empresa>;
   Nombre: string;
   userUid;
-  id;
-  photoUrl;
-
   constructor(
     public afAuth: AngularFireAuth,
     private afs: AngularFirestore,
@@ -39,15 +33,12 @@ export class AuthService {
     private loadingController: LoadingController,
     private logger: LoggingService,
     private sendPush: SendPushService,
-    private alertService: AlertService,
-    private storage: AngularFireStorage
+    private alertService: AlertService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
         if (user) {
           this.userUid = user.uid;
-          const ref = this.storage.ref(`profile/${this.userUid}`);
-          this.photoUrl = ref.getDownloadURL().toPromise();
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
         } else {
           return of(null);
@@ -286,20 +277,18 @@ export class AuthService {
   }
 
   validateBusiness(data) {
-
-    console.log(data.CIF)
-    console.log(data.DNI)
+    console.log(data.CIF);
+    console.log(data.DNI);
 
     this.afs
-    .collection(`empresasPendientes`)
-    .doc(data.CIF)
-    .set({
-      cif: data.CIF,
-      dni: data.DNI
-    })
-    .catch(error => {});
+      .collection(`empresasPendientes`)
+      .doc(data.CIF)
+      .set({
+        cif: data.CIF,
+        dni: data.DNI
+      })
+      .catch(error => {});
   }
-
 
   login(email: string, password: string) {
     this.loadingController
@@ -586,7 +575,7 @@ export class AuthService {
       })
       .toPromise();
   }
-  crearHorario(dataHorario, cif){
+  crearHorario(dataHorario, cif) {
     dataHorario.forEach(horario => {
       let stringId =
         horario.horaEntrada.replace(":", "") +
@@ -596,17 +585,16 @@ export class AuthService {
         horario.numPausas +
         "_" +
         horario.timePausa;
-        this.afs.doc(`empresas/${cif}/horarios/${stringId}`).set({
-          horaEntrada: horario.horaEntrada,
-          horaSalida: horario.horaSalida,
-          pausas: {
-            num: horario.numPausas,
-            tiempo: horario.timePausa
-          },
-          code: stringId
-        })
+      this.afs.doc(`empresas/${cif}/horarios/${stringId}`).set({
+        horaEntrada: horario.horaEntrada,
+        horaSalida: horario.horaSalida,
+        pausas: {
+          num: horario.numPausas,
+          tiempo: horario.timePausa
+        },
+        code: stringId
+      });
     });
-      
   }
   createHorario(data) {
     let stringId =

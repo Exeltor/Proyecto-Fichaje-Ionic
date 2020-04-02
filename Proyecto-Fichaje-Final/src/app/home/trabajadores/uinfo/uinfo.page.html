@@ -15,9 +15,11 @@
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-img *ngIf="(photoUrl | async)" [src]="(photoUrl | async)" class="profileimg">
+        <ion-img *ngIf="(photoUrl | async)" [src]="(photoUrl | async)" class="profileimg"
+          (click)="getCordovaAvailable()">
         </ion-img>
-        <ion-img *ngIf="!(photoUrl | async)" src="../../../assets/res/avatar.svg" class="profileimg">
+        <ion-img *ngIf="!(photoUrl | async)" src="../../../assets/res/avatar.svg" class="profileimg"
+          (click)="getCordovaAvailable()">
         </ion-img>
       </ion-col>
       <ion-col size="3"></ion-col>
@@ -81,4 +83,6 @@
       <ion-icon name="checkmark" (click)="submit()"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <input #fileInput type="file" (change)=" addFile($event)" type="file" accept='image/*' style="display:none;">
 </ion-content>

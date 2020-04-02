@@ -2,23 +2,27 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
+import { ToastController, ModalController } from '@ionic/angular';
+import { AlertService } from 'src/app/services/alert.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadService {
-  uploadPercent: Observable<number>;
   downloadURL: Observable<string>;
 
-  constructor(private afs: AngularFirestore, private storage: AngularFireStorage) { }
+  constructor(private alertService: AlertService, private storage: AngularFireStorage) { }
 
   uploadFile(dataURL, directory:string, filename:string){
     const file = this.dataURItoBlob(dataURL);
     const filePath = `${directory}/${filename}`;
     const fileRef = this.storage.ref(filePath);
-    const task = this.storage.upload(filePath, file);
+    this.storage.upload(filePath, file).then(() => {
+      this.alertService.presentToastSinError("Correcto", "Foto subida correctamente", "modal")
+    });
 
-    this.uploadPercent = task.percentageChanges();
+    
+    
   }
 
   dataURItoBlob(dataURI) {

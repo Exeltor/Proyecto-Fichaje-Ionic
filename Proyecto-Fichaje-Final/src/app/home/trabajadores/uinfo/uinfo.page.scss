@@ -1,6 +1,7 @@
-
 .profileimg {
-    border-radius: 50% !important;
-    overflow: hidden;
-
+  border-radius: 50% !important;
+  overflow: hidden;
+}
+.profileimg:hover {
+  opacity: 50%;
 }
