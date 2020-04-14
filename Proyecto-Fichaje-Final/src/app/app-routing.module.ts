@@ -14,6 +14,10 @@ const routes: Routes = [
     path: 'recuperarpass',
     loadChildren: () => import('./auth/recuperarpass/recuperarpass.module').then( m => m.RecuperarpassPageModule)
   },
+  {
+    path: 'newpass',
+    loadChildren: () => import('./auth/newpass/newpass.module').then( m => m.NewpassPageModule)
+  },
 
 ];
 

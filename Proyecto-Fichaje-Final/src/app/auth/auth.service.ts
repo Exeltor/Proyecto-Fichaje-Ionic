@@ -18,6 +18,7 @@ import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
 import { AlertService } from '../services/alert.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: "root"
@@ -38,7 +39,8 @@ export class AuthService {
     private loadingController: LoadingController,
     private logger: LoggingService,
     private sendPush: SendPushService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private fb: FormBuilder
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -301,6 +303,20 @@ export class AuthService {
             );
             this.alertService.loginError(error);
           });
+      });
+  }
+//RECUPERAR CONTRASEÑA
+  recuperarpass(email: string) {
+    this.loadingController
+      .create({
+        keyboardClose: true,
+        message: "Validando Email..."
+      })
+      .then(loadingEl => {
+        loadingEl.present();
+        return this.afAuth.auth
+          .sendPasswordResetEmail(email,{url:"http://localhost:8100/auth"}).then(function(){})
+          
       });
   }
 

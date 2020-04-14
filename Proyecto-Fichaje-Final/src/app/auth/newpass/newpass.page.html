@@ -1,0 +1,34 @@
+<!--HEADER-->
+<ion-header>
+  <ion-toolbar>
+    <!--TITULO-->
+    <ion-title>Nueva Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+<!--BODY-->
+<ion-content>
+  <ion-grid style="margin-top: 45%;">
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+        <ion-col>
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-label><h1>Reestablece tu contraseña</h1></ion-label>
+          </ion-row>
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-item>
+              <ion-label position="floating">New Password</ion-label>
+              <ion-input type="password" ngModel name="newpassword" required minlength="6" #passwordCtrl="ngModel"></ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="floating">Repeat Password</ion-label>
+              <ion-input type="password" ngModel name="repeatpassword" required minlength="6" #passwordCtrl="ngModel"></ion-input>
+            </ion-item>
+
+        </ion-row>
+        </ion-col>
+    </form>
+    
+  </ion-grid>
+  
+</ion-content>
+<ion-button expand="block" class="ion-margin" type="submit">Enviar</ion-button>
