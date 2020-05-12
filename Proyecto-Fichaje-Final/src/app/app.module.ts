@@ -21,7 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValidateBusinessModalComponent } from './validate-business-modal/validate-business-modal.component';
 
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
-
+import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 
 @NgModule({
   declarations: [AppComponent, 
@@ -42,6 +42,7 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    
   ],
   providers: [
     AngularFireAuth,

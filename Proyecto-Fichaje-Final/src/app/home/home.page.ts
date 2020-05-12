@@ -7,7 +7,7 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-
+  
   constructor(private authService: AuthService) {}
 
   logout() {

@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { AuthPage } from './auth.page';
 import { LoginComponent } from './login/login.component';
+import { GoogleMapsAPIWrapper } from '@agm/core';
 
 const routes: Routes = [
   {

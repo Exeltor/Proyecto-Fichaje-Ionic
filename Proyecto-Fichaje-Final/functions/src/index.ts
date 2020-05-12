@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as cors from "cors";
+import * as https from 'https';
 import { Timestamp } from "@google-cloud/firestore";
 const corsHandler = cors({ origin: "*" });
 admin.initializeApp(functions.config().firebase);

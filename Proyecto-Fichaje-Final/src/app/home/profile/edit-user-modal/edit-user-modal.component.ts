@@ -89,7 +89,7 @@ export class EditUserModalComponent implements OnInit {
           `https://nominatim.openstreetmap.org/search/${direccionEncoded}?format=json`
         )
         .toPromise();
-
+          
       latLon = [jsonQ[0].lat, jsonQ[0].lon];
     }
 
