@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
-  AngularFirestoreDocument
+  AngularFirestoreDocument,
 } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { AlertController, LoadingController } from "@ionic/angular";
@@ -15,9 +15,10 @@ import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
 import { AlertService } from "../services/alert.service";
-
+import { StepperSelectionEvent } from "@angular/cdk/stepper";
+declare var google: any;
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class AuthService {
   user: Observable<User>;
@@ -36,7 +37,7 @@ export class AuthService {
     private alertService: AlertService
   ) {
     this.user = this.afAuth.authState.pipe(
-      switchMap(user => {
+      switchMap((user) => {
         if (user) {
           this.userUid = user.uid;
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
@@ -47,7 +48,7 @@ export class AuthService {
     );
 
     this.empresa = this.user.pipe(
-      switchMap(user => {
+      switchMap((user) => {
         if (user) {
           return this.afs
             .doc<Empresa>(`empresas/${user.empresa}`)
@@ -67,9 +68,9 @@ export class AuthService {
     this.loadingController
       .create({
         keyboardClose: true,
-        message: "Creando usuario"
+        message: "Creando usuario",
       })
-      .then(loadingEl => {
+      .then((loadingEl) => {
         loadingEl.present();
         const tel = `+${datos.country}${datos.telefono}`;
         const email = datos.email;
@@ -78,17 +79,18 @@ export class AuthService {
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
             password,
-            tel
+            tel,
           })
           .subscribe(
-            response => {
+            (response) => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
+
               this.setDoc(
                 jsonResponse.uid,
                 datos.nombre,
                 datos.DNI,
                 datos.country,
-                "",
+                '',
                 datos.telefono,
                 datos.horasTrabajo,
                 false,
@@ -97,6 +99,7 @@ export class AuthService {
                 datos.lonPersona,
                 datos.horarioCF
               );
+              
               this.alertService.presentToastSinError(
                 "Creado",
                 `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`,
@@ -104,7 +107,7 @@ export class AuthService {
               );
               loadingEl.dismiss();
             },
-            err => {
+            (err) => {
               const jsonError = JSON.parse(JSON.stringify(err));
               const error = jsonError.error.text;
               let errorMessage;
@@ -128,15 +131,16 @@ export class AuthService {
             }
           );
       });
+
   }
 
   registerAdmin(datos, cifEmpresa) {
     this.loadingController
       .create({
         keyboardClose: true,
-        message: "Creando administrador"
+        message: "Creando administrador",
       })
-      .then(loadingEl => {
+      .then((loadingEl) => {
         loadingEl.present();
         const tel = `+${datos.country}${datos.telefono}`;
         const email = datos.email;
@@ -145,10 +149,10 @@ export class AuthService {
           .post("https://us-central1-fichaje-uni.cloudfunctions.net/register", {
             email,
             password,
-            tel
+            tel,
           })
           .subscribe(
-            response => {
+            (response) => {
               const jsonResponse = JSON.parse(JSON.stringify(response));
               this.setDoc(
                 jsonResponse.uid,
@@ -172,7 +176,7 @@ export class AuthService {
               );
               this.router.navigateByUrl("/auth");
             },
-            err => {
+            (err) => {
               const jsonError = JSON.parse(JSON.stringify(err));
               const error = jsonError.error.text;
               let errorMessage;
@@ -216,7 +220,7 @@ export class AuthService {
       `users/${uid}`
     );
 
-    this.user.pipe(take(1)).subscribe(data => {
+    this.user.pipe(take(1)).subscribe((data) => {
       if (admin == false) {
         empresa = data.empresa;
       }
@@ -231,18 +235,18 @@ export class AuthService {
         empresa,
         horario: horarioCF,
         horasDiarias: hours,
-        localizacionCasa: { lat, lon }
+        localizacionCasa: { lat, lon },
       };
-
+      
       if (admin == false) {
         this.afs
           .collection("users")
           .ref.where("empresa", "==", data.empresa)
           .where("admin", "==", true)
           .get()
-          .then(docs => {
+          .then((docs) => {
             let uids: Array<string> = [];
-            docs.forEach(doc => {
+            docs.forEach((doc) => {
               uids.push(doc.data().uid);
             });
             this.sendPush.sendPush(
@@ -252,6 +256,7 @@ export class AuthService {
             );
           });
         userRef.set(userDoc);
+        this.getStepsWorkUser(lat,lon,empresa,uid);
         this.logger.logEvent(`User created: ${DNI}`, 3, "authService setDoc");
       } else {
         userRef.set(userDoc);
@@ -267,13 +272,13 @@ export class AuthService {
       .set({
         Nombre: data.nombreEmpresa,
         id: data.cif,
-        loc: [data.latEmpresa, data.lonEmpresa],
-        distancia: data.distancia
+        loc: [Number(data.latEmpresa), Number(data.lonEmpresa)],
+        distancia: data.distancia,
       })
       .then(() => {
         this.afs.doc(`empresasPendientes/${data.cif}`).delete();
       })
-      .catch(error => {});
+      .catch((error) => {});
   }
 
   validateBusiness(data) {
@@ -285,22 +290,22 @@ export class AuthService {
       .doc(data.CIF)
       .set({
         cif: data.CIF,
-        dni: data.DNI
+        dni: data.DNI,
       })
-      .catch(error => {});
+      .catch((error) => {});
   }
 
   login(email: string, password: string) {
     this.loadingController
       .create({
         keyboardClose: true,
-        message: "Iniciando Sesion..."
+        message: "Iniciando Sesion...",
       })
-      .then(loadingEl => {
+      .then((loadingEl) => {
         loadingEl.present();
         this.afAuth.auth
           .signInWithEmailAndPassword(email, password)
-          .then(val => {
+          .then((val) => {
             this.logger.logEvent(
               `User logged in: ${val.user.uid}`,
               3,
@@ -309,7 +314,7 @@ export class AuthService {
             loadingEl.dismiss();
             this.router.navigateByUrl("/home");
           })
-          .catch(err => {
+          .catch((err) => {
             let error;
 
             if (
@@ -345,7 +350,7 @@ export class AuthService {
 
   signInWithGoogle() {
     const provider = new auth.GoogleAuthProvider();
-    this.afAuth.auth.signInWithPopup(provider).then(val => {
+    this.afAuth.auth.signInWithPopup(provider).then((val) => {
       if (val.additionalUserInfo.isNewUser) {
         val.user.delete();
         this.alertController
@@ -355,11 +360,11 @@ export class AuthService {
             buttons: [
               {
                 text: "Aceptar",
-                role: "cancel"
-              }
-            ]
+                role: "cancel",
+              },
+            ],
           })
-          .then(alert => {
+          .then((alert) => {
             alert.present();
             this.logger.logEvent(
               `Sign in with Google failed, no account linked`,
@@ -380,7 +385,7 @@ export class AuthService {
 
   signInWithFacebook() {
     const provider = new auth.FacebookAuthProvider();
-    this.afAuth.auth.signInWithPopup(provider).then(val => {
+    this.afAuth.auth.signInWithPopup(provider).then((val) => {
       if (val.additionalUserInfo.isNewUser) {
         val.user.delete();
         this.alertController
@@ -390,11 +395,11 @@ export class AuthService {
             buttons: [
               {
                 text: "Aceptar",
-                role: "cancel"
-              }
-            ]
+                role: "cancel",
+              },
+            ],
           })
-          .then(alert => {
+          .then((alert) => {
             alert.present();
             this.logger.logEvent(
               `Sign in with Facebook failed, no account linked`,
@@ -436,17 +441,18 @@ export class AuthService {
       nombre: newData.nombre,
       countryCode: newData.country,
       horario: newData.horarioCF,
-      localizacionCasa: { lat: newData.latPersona, lon: newData.lonPersona }
+      localizacionCasa: { lat: newData.latPersona, lon: newData.lonPersona },
     });
+    this.getStepsWorkUser(newData.latPersona, newData.lonPersona, user.empresa, this.userUid);
 
     const phoneStatus = await this.changePhone(
       newData.telefono,
       newData.country
-    ).catch(err => {
+    ).catch((err) => {
       if (err.error.text === "Done") {
         this.afs.doc(`users/${this.userUid}`).update({
           telefono: newData.telefono,
-          countryCode: newData.country
+          countryCode: newData.country,
         });
 
         return "success";
@@ -460,11 +466,11 @@ export class AuthService {
     });
     if (phoneStatus === "error") return;
 
-    const emailStatus = await this.changeEmail(newData.email).catch(err => {
+    const emailStatus = await this.changeEmail(newData.email).catch((err) => {
       if (err.error.text === "Done") {
         this.afs.doc(`users/${this.userUid}`).update({
           telefono: newData.telefono,
-          countryCode: newData.country
+          countryCode: newData.country,
         });
 
         return "success";
@@ -499,18 +505,29 @@ export class AuthService {
         .doc<Empresa>(`empresas/${newData.CIF}`)
         .valueChanges()
         .pipe(take(1))
-        .subscribe(empresa => {
+        .subscribe((empresa) => {
+          console.log(newData);
           this.afs.doc(`empresas/${newData.CIF}`).update({
             Nombre: newData.Nombre,
             id: newData.CIF,
-            loc: [newData.loc1, newData.loc2],
-            distancia: newData.distancia
+            loc: [Number(newData.latEmpresa), Number(newData.lonEmpresa)],
+            distancia: newData.distancia,
           });
 
           //this.afs.collection(`users/${this.userUid}/historicoDatos`).add(previousDoc);
           // this.updateHistory(newData, user);
           // this.logger.logEvent(`User ${user.uid} updated profile`, 3, 'authService updateProfile')
         });
+      this.getStepsWorkEmpresa(
+        newData.latEmpresa,
+        newData.lonEmpresa,
+        newData.CIF
+      );
+      this.alertService.presentToastSinError(
+        "Empresa actualizada",
+        "Empresa actualizada con exito",
+        "modal"
+      );
     } catch (error) {
       console.log(error);
       // this.logger.logEvent(`${this.userUid}: ${error}`, 4, 'authService updateProfile')
@@ -527,7 +544,7 @@ export class AuthService {
       changes = {
         ...changes,
         "-nombre": previousData.nombre,
-        "+nombre": newData.nombre
+        "+nombre": newData.nombre,
       };
     }
 
@@ -535,7 +552,7 @@ export class AuthService {
       changes = {
         ...changes,
         "-country": previousData.countryCode,
-        "+country": newData.country
+        "+country": newData.country,
       };
     }
 
@@ -543,7 +560,7 @@ export class AuthService {
       changes = {
         ...changes,
         "-telefono": previousData.telefono,
-        "+telefono": newData.telefono
+        "+telefono": newData.telefono,
       };
     }
 
@@ -571,12 +588,12 @@ export class AuthService {
       .post("https://us-central1-fichaje-uni.cloudfunctions.net/updatePhone", {
         tel: newPhone,
         country: newCountry,
-        uid: this.afAuth.auth.currentUser.uid
+        uid: this.afAuth.auth.currentUser.uid,
       })
       .toPromise();
   }
   crearHorario(dataHorario, cif) {
-    dataHorario.forEach(horario => {
+    dataHorario.forEach((horario) => {
       let stringId =
         horario.horaEntrada.replace(":", "") +
         "_" +
@@ -590,9 +607,9 @@ export class AuthService {
         horaSalida: horario.horaSalida,
         pausas: {
           num: horario.numPausas,
-          tiempo: horario.timePausa
+          tiempo: horario.timePausa,
         },
-        code: stringId
+        code: stringId,
       });
     });
   }
@@ -606,15 +623,15 @@ export class AuthService {
       "_" +
       data.timePausa;
 
-    this.user.pipe(take(1)).subscribe(user => {
+    this.user.pipe(take(1)).subscribe((user) => {
       this.afs.doc(`empresas/${user.empresa}/horarios/${stringId}`).set({
         horaEntrada: data.horaEntrada,
         horaSalida: data.horaSalida,
         pausas: {
           num: data.numPausas,
-          tiempo: data.timePausa
+          tiempo: data.timePausa,
         },
-        code: stringId
+        code: stringId,
       });
     });
   }
@@ -622,7 +639,7 @@ export class AuthService {
   logout() {
     this.afAuth.auth
       .signOut()
-      .then(val => {
+      .then((val) => {
         this.router.navigateByUrl("auth");
         this.logger.logEvent(
           `User ${this.userUid} logged out`,
@@ -630,8 +647,102 @@ export class AuthService {
           "authService logout"
         );
       })
-      .catch(err => {
+      .catch((err) => {
         this.logger.logEvent(err, 4, "authService logout");
+      });
+  }
+  getStepsWorkUser(latInicio, lonInicio, CIF, uid) {
+    const directionsService = new google.maps.DirectionsService();
+    this.afs
+      .doc<Empresa>(`empresas/${CIF}`)
+      .valueChanges()
+      .pipe(take(1))
+      .toPromise()
+      .then((empresa) => {
+        
+        directionsService.route(
+          {
+            origin: { lat: latInicio, lng: lonInicio },
+            destination: { lat: Number(empresa.loc[0]), lng: Number(empresa.loc[1]) },
+            waypoints: [],
+            optimizeWaypoints: true,
+            travelMode: "DRIVING",
+          },
+          (response, status) => {
+            if (status === "OK") {
+              var docSteps: Array<any> = [];
+              var steps = response["routes"][0]["legs"][0]["steps"];
+              for (var i = 0; i < steps.length; i++) {
+                var doc = {};
+                doc["duracion"] = steps[i]["duration"]["value"];
+                doc["inicio"] = {
+                  lat: steps[i]["start_location"].lat(),
+                  lon: steps[i]["start_location"].lng(),
+                };
+                doc["final"] = {
+                  lat: steps[i]["end_location"].lat(),
+                  lon: steps[i]["end_location"].lng(),
+                };
+                docSteps.push(doc);
+              }
+
+              this.afs.doc(`users/${uid}`).update({
+                stepsToWork: docSteps,
+              });
+            } else {
+              console.log("Directions request failed due to " + status);
+            }
+          }
+        );
+      });
+  }
+  getStepsWorkEmpresa(latLlegada, lonLlegada, CIF) {
+    const directionsService = new google.maps.DirectionsService();
+    this.afs
+      .collection<User>(`users`, (ref) => ref.where("empresa", "==", CIF))
+      .valueChanges()
+      .pipe()
+      .toPromise()
+      .then((users) => {
+        users.forEach((user) => {
+          directionsService.route(
+            {
+              origin: {
+                lat: user.localizacionCasa.lat,
+                lng: user.localizacionCasa.lon,
+              },
+              destination: { lat: Number(latLlegada), lng: Number(lonLlegada) },
+              waypoints: [],
+              optimizeWaypoints: true,
+              travelMode: "DRIVING",
+            },
+            (response, status) => {
+              if (status === "OK") {
+                var docSteps: Array<any> = [];
+                var steps = response["routes"][0]["legs"][0]["steps"];
+                for (var i = 0; i < steps.length; i++) {
+                  var doc = {};
+                  doc["duracion"] = steps[i]["duration"]["value"];
+                  doc["inicio"] = {
+                    lat: steps[i]["start_location"].lat(),
+                    lon: steps[i]["start_location"].lng(),
+                  };
+                  doc["final"] = {
+                    lat: steps[i]["end_location"].lat(),
+                    lon: steps[i]["end_location"].lng(),
+                  };
+                  docSteps.push(doc);
+                }
+
+                this.afs.doc(`users/${user.uid}`).update({
+                  stepsToWork: docSteps,
+                });
+              } else {
+                console.log("Directions request failed due to " + status);
+              }
+            }
+          );
+        });
       });
   }
 }
