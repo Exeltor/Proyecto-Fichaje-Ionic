@@ -18,7 +18,7 @@ import { auth } from "firebase/app";
 import { LoggingService } from "../logging/logging.service";
 import { SendPushService } from "../services/send-push.service";
 import { AlertService } from '../services/alert.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder} from '@angular/forms';
 
 @Injectable({
   providedIn: "root"
