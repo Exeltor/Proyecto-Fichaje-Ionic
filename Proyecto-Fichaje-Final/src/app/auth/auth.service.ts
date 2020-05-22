@@ -39,8 +39,7 @@ export class AuthService {
     private loadingController: LoadingController,
     private logger: LoggingService,
     private sendPush: SendPushService,
-    private alertService: AlertService,
-    private fb: FormBuilder
+    private alertService: AlertService
   ) {
     this.user = this.afAuth.authState.pipe(
       switchMap(user => {
@@ -305,19 +304,15 @@ export class AuthService {
           });
       });
   }
-//RECUPERAR CONTRASEÑA
+
   recuperarpass(email: string) {
-    this.loadingController
-      .create({
-        keyboardClose: true,
-        message: "Validando Email..."
-      })
-      .then(loadingEl => {
-        loadingEl.present();
-        return this.afAuth.auth
-          .sendPasswordResetEmail(email,{url:"http://localhost:8100/auth"}).then(function(){})
-          
-      });
+    this.afAuth.auth.sendPasswordResetEmail(email)
+      .then(function(){
+        alert('Se ha enviado un correo al email introducido con los pasos a seguir para restablecer tu contraseña.');
+      }, function (error) {
+        console.log(error);
+        alert('Este email no se encuentra registrado. Intentelo de nuevo con uno que sí lo esté.')
+    })
   }
 
   linkWithFacebook() {
