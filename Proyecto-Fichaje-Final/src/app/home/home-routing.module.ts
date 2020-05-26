@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { HomePage } from "./home.page";
-import { AdminGuard } from '../guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -36,16 +35,6 @@ const routes: Routes = [
         ]
       },
       {
-        path: "trabajadores",
-        children: [
-          {
-            path: "",
-            loadChildren: "./trabajadores/trabajadores.module#TrabajadoresPageModule",
-            canActivate: [AdminGuard]
-          }
-        ]
-      },
-      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"
@@ -57,7 +46,7 @@ const routes: Routes = [
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
   },
-  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+  { path: 'uinfo', loadChildren: './hora/uinfo/uinfo.module#UinfoPageModule' }
 ];
 
 @NgModule({

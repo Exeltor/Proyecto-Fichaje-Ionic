@@ -4,11 +4,10 @@ export interface User {
     DNI: string;
     empresa: string;
     admin: boolean;
-    superadmin: boolean;
     telefono: string;
     countryCode: string;
     horasDiarias: number;
-    horario?:string;
     localizacionCasa: {lat: any, lon: any}
-    photoUrl?: string;
 }
+// un usuario no necesita mas campos pero hay que relacionarle un horario
+// o al menos las horas a las que entra

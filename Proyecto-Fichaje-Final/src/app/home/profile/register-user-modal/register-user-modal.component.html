@@ -1,8 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Añadir Usuario</ion-title>
+    <ion-title>Introduce los Datos</ion-title>
     <ion-buttons slot="primary">
-      <ion-button fill="clear" (click)="modalDismiss()">Cerrar</ion-button>
+      <ion-button fill="clear" (click)="modalDismiss()">Cancelar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -12,99 +12,94 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-          <ion-card>
-            <ion-card-content>
-              <ion-item>
-                <ion-label position="floating">
-                  <ion-icon slot="start" name="mail"></ion-icon>
-                  Email
-                </ion-label>
-                <ion-input formControlName="email"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label position="floating">
-                  <ion-icon slot="start" name="key"></ion-icon>
-                  Contraseña
-                </ion-label>
-                <ion-input formControlName="password" type="password"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label position="floating">
-                  <ion-icon name="person"></ion-icon>
-                  Nombre y Apellidos
-                </ion-label>
-                <ion-input formControlName="nombre">
-                </ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label position="floating">
-                  <ion-icon slot="start" name="card"></ion-icon>
-                  DNI
-                </ion-label>
-                <ion-input formControlName="DNI"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-label positon="floating">
-                  <ion-icon slot="start" name="calendar-outline"></ion-icon>
-                  Horario Laboral
-                </ion-label>
-                <ion-select placeholder="Selecciona un horario" formControlName="horarioCF">
-                  <ion-select-option [value]="horarioEm.code" *ngFor="let horarioEm of horariosEmpresas | async">{{ horarioEm.horaEntrada}} - {{ horarioEm.horaSalida }}</ion-select-option>
-                </ion-select>
-              </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="mail"></ion-icon>
+              Email
+            </ion-label>
+            <ion-input formControlName="email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="key"></ion-icon>
+              Contraseña
+            </ion-label>
+            <ion-input formControlName="password" type="password"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon name="person"></ion-icon>
+              Nombre y Apellidos
+            </ion-label>
+            <ion-input formControlName="nombre">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="clipboard"></ion-icon>
+              DNI
+            </ion-label>
+            <ion-input formControlName="DNI"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="globe"></ion-icon>
+              País
+            </ion-label>
+            <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
+              <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-row>
+            <ion-col size="4">
               <ion-item>
                 <ion-label position="floating">
                   <ion-icon slot="start" name="globe"></ion-icon>
-                  Número de Teléfono
+                  País
                 </ion-label>
-                <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
-                  <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
-                </ion-select>
+                <ion-input value="+{{countryCode_.value}}" readonly="true"></ion-input>
               </ion-item>
-              <ion-row>
-                <ion-col size="4">
-                  <ion-item>
-                    <ion-input value="+{{countryCode_.value}}" readonly="true" disabled="true"></ion-input>
-                  </ion-item>
-                </ion-col>
-                <ion-col size="8">
-                  <ion-item class="ion-no-padding">
-                    <ion-input formControlName="telefono"></ion-input>
-                  </ion-item>
-                </ion-col>
-              </ion-row>
-              <ion-item>
+            </ion-col>
+            <ion-col size="8">
+              <ion-item class="ion-no-padding">
                 <ion-label position="floating">
-                  <ion-icon slot="start" name="alarm"></ion-icon>
-                  Horas de trabajo diarias
+                  <ion-icon slot="start" name="call"></ion-icon>
+                  Telefono
                 </ion-label>
-                <ion-input formControlName="horasTrabajo"></ion-input>
+                <ion-input formControlName="telefono"></ion-input>
               </ion-item>
-              <ion-item>
-                <ion-label position="floating">
-                  <ion-icon slot="start" name="map"></ion-icon>
-                  Direccion
-                </ion-label>
-                <ion-input type="text" formControlName="direccionPersona"></ion-input>
-                <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="personaCoords_.invalid && direccion_.dirty" ></ion-icon>
-                <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid"></ion-icon>
-              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="alarm"></ion-icon>
+              Horas de trabajo diarias
+            </ion-label>
+            <ion-input formControlName="horasTrabajo"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon slot="start" name="map"></ion-icon>
+              Direccion
+            </ion-label>
+            <ion-input type="text" formControlName="direccionPersona"></ion-input>
+            <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="personaCoords_.invalid && direccion_.dirty" ></ion-icon>
+            <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid"></ion-icon>
+          </ion-item>
 
-              <ion-button (click)="openMap()" expand="block" fill="clear" shape="round" [disabled]="direccion_.invalid">
-                Abrir Mapa
-              </ion-button>
-              <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
-              <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    
-      <ion-row class="ion-text-center">
-        <ion-col>
-          <ion-button expand="block" class="ion-margin" (click)="onSubmit()" [disabled]="!registerForm.valid">Crear Usuario</ion-button>
+          <ion-button (click)="openMap()" expand="block" fill="clear" shape="round" [disabled]="direccion_.invalid">
+            Abrir Mapa
+          </ion-button>
+          <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
+          <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
         </ion-col>
       </ion-row>
     </ion-grid>
+    <!-- fab placed to the bottom end -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button (click)="onSubmit()" [disabled]="!registerForm.valid">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
   </form>
 </ion-content>

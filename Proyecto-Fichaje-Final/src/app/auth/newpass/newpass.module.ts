@@ -1,26 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { FichaPage } from './ficha.page';
+import { NewpassPageRoutingModule } from './newpass-routing.module';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: FichaPage
-  }
-];
+import { NewpassPage } from './newpass.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    NewpassPageRoutingModule
   ],
-  declarations: [FichaPage]
+  declarations: [NewpassPage]
 })
-export class FichaPageModule {}
+export class NewpassPageModule {}

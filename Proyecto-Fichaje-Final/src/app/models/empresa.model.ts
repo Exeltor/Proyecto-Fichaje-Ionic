@@ -1,6 +1,6 @@
 export interface Empresa {
     id: string;
-    Nombre: string;
-    loc: [number,number];
+    nombre: string;
+    loc: [string,string];
     distancia: number;
 }

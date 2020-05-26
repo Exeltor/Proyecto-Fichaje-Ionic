@@ -15,20 +15,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx'
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ValidateBusinessModalComponent } from './validate-business-modal/validate-business-modal.component';
 
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
-import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 
 @NgModule({
-  declarations: [AppComponent, 
-    ValidateBusinessModalComponent],
-  entryComponents: [
-    ValidateBusinessModalComponent
-  ],
+  declarations: [AppComponent],
+  entryComponents: [],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -39,10 +33,7 @@ import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
     AngularFireStorageModule,
     AngularFireMessagingModule,
     HttpClientModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    
+    BrowserAnimationsModule
   ],
   providers: [
     AngularFireAuth,
@@ -50,7 +41,7 @@ import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
     AngularFireAuthGuard,
     AngularFirestoreModule,
     Geolocation,
-    Diagnostic,
+    LocationAccuracy,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

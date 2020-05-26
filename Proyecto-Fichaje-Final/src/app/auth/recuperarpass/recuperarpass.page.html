@@ -1,0 +1,39 @@
+<!--HEADER-->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!--BACK BUTTON-->
+      <ion-back-button defaultHref="auth"></ion-back-button>
+    </ion-buttons>
+    <!--TITULO-->
+    <ion-title>Recuperar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+<!--BODY-->
+<ion-content>
+  <ion-grid style="margin-top: 45%;">
+    <form #rPassForm="ngForm" (ngSubmit)="onSubmit(rPassForm)">
+        <ion-col>
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-label><h1>¿Has olvidado tu contraseña?</h1></ion-label>
+          </ion-row>
+          <ion-row class="ion-justify-content-center ion-align-items-center" 
+          style="padding-top: 10%; padding-left: 8%;padding-right: 8%;">
+            <ion-label>
+              A continuacion, introduzca su email y le enviaremos un correo, lo antes posible, para recuperar su contraseña.
+            </ion-label>
+          </ion-row>
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-item>
+                <ion-label position="floating">E-mail</ion-label>
+                <ion-input type="email" ngModel name="email" required email #emailCtrl="ngModel"></ion-input>
+            </ion-item>
+        </ion-row>
+        </ion-col>
+        <ion-button expand="block" class="ion-margin" type="submit">Enviar</ion-button>
+    </form>
+    
+  </ion-grid>
+  
+</ion-content>
+

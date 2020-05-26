@@ -12,10 +12,6 @@
             <ion-icon name="exit" slot="start"></ion-icon>
             <ion-label>Logout</ion-label>
           </ion-item>
-          <ion-item lines="none" (click)="validarEmpresa()" *ngIf="(authService.user | async)?.superadmin" button>
-            <ion-icon name="add" slot="start"></ion-icon>
-            <ion-label>Dar de alta empresa</ion-label>
-          </ion-item>
         </ion-menu-toggle>
       </ion-list>
     </ion-content>

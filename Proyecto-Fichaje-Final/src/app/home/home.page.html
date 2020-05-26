@@ -12,9 +12,5 @@
             <ion-label>Horario</ion-label>
             <ion-icon name="timer"></ion-icon>
         </ion-tab-button>
-        <ion-tab-button tab="trabajadores" *ngIf="(authService.user | async)?.admin">
-            <ion-label>Trabajadores</ion-label>
-            <ion-icon name="people"></ion-icon>
-        </ion-tab-button>
     </ion-tab-bar>
 </ion-tabs>

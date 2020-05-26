@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../auth.service";
-import { FormGroup, FormBuilder, Validators, FormArray } from "@angular/forms";
-import { ModalController } from "@ionic/angular";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { ModalController, NavController } from "@ionic/angular";
 import { PhoneValidator } from "../phone.validator";
 import { CIFValidator } from "../cif.validator";
 import { countryCodes } from "src/environments/environment";
@@ -33,16 +33,9 @@ export class RegisterempresaPage implements OnInit {
   password: string;
   horasTrabajo: number;
 
-  horaEntrada;
-  horaSalida;
-  numPausas;
-  timePausa;
-
   activeIndex = 0;
   registerCompany: FormGroup;
   registerAdmin: FormGroup;
-  horarioForm: FormGroup;
-  horarios=[];
   paises = countryCodes;
   constructor(
     private authService: AuthService,
@@ -63,8 +56,9 @@ export class RegisterempresaPage implements OnInit {
       latEmpresa: [null, Validators.required],
       lonEmpresa: [null, Validators.required],
       direccionEmpresa: ["", Validators.required],
-      distancia: [250, Validators.required],
+      distancia: [250, Validators.required]
     });
+
     this.registerAdmin = this.fb.group({
       email: ["", Validators.compose([Validators.email, Validators.required])],
       DNI: ["", Validators.required, DNIValidator.dni_check(this.afs)],
@@ -83,35 +77,6 @@ export class RegisterempresaPage implements OnInit {
       ],
       horasTrabajo: ["", Validators.max(24)]
     });
-
-    
-    this.horarioForm = this.fb.group({
-      horarios: this.fb.array([this.fb.group({
-        horaEntrada: ["08:00", Validators.required],
-        horaSalida: ["17:00", Validators.required],
-        numPausas: ["", Validators.required],
-        timePausa: ["", Validators.required]
-      })])
-    });
-  }
-
-  get horarioFormGetter() {
-    return this.horarioForm.get('horarios') as FormArray;
-  }
-
-  addHorario() {
-    this.horarioFormGetter.push(this.fb.group({
-      horaEntrada: ["08:00", Validators.required],
-      horaSalida: ["17:00", Validators.required],
-      numPausas: ["", Validators.required],
-      timePausa: ["", Validators.required]
-    }));
-  }
-
-  removeHorario(index) {
-    if (this.horarioFormGetter.length > 1) {
-      this.horarioFormGetter.removeAt(index);
-    }
   }
 
   stepForward(stepper: MatStepper) {
@@ -183,21 +148,8 @@ export class RegisterempresaPage implements OnInit {
       this.registerAdmin.value,
       this.registerCompany.value.cif
     );
-    this.authService.crearHorario(this.horarioForm.value.horarios, this.registerCompany.value.cif);
   }
-  
-  get horaEntrada_(){
-    return this.horarioForm.get("horaEntrada")
-  }
-  get horaSalida_(){
-    return this.horarioForm.get("horaSalida")
-  }
-  get numPausas_(){
-    return this.horarioForm.get("numPausas")
-  }
-  get timePausa_(){
-    return this.horarioForm.get("timePausa")
-  }
+
 
   get distancia_(){
     return this.registerCompany.get('distancia');

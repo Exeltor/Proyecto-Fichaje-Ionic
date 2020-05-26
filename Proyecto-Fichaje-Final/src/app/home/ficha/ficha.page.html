@@ -8,78 +8,37 @@
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <ion-grid *ngIf="!isLoading&&locationStatus.enabled">
+    <ion-grid *ngIf="!isLoading&&!locationBlocked">
         <ion-row>
-            <ng-container *ngIf="dayDocument | async as document; else noDayDocument">
-                <ion-col size="4">
-                    <ion-text color="primary">
-                        <h1 class="ion-no-margin">{{ document.horaInicio.toDate() | date:'HH:mm'}}</h1>
-                    </ion-text>
-                    <small>Hora comienzo</small>
-                </ion-col>
-                <ion-col size="4" (click)="showRestingPopover()" style="cursor: pointer;">
-                    <ion-text color="primary">
-                        <h1 class="ion-no-margin">{{ document.pausasRestantes }}<ion-icon name="information-circle" style="vertical-align: -4px;"></ion-icon></h1>
-                    </ion-text>
-                    <small style="font-size: 0.7em">Descansos restantes</small>
-                </ion-col>
-                <ion-col size="4">
-                    <ion-text>
-                        <h1 class="ion-no-margin">
-                            <ion-icon name="flag" color="danger" *ngIf="!comenzado&&!terminado"></ion-icon>
-                            <ion-icon name="flag" color="warning" *ngIf="comenzado && !terminado"></ion-icon>
-                            <ion-icon name="flag" color="success" *ngIf="terminado"></ion-icon>
-                        </h1>
-                    </ion-text>
-                    <small>¡Fin!</small>
-                </ion-col>
-            </ng-container>
-        </ion-row>
-        <ion-progress-bar value="1" color="danger" *ngIf="!comenzado&&!terminado"></ion-progress-bar>
-        <ion-progress-bar value="0" buffer="0.1" color="warning" *ngIf="comenzado&&enPausa&&masPauses&&!terminado"></ion-progress-bar>
-        <ion-progress-bar type="indeterminate" color="success" *ngIf="comenzado&&!enPausa&&!masPauses&&!terminado"></ion-progress-bar>
-        <ion-progress-bar value="1" color="success" *ngIf="terminado"></ion-progress-bar>
-        <ion-row>
-            <ion-col size-lg="6" offset-lg="3">
-                <ng-container *ngIf="!comenzado&&!terminado">
-                    <ion-img src="../../../assets/comenzarDia.svg" style="width: 50%; margin: auto; margin-top: 2em"></ion-img>
-                    <ion-card color="primary" (click)="comenzarDia()">
-                        <ion-card-header>
-                            <ion-card-title>Fichar Entrada</ion-card-title>
-                        </ion-card-header>
-                    </ion-card>
-                </ng-container>
-                <ng-container *ngIf="dayDocument | async as document">
-                    <ng-container *ngIf="comenzado&&!enPausa&&!masPauses&&!terminado">
-                        <ion-text color="primary"><h1>Trabajando</h1></ion-text>
-                        <object type="image/svg+xml" data="../../../assets/notepad-icon-dark-grey.svg" style="width: 50%; margin: auto" ></object>
-                        <ion-card color="warning" (click)="flipPausa()" *ngIf="document.pausasRestantes > 0">
-                            <ion-card-header>
-                                <ion-card-title><ion-img src="../../../assets/breakfast.svg" style="display: inline-block; height: 1em; width: 1em; margin-right: 0.3em"></ion-img><div style="display: inline;">Descanso</div></ion-card-title>
-                            </ion-card-header>
-                        </ion-card>
-                    </ng-container>
-                </ng-container>
-                <ng-container *ngIf="comenzado&&enPausa&&masPauses&&!terminado">
-                    <ion-text color="warning"><h1>Descansando</h1></ion-text>
-                    <ion-img src="../../../assets/breakfast.svg" style="width: 50%; margin: auto"></ion-img>
-                    <ion-card color="success" (click)="flipPausa()">
-                        <ion-card-header>
-                            <ion-card-title><object type="image/svg+xml" data="../../../assets/notepad-icon-dark-grey.svg" style="display: inline-block; height: 1.2em; width: 1.2em; margin-right: 0.3em; vertical-align: sub;"></object><div style="display: inline;">Volver al trabajo</div></ion-card-title>
-                        </ion-card-header>
-                    </ion-card>
-                </ng-container>
-                <ng-container *ngIf="terminado">
-                    <ion-img src="../../../assets/correct.svg" style="width: 50%; margin: auto; margin-top: 2em"></ion-img>
-                    <ion-card color="success">
-                        <ion-card-header>
-                            <ion-card-title>Ya has hecho todo hoy</ion-card-title>
-                        </ion-card-header>
-                    </ion-card>
-                </ng-container>
+            <ion-col>
+                <ion-card color="primary" *ngIf="!comenzado&&!terminado" (click)="comenzarDia()">
+                    <ion-card-header>
+                        <ion-card-subtitle>Accion única por día</ion-card-subtitle>
+                        <ion-card-title>Comenzar dia de trabajo</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
+                </ion-card>
+                <ion-card color="warning" *ngIf="comenzado&&!enPausa&&!masPauses&&!terminado" (click)="flipPausa()">
+                    <ion-card-header>
+                        <ion-card-title>Descanso</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+                <ion-card color="success" *ngIf="comenzado&&enPausa&&masPauses&&!terminado" (click)="flipPausa()">
+                    <ion-card-header>
+                        <ion-card-title>Volver al trabajo</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+
+                <ion-card color="success" *ngIf="terminado">
+                    <ion-card-header>
+                        <ion-card-title>Ya has hecho todo hoy</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
             </ion-col>
         </ion-row>
-        <!-- <ion-row *ngIf="comenzado">
+        <ion-row>
             <ion-col>
                 <ion-card>
                     <ion-card-header>
@@ -88,13 +47,17 @@
                     </ion-card-header>
                 </ion-card>
             </ion-col>
-        </ion-row> -->
+        </ion-row>
         <ion-row>
-            <ion-col size-lg="6" offset-lg="3">
-                <ion-card color="danger" *ngIf="comenzado&&!terminado" (click)="finalizarDia()" style="margin-top: 0;">
+            <ion-col>
+                <ion-card color="danger" *ngIf="comenzado&&!terminado" (click)="finalizarDia()">
                     <ion-card-header>
-                        <ion-card-title>Fichar salida</ion-card-title>
+                        <ion-card-subtitle>Accion única por día</ion-card-subtitle>
+                        <ion-card-title>Finalizar dia de trabajo</ion-card-title>
                     </ion-card-header>
+                    <ion-card-content>
+                        Asegurate de estar en el trabajo para poder realizar esta accion
+                    </ion-card-content>
                 </ion-card>
             </ion-col>
         </ion-row>
@@ -106,41 +69,14 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-    <ion-grid *ngIf="!locationStatus.enabled && locationStatus.deniedAlways">
+    <ion-grid *ngIf="locationBlocked">
         <ion-row>
             <ion-col>
                 <p>Permite el uso de la localización a esta aplicación para usar la funcionalidad de fichar</p>
+                <ion-button (click)="activateLocation()" expand="block" fill="clear" shape="round">
+                    Activar Geolocalización
+                </ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>
 </ion-content>
-
-<ion-footer>
-    <ion-grid>
-        <ion-row>
-            <ion-col size="2" >
-                <ion-icon name="compass" style=" height: 100%; font-size: 2.3em"></ion-icon>
-            </ion-col>
-            <ion-col size="8" class="ion-text-center ion-no-padding">
-                <small style="margin: 0">Precisión Localización</small>
-                <ng-container *ngIf="locationAccuracy === 1">
-                    <p style="margin: 0; color: green">Excelente<ion-icon name="checkmark" style="margin-left: 2px;"></ion-icon></p>
-                </ng-container>
-                <ng-container *ngIf="locationAccuracy < 5 && locationAccuracy > 2">
-                    <p style="margin: 0; color: orange">Mediocre<ion-icon name="help" style="margin-left: 2px"></ion-icon></p>
-                </ng-container>
-                <ng-container *ngIf="locationAccuracy > 4">
-                    <p style="margin: 0; color: red">Mala<ion-icon name="close" style="margin-left: 2px"></ion-icon></p>
-                </ng-container>
-            </ion-col>
-        </ion-row>
-    </ion-grid>
-</ion-footer>
-
-<ng-template #noDayDocument>
-    <ion-col size="12">
-        <ion-text color="primary" class="ion-text-center">
-            <h1>Aun no has comenzado tu dia</h1>
-        </ion-text>
-    </ion-col>
-</ng-template>
