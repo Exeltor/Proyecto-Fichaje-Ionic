@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -22,6 +23,7 @@ const routes: Routes = [
     IonicModule,
     MatStepperModule,
     ReactiveFormsModule,
+    MatExpansionModule,
     RouterModule.forChild(routes)
   ],
   declarations: [RegisterempresaPage], 

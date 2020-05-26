@@ -38,7 +38,9 @@ export class FichajeService {
   startWorkDay() {
     // Comprobamos si el documento existe
     
-    this.authService.user.pipe(take(1)).subscribe(userData => {
+    this.authService.user.pipe(take(1)).subscribe(async userData => {
+      const horario = await this.afs.doc<any>(`empresas/${userData.empresa}/horarios/${userData.horario}`).valueChanges().pipe(take(1)).toPromise();
+      const numPausas = horario.pausas.num;
       this.afs.firestore
         .doc(
           `users/${
@@ -58,6 +60,7 @@ export class FichajeService {
               horaInicio: new Date(),
               horasPausa: [],
               horasResume: [],
+              pausasRestantes: numPausas
             };
             entryRef.set(data);
           }
@@ -75,10 +78,10 @@ export class FichajeService {
             userData.uid
           }/asistenciaTrabajo/${this.currentTimestamp.getDate()}-${this.currentTimestamp.getMonth()+1}-${this.currentTimestamp.getFullYear()}`
         )
-        .ref.update(
-          'horasPausa',
-          firebase.firestore.FieldValue.arrayUnion(new Date())
-        );
+        .ref.update({
+          horasPausa: firebase.firestore.FieldValue.arrayUnion(new Date()),
+          pausasRestantes: firebase.firestore.FieldValue.increment(-1)
+        });
     });
     LocalNotifications.schedule({
       notifications: [
@@ -122,5 +125,9 @@ export class FichajeService {
     };
     entryRef.update(data);
     });
+  }
+  
+  getServerDate() {
+    return firebase.firestore.FieldValue.serverTimestamp();
   }
 }

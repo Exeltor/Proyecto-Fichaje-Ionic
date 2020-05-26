@@ -25,5 +25,4 @@ export class LoginComponent implements OnInit {
   facebook() {
     this.authService.signInWithFacebook();
   }
-
 }
