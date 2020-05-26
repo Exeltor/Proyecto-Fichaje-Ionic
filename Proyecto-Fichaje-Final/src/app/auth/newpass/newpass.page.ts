@@ -10,8 +10,29 @@ import { Router } from '@angular/router';
 export class NewpassPage implements OnInit {
 
   constructor(private authService: AuthService, private router: Router) { }
-
+  private urlParameters: Array<any> = [];
   ngOnInit() {
+    console.log("hola mundo");
+    if (document.URL.indexOf("?") > 0) {
+      let splitURL = document.URL.split("?");
+      let splitParams = splitURL[1].split("&");
+      let i: any;
+      for (i in splitParams){
+        let singleURLParam = splitParams[i].split('=');
+        if (singleURLParam[0] == "oobCode"){
+          //DO SOMETHING
+          console.log("El parametro oobCode es: " + singleURLParam[1])
+        }
+        if (singleURLParam[0] == "apiKey"){
+          console.log("El parametro apiKey es: " + singleURLParam[1])
+        }
+        let urlParameter = {
+        'name': singleURLParam[0],
+        'value': singleURLParam[1]
+      };
+      this.urlParameters.push(urlParameter);
+      }
+    }
   }
 
   onSubmit(form: NgForm) {
