@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
+// import { ModalController } from 'ionic-angular';
 
 @Component({
   selector: 'app-root',
@@ -22,5 +23,8 @@ export class AppComponent implements OnInit {
 
   onLogout() {
     this.authService.logout();
+  }
+  abrirGeneradorFichaje(){
+    // this.modal.create();
   }
 }
