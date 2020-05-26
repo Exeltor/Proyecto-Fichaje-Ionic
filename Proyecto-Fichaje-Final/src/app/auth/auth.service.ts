@@ -314,6 +314,26 @@ export class AuthService {
         alert('Este email no se encuentra registrado. Intentelo de nuevo con uno que sí lo esté.')
     })
   }
+  newpass(actionCode: string, newpassword: string, repeatpassword: string) {
+    //api_Key = "AIzaSyA5_59-4Q-Ra0bmXrVIS-g-cjXy4BxUJZM"
+    this.afAuth.auth.verifyPasswordResetCode(actionCode)
+    .then(function(){
+      if (newpassword == repeatpassword){
+    
+        this.afAuth.auth.comfirmPasswordReset(actionCode, newpassword)
+          .then(function(){
+            alert('Contraseña cambiada con exito.')
+          }, function (error) {
+            console.log(error);
+            alert('Algo ha salido mal. Por favor intentelo de nuevo.')
+        })
+      }else{
+        alert('Las contraseñas no coinciden');
+      }
+    })
+    //https://firebase.google.com/docs/auth/custom-email-handler
+  }
+
 
   linkWithFacebook() {
     const provider = new auth.FacebookAuthProvider();

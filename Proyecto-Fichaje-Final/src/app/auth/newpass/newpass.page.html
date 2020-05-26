@@ -8,7 +8,7 @@
 <!--BODY-->
 <ion-content>
   <ion-grid style="margin-top: 45%;">
-    <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+    <form #newpassForm="ngForm" (ngSubmit)="onSubmit(newpassForm)">
         <ion-col>
           <ion-row class="ion-justify-content-center ion-align-items-center">
             <ion-label><h1>Reestablece tu contraseña</h1></ion-label>
@@ -23,12 +23,35 @@
               <ion-label position="floating">Repeat Password</ion-label>
               <ion-input type="password" ngModel name="repeatpassword" required minlength="6" #passwordCtrl="ngModel"></ion-input>
             </ion-item>
-
+            <ion-item>
+              <ion-label position="floating">Repeat Password</ion-label>
+              <!--<ion-input type="password" ngModel name="repeatpassword" required minlength="6" #passwordCtrl="ngModel"></ion-input>
+              --><ion-input type="oobcode" name='code' value="" NgModel></ion-input>
+            </ion-item>
+           
         </ion-row>
         </ion-col>
+        <ion-button expand="block" class="ion-margin" type="submit">Enviar</ion-button>
     </form>
     
   </ion-grid>
   
 </ion-content>
-<ion-button expand="block" class="ion-margin" type="submit">Enviar</ion-button>
+
+<script>
+
+  $(window).load(function () {
+    console.log('Hola Mundo');
+      function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, '\\$&');
+          var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+      var actionCode = getParameterByName('oobCode');
+      //document.getElementById('code').value = actionCode;
+      console.log('Hola Mundo');
+  </script>
