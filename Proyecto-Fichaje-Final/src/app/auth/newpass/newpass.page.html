@@ -1,12 +1,9 @@
 <!--HEADER-->
-
-
 <ion-header>
   <ion-toolbar>
     <!--TITULO-->
     <ion-title>Nueva Contraseña</ion-title>
   </ion-toolbar>
-
 </ion-header>
 <!--BODY-->
 <ion-content>
@@ -25,6 +22,9 @@
             <ion-item>
               <ion-label position="floating">Repeat Password</ion-label>
               <ion-input type="password" ngModel name="repeatpassword" required minlength="6" #passwordCtrl="ngModel"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="hidden" ngModel id="code" name="code" required minlength="6" #passwordCtrl="ngModel" value="">
             </ion-item>
         </ion-row>
         </ion-col>
