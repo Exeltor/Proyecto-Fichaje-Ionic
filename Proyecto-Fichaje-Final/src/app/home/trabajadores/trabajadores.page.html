@@ -1,0 +1,44 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Trabajadores</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col size-lg="6" offset-lg="3">
+                <ion-card>
+                    <ion-list>
+                        <ion-list-header>{{ (empresa | async)?.Nombre }}</ion-list-header>
+                        <ion-item-sliding *ngFor="let user of listaWorkers">
+                            <ion-item *ngIf="(authService.user | async)?.DNI != user.DNI">
+                                <ion-avatar slot="start">
+                                    <ion-img *ngIf="(user.photoUrl | async)"
+                                        [src]="(user.photoUrl | async)">
+                                    </ion-img>
+                                    <ion-img *ngIf="!(user.photoUrl | async)"
+                                        src="../../../assets/res/avatar.svg">
+                                    </ion-img>
+                                </ion-avatar>
+                                <ion-label
+                                    (click)="presentModal(user.uid, user.nombre, user.empresa, user.horario, user.DNI, user.telefono)">
+                                    <h2>{{ user.nombre }}</h2>
+                                    <p>DNI: {{ user.DNI }}</p>
+                                </ion-label>
+                            </ion-item>
+                            <ion-item-options>
+                                <ion-item-option color="danger" (click)="borrarUsuario(user.uid)">
+                                    <ion-icon name="trash"></ion-icon>
+                                </ion-item-option>
+                            </ion-item-options>
+                        </ion-item-sliding>
+                    </ion-list>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Recorta tu foto</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-margin">
+
+  <image-cropper [imageBase64]="myImage" [maintainAspectRatio]="true" [aspectRatio]="1 / 1" format="jpeg"
+    (imageCropped)="imageCropped($event)" [autoCrop]="false">
+  </image-cropper>
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button (click)="cancel()">
+      <ion-icon name="close"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="submit()">
+      <ion-icon name="checkmark"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

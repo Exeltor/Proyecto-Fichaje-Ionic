@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as cors from "cors";
+import * as https from 'https';
 import { Timestamp } from "@google-cloud/firestore";
 const corsHandler = cors({ origin: "*" });
 admin.initializeApp(functions.config().firebase);
@@ -153,4 +154,35 @@ exports.calculateHours = functions.firestore
         }	
         admin.messaging().sendMulticast(message)	
       })
+  })
+
+  // cada 30 minutos desde las 00:00
+  exports.refreshTravelTimes = functions.pubsub.schedule('every 30 minutes synchronized') .onRun(async (context) => {
+    const currentTimestamp = new Date();
+    const userSnapshots = await admin.firestore().collection('users').get();
+
+    userSnapshots.forEach(async userSnapshot => {
+      const empresaUsuario = userSnapshot.get('empresa');
+      const horarioUsuario = userSnapshot.get('horario');
+
+      const horarioUsuarioSnap = await admin.firestore().doc(`empresas/${empresaUsuario}/horarios/${horarioUsuario}`).get();
+      const horaEntradaString: string = horarioUsuarioSnap.get('horaEntrada');
+
+      let horaYMinutoEntrada: Array<string> = horaEntradaString.split(':');
+      const horaEntrada = parseInt(horaYMinutoEntrada[0]);
+      const minutoEntrada = parseInt(horaYMinutoEntrada[1]);
+
+      let dateEntrada = new Date()
+      dateEntrada.setHours(horaEntrada);
+      dateEntrada.setMinutes(minutoEntrada);
+
+      let diff = dateEntrada.getTime() - currentTimestamp.getTime();
+
+      let hours = Math.floor(diff / 3.6e6);
+      let minutes = Math.floor((diff % 3.6e6) / 6e4);
+
+      if (hours == 0 && minutes < 60) {
+        //TODO: request
+      }
+    })
   })
