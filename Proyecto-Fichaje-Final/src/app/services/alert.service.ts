@@ -1,11 +1,15 @@
 import { Injectable } from "@angular/core";
-import { ModalController, AlertController, ToastController } from "@ionic/angular";
+import {
+  ModalController,
+  AlertController,
+  ToastController,
+} from "@ionic/angular";
 import { Router } from "@angular/router";
 import { AngularFireAuth } from "@angular/fire/auth";
 import * as firebase from "firebase/app";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class AlertService {
   constructor(
@@ -32,15 +36,16 @@ export class AlertService {
                 break;
               case "registrarEmpresa":
                 this.router.navigateByUrl("/auth");
+                break;
               default:
                 break;
             }
-          }
+          },
         },
         {
-          text: "Editar"
-        }
-      ]
+          text: "Editar",
+        },
+      ],
     });
 
     await alert.present();
@@ -51,7 +56,7 @@ export class AlertService {
       header: title,
       message,
       duration: 2000,
-      position: "top"
+      position: "top",
     });
     switch (from) {
       case "modal":
@@ -59,6 +64,10 @@ export class AlertService {
         break;
       case "registrarEmpresa":
         this.router.navigateByUrl("/auth");
+        break;
+      case "recuperarcontrasena":
+        this.router.navigateByUrl("/");
+        break;
       default:
         break;
     }
@@ -74,27 +83,33 @@ export class AlertService {
           {
             name: "password",
             type: "password",
-            placeholder: "Tu actual contraseña"
-          }
+            placeholder: "Tu actual contraseña",
+          },
         ],
         buttons: [
           {
             text: "Cancelar",
-            role: "cancel"
+            role: "cancel",
           },
           {
             text: "OK",
-            handler: data => {
+            handler: (data) => {
               const userEmail = this.afAuth.auth.currentUser.email;
-              const credential = firebase.auth.EmailAuthProvider.credential(userEmail, data.password);
-              this.afAuth.auth.currentUser.reauthenticateWithCredential(credential).then(() => resolve(true)).catch(() => resolve(false));
-            }
-          }
-        ]
+              const credential = firebase.auth.EmailAuthProvider.credential(
+                userEmail,
+                data.password
+              );
+              this.afAuth.auth.currentUser
+                .reauthenticateWithCredential(credential)
+                .then(() => resolve(true))
+                .catch(() => resolve(false));
+            },
+          },
+        ],
       });
-  
+
       await alert.present();
-    })
+    });
   }
 
   loginError(error) {
@@ -105,11 +120,11 @@ export class AlertService {
         buttons: [
           {
             text: "Aceptar",
-            role: "cancel"
-          }
-        ]
+            role: "cancel",
+          },
+        ],
       })
-      .then(alertEl => {
+      .then((alertEl) => {
         alertEl.present();
       });
   }

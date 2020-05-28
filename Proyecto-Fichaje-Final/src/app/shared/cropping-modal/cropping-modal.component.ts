@@ -7,7 +7,7 @@ import { ImageCropperComponent } from "ngx-image-cropper";
 @Component({
   selector: "app-cropping-modal",
   templateUrl: "./cropping-modal.component.html",
-  styleUrls: ["./cropping-modal.component.scss"]
+  styleUrls: ["./cropping-modal.component.scss"],
 })
 export class CroppingModalComponent implements OnInit {
   @ViewChild(ImageCropperComponent) imageCropper: ImageCropperComponent;

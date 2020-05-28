@@ -90,7 +90,7 @@ export class AuthService {
                 datos.nombre,
                 datos.DNI,
                 datos.country,
-                '',
+                "",
                 datos.telefono,
                 datos.horasTrabajo,
                 false,
@@ -99,7 +99,7 @@ export class AuthService {
                 datos.lonPersona,
                 datos.horarioCF
               );
-              
+
               this.alertService.presentToastSinError(
                 "Creado",
                 `Se ha añadido al trabajador ${datos.nombre} a tu empresa.`,
@@ -131,7 +131,6 @@ export class AuthService {
             }
           );
       });
-
   }
 
   registerAdmin(datos, cifEmpresa) {
@@ -237,7 +236,7 @@ export class AuthService {
         horasDiarias: hours,
         localizacionCasa: { lat, lon },
       };
-      
+
       if (admin == false) {
         this.afs
           .collection("users")
@@ -256,7 +255,7 @@ export class AuthService {
             );
           });
         userRef.set(userDoc);
-        this.getStepsWorkUser(lat,lon,empresa,uid);
+        this.getStepsWorkUser(lat, lon, empresa, uid);
         this.logger.logEvent(`User created: ${DNI}`, 3, "authService setDoc");
       } else {
         userRef.set(userDoc);
@@ -339,32 +338,46 @@ export class AuthService {
   }
 
   recuperarpass(email: string) {
-    this.afAuth.auth.sendPasswordResetEmail(email)
-      .then(function(){
-        alert('Se ha enviado un correo al email introducido con los pasos a seguir para restablecer tu contraseña.');
-      }, function (error) {
-        console.log(error);
-        alert('Este email no se encuentra registrado. Intentelo de nuevo con uno que sí lo esté.')
-    })
+    this.afAuth.auth.sendPasswordResetEmail(email).then(
+      () => {
+        this.alertService.presentToastSinError(
+          "Operacion realizada con exito",
+          "Se ha enviado un correo al email introducido con los pasos a seguir para restablecer tu contraseña.",
+          "page"
+        );
+      },
+      (error) => {
+        this.alertService.presentAlertError(
+          "Algo ha salido mal. Por favor intentelo de nuevo.",
+          "recuperarcontrasena"
+        );
+      }
+    );
   }
   newpass(actionCode: string, newpassword: string, repeatpassword: string) {
-    this.afAuth.auth.verifyPasswordResetCode(actionCode)
-    .then(()=>{
-      if (newpassword == repeatpassword){
-    
-        this.afAuth.auth.confirmPasswordReset(actionCode, newpassword)
-          .then(()=>{
-            alert('Contraseña cambiada con exito.')
-          },  error =>{
+    this.afAuth.auth.verifyPasswordResetCode(actionCode).then(() => {
+      if (newpassword == repeatpassword) {
+        this.afAuth.auth.confirmPasswordReset(actionCode, newpassword).then(
+          () => {
+            this.router.navigateByUrl("/");
+          },
+          (error) => {
             console.log(error);
-            alert('Algo ha salido mal. Por favor intentelo de nuevo.')
-        })
-      }else{
-        alert('Las contraseñas no coinciden');
+            this.alertService.presentAlertError(
+              "Algo ha salido mal. Por favor intentelo de nuevo.",
+              "page"
+            );
+          }
+        );
+      } else {
+        this.alertService.presentToastSinError(
+          "Contraseñas no coinciden",
+          "Por favor cambia las contraseñas",
+          "page"
+        );
       }
-    })
+    });
   }
-
 
   linkWithFacebook() {
     const provider = new auth.FacebookAuthProvider();
@@ -471,7 +484,12 @@ export class AuthService {
       horario: newData.horarioCF,
       localizacionCasa: { lat: newData.latPersona, lon: newData.lonPersona },
     });
-    this.getStepsWorkUser(newData.latPersona, newData.lonPersona, user.empresa, this.userUid);
+    this.getStepsWorkUser(
+      newData.latPersona,
+      newData.lonPersona,
+      user.empresa,
+      this.userUid
+    );
 
     const phoneStatus = await this.changePhone(
       newData.telefono,
@@ -687,11 +705,13 @@ export class AuthService {
       .pipe(take(1))
       .toPromise()
       .then((empresa) => {
-        
         directionsService.route(
           {
             origin: { lat: latInicio, lng: lonInicio },
-            destination: { lat: Number(empresa.loc[0]), lng: Number(empresa.loc[1]) },
+            destination: {
+              lat: Number(empresa.loc[0]),
+              lng: Number(empresa.loc[1]),
+            },
             waypoints: [],
             optimizeWaypoints: true,
             travelMode: "DRIVING",
