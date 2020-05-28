@@ -24,25 +24,9 @@
                 <ion-button expand="block" class="ion-margin" type="submit">Login</ion-button>
                 <!--RECUPERAR CONTRASEÑA-->
                 <div class="ion-text-center">
-                    <a>¿Has olvidado tu contraseña?</a>
+                    <a [routerLink]="['/recuperarpass']">¿Has olvidado tu contraseña?</a>
                 </div>
             </ion-col>
         </ion-row>
     </form>
-    <!--FACEBOOK Y GOOGLE-->
-    <ion-row class="ion-text-center">
-        <ion-col size="6" size-lg="2" offset-lg="4">
-            <ion-button (click)="facebook()">
-                <ion-icon slot="start" name="logo-facebook"></ion-icon>
-                Sign in
-            </ion-button>
-        </ion-col>
-        <ion-col size="6" size-lg="2">
-            <ion-button (click)="google()">
-                <ion-icon slot="start" name="logo-google"></ion-icon>
-                Sign in
-            </ion-button>
-        </ion-col>
-    </ion-row>
-    <!--REGISTRO DE EMPRESA-->
 </ion-grid>

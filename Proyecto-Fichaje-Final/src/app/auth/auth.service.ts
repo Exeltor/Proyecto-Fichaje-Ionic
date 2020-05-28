@@ -338,6 +338,34 @@ export class AuthService {
       });
   }
 
+  recuperarpass(email: string) {
+    this.afAuth.auth.sendPasswordResetEmail(email)
+      .then(function(){
+        alert('Se ha enviado un correo al email introducido con los pasos a seguir para restablecer tu contraseña.');
+      }, function (error) {
+        console.log(error);
+        alert('Este email no se encuentra registrado. Intentelo de nuevo con uno que sí lo esté.')
+    })
+  }
+  newpass(actionCode: string, newpassword: string, repeatpassword: string) {
+    this.afAuth.auth.verifyPasswordResetCode(actionCode)
+    .then(()=>{
+      if (newpassword == repeatpassword){
+    
+        this.afAuth.auth.confirmPasswordReset(actionCode, newpassword)
+          .then(()=>{
+            alert('Contraseña cambiada con exito.')
+          },  error =>{
+            console.log(error);
+            alert('Algo ha salido mal. Por favor intentelo de nuevo.')
+        })
+      }else{
+        alert('Las contraseñas no coinciden');
+      }
+    })
+  }
+
+
   linkWithFacebook() {
     const provider = new auth.FacebookAuthProvider();
     this.afAuth.auth.currentUser.linkWithPopup(provider);
