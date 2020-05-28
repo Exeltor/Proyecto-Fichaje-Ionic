@@ -315,15 +315,14 @@ export class AuthService {
     })
   }
   newpass(actionCode: string, newpassword: string, repeatpassword: string) {
-    //api_Key = "AIzaSyA5_59-4Q-Ra0bmXrVIS-g-cjXy4BxUJZM"
     this.afAuth.auth.verifyPasswordResetCode(actionCode)
-    .then(function(){
+    .then(()=>{
       if (newpassword == repeatpassword){
     
-        this.afAuth.auth.comfirmPasswordReset(actionCode, newpassword)
-          .then(function(){
+        this.afAuth.auth.confirmPasswordReset(actionCode, newpassword)
+          .then(()=>{
             alert('Contraseña cambiada con exito.')
-          }, function (error) {
+          },  error =>{
             console.log(error);
             alert('Algo ha salido mal. Por favor intentelo de nuevo.')
         })
@@ -331,7 +330,6 @@ export class AuthService {
         alert('Las contraseñas no coinciden');
       }
     })
-    //https://firebase.google.com/docs/auth/custom-email-handler
   }
 
 
