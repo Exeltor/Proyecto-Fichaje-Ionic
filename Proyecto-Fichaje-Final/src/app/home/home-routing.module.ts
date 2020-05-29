@@ -46,6 +46,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: "cercanos",
+        children: [
+          {
+            path: "",
+            loadChildren: "./cercanos/cercanos.module#CercanosPageModule",
+            canActivate: [AdminGuard]
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"
@@ -58,6 +68,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+
+
 ];
 
 @NgModule({
