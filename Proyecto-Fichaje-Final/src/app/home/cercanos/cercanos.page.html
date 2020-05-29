@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cercanos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Localizacion casa</ion-card-title>
+          </ion-card-header>
+          <ion-card-content style="padding-left: 0.2em">
+            <ion-list>
+              <ion-item>
+                <ion-icon name="time-outline"></ion-icon>
+                <ion-label>DE (CASA YO): {{ (authService.user | async)?.localizacionCasa.lat }}, {{ (authService.user | async)?.localizacionCasa.lon }}</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="timer-outline"></ion-icon>
+                <ion-label>A (CASA OTRO): {{ selectedUser ? selectedUser.localizacionCasa.lat + ', ' + selectedUser.localizacionCasa.lon : 'Selecciona un usuario' }}</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card>
+          <ion-list>
+              <ion-list-header>YO CONDUZCO...</ion-list-header>
+              <ion-item>
+                <ion-avatar slot="start">
+                  <ion-img *ngIf="((authService.user | async)?.photoUrl)"
+                      [src]="((authService.user | async)?.photoUrl)">
+                  </ion-img>
+                  <ion-img *ngIf="!((authService.user | async)?.photoUrl)"
+                      src="../../../assets/res/avatar.svg">
+                  </ion-img>
+                </ion-avatar>
+                <ion-label
+                    (click)="selectUser(user.uid)">
+                    <h2>{{ ((authService.user | async)?.nombre) }}</h2>
+                    <p>DNI: {{ ((authService.user | async)?.DNI) }}</p>
+                </ion-label>
+              </ion-item>
+              <ion-list-header>...LLEVANDO A</ion-list-header>
+              <ng-container *ngFor="let user of listaWorkers">
+                <ion-item *ngIf="(authService.user | async)?.DNI != user.DNI" (click)="selectUser(user.uid)">
+                  <ion-avatar slot="start">
+                      <ion-img *ngIf="(user.photoUrl | async)"
+                          [src]="(user.photoUrl | async)">
+                      </ion-img>
+                      <ion-img *ngIf="!(user.photoUrl | async)"
+                          src="../../../assets/res/avatar.svg">
+                      </ion-img>
+                  </ion-avatar>
+                  <ion-label
+                      (click)="selectUser(user.uid)">
+                      <h2>{{ user.nombre }}</h2>
+                      <p>DNI: {{ user.DNI }}</p>
+                  </ion-label>
+              </ion-item>
+              </ng-container>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

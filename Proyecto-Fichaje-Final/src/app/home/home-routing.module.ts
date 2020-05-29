@@ -46,6 +46,10 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'cercanos',
+        loadChildren: () => import('./cercanos/cercanos.module').then( m => m.CercanosPageModule)
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"
@@ -57,7 +61,7 @@ const routes: Routes = [
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
   },
-  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' },
 ];
 
 @NgModule({
