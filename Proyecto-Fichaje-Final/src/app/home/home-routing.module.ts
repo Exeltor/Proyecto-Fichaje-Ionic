@@ -46,6 +46,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: "CERCANOS",
+        children: [
+          {
+            path: "",
+            loadChildren: "./cercanos/cercanos.module#CercanosPageModule",
+            canActivate: [AdminGuard]
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"
@@ -57,7 +67,8 @@ const routes: Routes = [
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
   },
-  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' },
+  { path: 'uinfo', loadChildren: './cercanos/uinfo/uinfo.module#UinfoPageModule' }
 ];
 
 @NgModule({
