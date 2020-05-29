@@ -50,7 +50,7 @@ export class CercanosPage implements OnInit {
       this.listaWorkers = [];
       for (let i = 0; i < workers.length; i++) {
         const ref = this.storage.ref(`profile/${workers[i].uid}`);
-        workers[i].photoUrl = ref.getDownloadURL().toPromise();
+        workers[i].photoUrl = ref.getDownloadURL().toPromise().catch(e => console.log('usuario no tiene foto'));
         this.listaWorkers.push(workers[i]);
       }
     });
