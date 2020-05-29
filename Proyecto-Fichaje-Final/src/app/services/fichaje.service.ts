@@ -41,6 +41,18 @@ export class FichajeService {
     this.authService.user.pipe(take(1)).subscribe(async userData => {
       const horario = await this.afs.doc<any>(`empresas/${userData.empresa}/horarios/${userData.horario}`).valueChanges().pipe(take(1)).toPromise();
       const numPausas = horario.pausas.num;
+
+      // Comprobar hora --> comparar con horario --> apuntar retraso
+
+      const horaLlegada = this.currentTimestamp.getTime();
+
+      if (horaLlegada - horario.getTime )
+    
+
+
+
+
+
       this.afs.firestore
         .doc(
           `users/${
