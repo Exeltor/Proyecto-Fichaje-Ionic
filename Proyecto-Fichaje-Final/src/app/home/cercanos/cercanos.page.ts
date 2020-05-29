@@ -17,6 +17,7 @@ export class CercanosPage implements OnInit {
   fireList;
   listaWorkers;
   empresa;
+  userPhoto;
 
   constructor(
     private afs: AngularFirestore,
@@ -34,12 +35,14 @@ export class CercanosPage implements OnInit {
     );
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.empresa = this.authService.user.pipe(
       switchMap((user) => {
         return this.afs.doc(`empresas/` + user.empresa).valueChanges();
       })
     );
+    const ref = this.storage.ref(`profile/${this.authService.afAuth.auth.currentUser.uid}`);
+    this.userPhoto = await ref.getDownloadURL().toPromise();
   }
 
   ionViewWillEnter() {
@@ -55,6 +58,5 @@ export class CercanosPage implements OnInit {
 
   async selectUser(userID) {
     this.selectedUser = await this.afs.doc(`users/${userID}`).valueChanges().pipe(take(1)).toPromise();
-    console.log(this.selectedUser);
   }
 }
