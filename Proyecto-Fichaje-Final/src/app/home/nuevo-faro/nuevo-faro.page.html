@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>NUEVO FARO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+  <ion-content>
+    <form  #form="ngForm" (ngSubmit)="onSubmit(form)">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-card>
+              <ion-card-title>
+                Registrar Nuevo punto
+              </ion-card-title> 
+              <ion-card-content>
+              <ion-item>
+                <ion-label position="floating">
+                  
+                  Nombre del punto
+                </ion-label>
+                <ion-input  name="name" ngModel required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">
+                  
+                  ID Faro
+                </ion-label>
+                <ion-input name="id"  ngModel required></ion-input>
+              </ion-item>
+
+             
+              <ion-item>
+                <ion-label position="floating">
+                  
+                  Coordenadas (Latitud, Longitud)
+                </ion-label>
+                <ion-input name="latpunto" ngModel required></ion-input>
+                <ion-input name="lonpunto" ngModel required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">
+                 
+                 Tipo de elemento (opcional)
+                </ion-label>
+                <ion-input name="type" ngModel required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">
+                
+                 Intensidad
+                </ion-label>
+                <ion-input name="intensidad" ngModel required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">
+                
+                 Carga
+                </ion-label>
+                <ion-input name="carga" ngModel required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">
+                
+                 Ocupación
+                </ion-label>
+                <ion-input name="ocupacion" ngModel required></ion-input>
+              </ion-item>
+
+            </ion-card-content>
+
+              <ion-button size="medium" type="submit" color="warning" >Crear punto</ion-button>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+  </ion-content>
+  

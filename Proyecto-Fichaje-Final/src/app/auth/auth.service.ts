@@ -793,4 +793,29 @@ export class AuthService {
         });
       });
   }
+
+  crearPunto(name, id, latpunto, lonpunto, type, intensidad, carga, ocupacion){
+
+    
+
+    this.afs
+      .collection(`mapas`)
+      .doc(`10000`)
+      .set({
+        cod_centro: "10000",
+        latitud: latpunto,
+        longitud: lonpunto,
+        nombre: name ,
+        tipo_elem: type
+      })
+
+      this.afs
+      .collection(`medias_tramos`)
+      .doc(`10000`)
+      .set({
+        Intensidad: intensidad,
+        carga: carga,
+        ocupacion: ocupacion
+      })
+  }
 }
