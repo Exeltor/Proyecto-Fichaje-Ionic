@@ -46,6 +46,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: "radiofaros",
+        children: [
+          {
+            path: "",
+            loadChildren: "./radiofaros/radiofaros.module#RadiofarosPageModule",
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"
@@ -57,7 +66,11 @@ const routes: Routes = [
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
   },
-  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' },
+  {
+    path: 'radiofaros',
+    loadChildren: () => import('./radiofaros/radiofaros.module').then( m => m.RadiofarosPageModule)
+  }
 ];
 
 @NgModule({
