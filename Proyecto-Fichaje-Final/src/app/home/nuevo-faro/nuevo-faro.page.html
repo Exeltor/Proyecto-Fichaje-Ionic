@@ -1,0 +1,217 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Añade un nuevo faro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <mat-vertical-stepper linear="true" #stepper>
+    <mat-step [stepControl]="registroIDFaro">
+      <form [formGroup]="registroIDFaro">
+        <ng-template matStepLabel>Introduce la identificacion del faro</ng-template>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start"name="key-outline"></ion-icon>Codigo Cent.
+          </ion-label>
+          <ion-input formControlName="cod_cent"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="key-outline"></ion-icon>ID Radio
+          </ion-label>
+          <ion-input formControlName="id_radio"></ion-input>
+        </ion-item>
+        <ion-button (click)="openMap()" expand="block" fill="clear" shape="round">
+          Abrir Mapa
+        </ion-button>
+        <ion-item *ngIf="registroIDFaro.value.latitud">
+          <ion-label>
+            Latitud Seleccionada
+          </ion-label>
+          <ion-input formControlName="latitud" readonly="true"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="registroIDFaro.value.longitud">
+          <ion-label>
+            Longitud Seleccionada
+          </ion-label>
+          <ion-input formControlName="longitud" readonly="true"></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="registroIDFaro.invalid">
+            Siguiente
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="nombreTipoFaro">
+      <form [formGroup]="nombreTipoFaro">
+        <ng-template matStepLabel>Nombre y Tipo</ng-template>
+        <ion-item>
+          <ion-label position="floating">
+            Nombre
+          </ion-label>
+          <ion-input formControlName="nombre"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            Tipo
+          </ion-label>
+          <ion-input formControlName="tipo_elem"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button (click)="stepBackward(stepper)" slot="start">
+            Atrás
+          </ion-button>
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="nombreTipoFaro.invalid">
+            Siguiente
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="datosFaro">
+      <form [formGroup]="datosFaro">
+        <ng-template matStepLabel>Datos Faro</ng-template>
+        <ion-item>
+          <ion-label position="floating">
+            Intensidad
+          </ion-label>
+          <ion-input formControlName="intensidad" type="number"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            Carga
+          </ion-label>
+          <ion-input formControlName="carga" type="number"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            Ocupacion
+          </ion-label>
+          <ion-input formControlName="ocupacion" type="number"></ion-input>
+        </ion-item>
+        <ion-spinner name="crescent" *ngIf="loading"></ion-spinner>
+        <ion-item lines="none">
+          <ion-button (click)="stepBackward(stepper)" slot="start">
+            Atrás
+          </ion-button>
+          <ion-button (click)="submit(stepper)" slot="end" [disabled]="nombreTipoFaro.invalid">
+            Finalizar
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <!-- <mat-step [stepControl]="registerAdmin">
+      <form [formGroup]="registerAdmin">
+        <ng-template matStepLabel>Registra el administrador</ng-template>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="mail"></ion-icon>
+            Email
+          </ion-label>
+          <ion-input formControlName="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="key"></ion-icon>
+            Contraseña
+          </ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon name="person"></ion-icon>
+            Nombre y Apellidos
+          </ion-label>
+          <ion-input formControlName="nombre"> </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="clipboard"></ion-icon>
+            DNI
+          </ion-label>
+          <ion-input formControlName="DNI"></ion-input>
+          <ion-icon class="availability-icon" name="close" style="color: red" *ngIf="dni_.invalid && dni_.dirty">
+          </ion-icon>
+          <ion-spinner class="availability-icon" *ngIf="cif_.pending"></ion-spinner>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="dni_.valid"></ion-icon>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="globe"></ion-icon>
+            País
+          </ion-label>
+          <ion-select placeholder="Selecciona un país" formControlName="country" (ngModelChange)="updateAll()">
+            <ion-select-option [value]="pais.code" *ngFor="let pais of paises">{{pais.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-row>
+          <ion-col size="4">
+            <ion-item>
+              <ion-label position="floating">
+                <ion-icon slot="start" name="globe"></ion-icon>
+                País
+              </ion-label>
+              <ion-input value="+{{countryCode_.value}}" readonly="true"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="8">
+            <ion-item class="ion-no-padding">
+              <ion-label position="floating">
+                <ion-icon slot="start" name="call"></ion-icon>
+                Telefono
+              </ion-label>
+              <ion-input formControlName="telefono"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="alarm"></ion-icon>
+            Horas de trabajo diarias
+          </ion-label>
+          <ion-input formControlName="horasTrabajo"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon slot="start" name="map"></ion-icon>
+            Direccion
+          </ion-label>
+          <ion-input type="text" formControlName="direccionPersona"></ion-input>
+          <ion-icon class="availability-icon" name="cross" style="color: red"
+            *ngIf="personaCoords_.invalid && direccionPersona_.dirty"></ion-icon>
+          <ion-icon class="availability-icon" name="checkmark" style="color: green" *ngIf="personaCoords_.valid">
+          </ion-icon>
+        </ion-item>
+        <ion-button (click)="openMapRegister()" expand="block" fill="clear" shape="round"
+          [disabled]="direccionEmpresa_.invalid">
+          Abrir Mapa
+        </ion-button>
+        <ion-input formControlName="latPersona" [value]="latPersona" hidden="true" readonly="true"></ion-input>
+        <ion-input formControlName="lonPersona" [value]="lonPersona" hidden="true" readonly="true"></ion-input>
+        <ion-item lines="none">
+          <ion-button (click)="stepBackward(stepper)" slot="start">
+            Atrás
+          </ion-button>
+          <ion-button (click)="stepForward(stepper)" slot="end" [disabled]="registerAdmin.invalid">
+            Siguiente
+          </ion-button>
+        </ion-item>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Final</ng-template>
+      <p>Has finalizado</p>
+      <ion-grid fixed>
+        <ion-row>
+          <ion-col>
+            <ion-button expand="block" fill="clear" shape="round"
+              [disabled]="registerAdmin.invalid || registerCompany.invalid" (click)="registerAll()">
+              Crear empresa y registro
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </mat-step> -->
+  </mat-vertical-stepper>
+</ion-content>
