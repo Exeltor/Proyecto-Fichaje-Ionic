@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start" style="background-color: red">
+          <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>NUEVO FARO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="nuevoFaroForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title color="danger">Datos del Nuevo Faro</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-item>
+                  <ion-label position="floating">
+                    Nombre del Nuevo Faro
+                  </ion-label>
+                  <ion-input formControlName="nombrefaro"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">
+                    ID del Faro Disponible
+                  </ion-label>
+                  <ion-input disabled="true" placeholder="{{ idFaro }}"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-button expand="block" class="ion-margin" color="danger" (click)="abrirMapa()">Marcar Faro</ion-button>
+                </ion-item> 
+                <ion-item>
+                  <ion-label position="floating">
+                    Codigo Cent
+                  </ion-label>
+                  <ion-input formControlName="codcentfaro"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">
+                    Radio ID
+                  </ion-label>
+                  <ion-input formControlName="idradiofaro"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">
+                    Tipo de Elemento
+                  </ion-label>
+                  <ion-input formControlName="tipoelemfaro"></ion-input>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title color="danger">Medias del Mes</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-item>
+                  <ion-label position="floating">
+                    Intensidad Media del Mes
+                  </ion-label>
+                  <ion-input type = "number" formControlName="intensidadfaro"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">
+                    Carga Media del Mes
+                  </ion-label>
+                  <ion-input type = "number" formControlName="cargafaro"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">
+                    Ocupacion Media del Mes
+                  </ion-label>
+                  <ion-input type = "number" formControlName="ocupacionfaro"></ion-input>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <ion-button expand="block" class="ion-margin" color="danger" (click)="onSubmit()">Crear Nuevo Faro</ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-label *ngIf="confirmacion" color="danger">Faro creado Correctamente</ion-label>
+      </ion-row>
+
+    </ion-grid>
+  </form>
+</ion-content>

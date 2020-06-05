@@ -36,6 +36,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: "nuevofaro",
+        children: [
+          {
+            path: "",
+            loadChildren: "./nuevofaro/nuevofaro.module#NuevofaroPageModule"
+          }
+        ]
+      },
+      {
         path: "trabajadores",
         children: [
           {
@@ -57,7 +66,11 @@ const routes: Routes = [
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
   },
-  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' },
+  {
+    path: 'nuevofaro',
+    loadChildren: () => import('./nuevofaro/nuevofaro.module').then( m => m.NuevofaroPageModule)
+  }
 ];
 
 @NgModule({
