@@ -682,6 +682,23 @@ export class AuthService {
     });
   }
 
+  crearFaro(data, id){
+    this.afs.doc(`mapas/${id}`).set({
+      cod_cent: data.code,
+      id_radio: data.id,
+      latitud: data.latFaro,
+      longitud: data.lonFaro,
+      nombre: data.NombreFaro,
+      tipo_elem: data.tipo
+    });
+    this.afs.doc(`medias_tramos/${id}`).set({
+      carga: data.carga,
+      intensidad: data.intensidad,
+      ocupacion: data.ocupacion
+    });
+
+     }
+
   logout() {
     this.afAuth.auth
       .signOut()

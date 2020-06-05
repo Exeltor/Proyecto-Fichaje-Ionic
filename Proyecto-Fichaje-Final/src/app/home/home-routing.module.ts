@@ -46,6 +46,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: "nuevofaro",
+        children: [
+          {
+            path: "",
+            loadChildren: "./nuevofaro/nuevofaro.module#NuevofaroPageModule",
+            canActivate: [AdminGuard]
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
         pathMatch: "full"

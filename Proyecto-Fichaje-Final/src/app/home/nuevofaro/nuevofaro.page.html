@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title style="color: green;">NUEVO FARO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="faroForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title style="color: green;">Fase 1</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item>
+                <ion-label position="floating" style="color: green;">
+                  Nombre del Faro
+                </ion-label>
+                <ion-input formControlName="NombreFaro"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating" style="color: green;">
+                  Radio
+                </ion-label>
+                <ion-input formControlName="id" type="number"></ion-input>
+              </ion-item>
+              <ion-button (click)="openMap()" expand="block" fill="clear" shape="round" style="color: green;">
+                Abrir Mapa
+              </ion-button>
+              <ion-input formControlName="latFaro" [value]="latFaro"></ion-input>
+              <ion-input formControlName="lonFaro" [value]="lonFaro"></ion-input>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title style="color: green;">Fase 2</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item>
+                <ion-label position="floating" style="color: green;">
+                  Código
+                </ion-label>
+                <ion-input formControlName="code"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating" style="color: green;">
+                  Tipo
+                </ion-label>
+                <ion-input formControlName="tipo"></ion-input>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title style="color: green;">Fase 3</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-item>
+                    <ion-label position="floating" style="color: green;">
+                      Carga
+                    </ion-label>
+                    <ion-input type="number" formControlName="carga"></ion-input>
+                  </ion-item>
+              <ion-item>
+                <ion-label position="floating" style="color: green;">
+                  Intensidad
+                </ion-label>
+                <ion-input type="number" formControlName="intensidad"></ion-input>
+              </ion-item>
+              
+              <ion-item>
+                <ion-label position="floating" style="color: green;">
+                  Ocupación
+                </ion-label>
+                <ion-input type="number" formControlName="ocupacion"></ion-input>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <ion-button expand="block" class="ion-margin" (click)="onSubmit()" [disabled]="!faroForm.valid">
+            Crear
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
