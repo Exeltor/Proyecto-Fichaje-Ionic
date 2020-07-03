@@ -16,5 +16,9 @@
             <ion-label>Trabajadores</ion-label>
             <ion-icon name="people"></ion-icon>
         </ion-tab-button>
+        <ion-tab-button tab="incompletos" *ngIf="(authService.user | async)?.admin">
+            <ion-label>INCOMPLETOS</ion-label>
+            <ion-icon name="people"></ion-icon>
+        </ion-tab-button>
     </ion-tab-bar>
 </ion-tabs>

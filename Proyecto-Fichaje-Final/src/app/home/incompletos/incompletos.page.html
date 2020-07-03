@@ -1,19 +1,25 @@
 <ion-header>
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
+            <ion-menu-button style="color: red;"></ion-menu-button>
         </ion-buttons>
-        <ion-title>Trabajadores</ion-title>
+        <ion-title>Incompletos</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="refresh()">
+                <ion-icon slot="icon-only" name="create-outline" style="color: red;"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
+    
 </ion-header>
 
-<ion-content>
+<ion-content >
     <ion-grid>
         <ion-row>
             <ion-col size-lg="6" offset-lg="3">
                 <ion-card>
                     <ion-list>
-                        <ion-list-header>{{ (empresa | async)?.Nombre }}</ion-list-header>
+                        <ion-list-header style="color: red;">{{ (empresa | async)?.Nombre }}</ion-list-header>
                         <ion-item-sliding *ngFor="let user of listaWorkers">
                             <ion-item *ngIf="(authService.user | async)?.DNI != user.DNI">
                                 <ion-avatar slot="start">
@@ -25,16 +31,11 @@
                                     </ion-img>
                                 </ion-avatar>
                                 <ion-label
-                                    (click)="presentModal(user.uid, user.nombre,user.email, user.empresa, user.horario, user.DNI, user.telefono)">
+                                    (click)="editProfile()">
                                     <h2>{{ user.nombre }}</h2>
-                                    <p>DNI: {{ user.DNI }}</p>
+                                    <p style="color: red;">Falta: DNI</p>
                                 </ion-label>
                             </ion-item>
-                            <ion-item-options>
-                                <ion-item-option color="danger" (click)="borrarUsuario(user.uid)">
-                                    <ion-icon name="trash"></ion-icon>
-                                </ion-item-option>
-                            </ion-item-options>
                         </ion-item-sliding>
                     </ion-list>
                 </ion-card>

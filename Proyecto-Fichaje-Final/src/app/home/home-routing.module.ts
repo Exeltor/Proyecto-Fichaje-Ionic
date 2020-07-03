@@ -46,8 +46,23 @@ const routes: Routes = [
         ]
       },
       {
+        path: "incompletos",
+        children: [
+          {
+            path: "",
+            loadChildren: "./incompletos/incompletos.module#IncompletosPageModule",
+            canActivate: [AdminGuard]
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/home/tabs/profile",
+        pathMatch: "full"
+      },
+      {
+        path: "",
+        redirectTo: "/home/tabs/incompletos",
         pathMatch: "full"
       }
     ]
