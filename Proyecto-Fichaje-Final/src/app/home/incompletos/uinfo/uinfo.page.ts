@@ -36,6 +36,8 @@ export class UinfoPage implements OnInit {
   photoUrl;
 
   nombreEdit;
+  dniEdit;
+  telefonoEdit;
   horarioEdit;
   photoEdit;
 
@@ -60,6 +62,8 @@ export class UinfoPage implements OnInit {
 
   ngOnInit() {
     this.nombreEdit = this.nombre;
+    this.dniEdit = this.dni;
+    this.telefonoEdit = this.telefono;
     this.horarioEdit = this.horarioCode;
     this.editBool = false;
 
@@ -87,6 +91,12 @@ export class UinfoPage implements OnInit {
     if (this.nombreEdit !== this.nombre) {
       this.editNombre();
     }
+    if (this.dniEdit !== this.dni) {
+      this.editDni();
+    }
+    if (this.telefonoEdit !== this.telefono) {
+      this.editTelefono();
+    }
     if (this.horarioEdit !== this.horario) {
       this.editHorario();
     }
@@ -98,6 +108,18 @@ export class UinfoPage implements OnInit {
       nombre: this.nombreEdit
     });
     this.nombre = this.nombreEdit;
+  }
+  private editDni() {
+    this.afs.doc(`users/${this.uid}`).update({
+      dni: this.dniEdit
+    });
+    this.dni = this.dniEdit;
+  }
+  private editTelefono() {
+    this.afs.doc(`users/${this.uid}`).update({
+      telefono: this.telefonoEdit
+    });
+    this.telefono = this.telefonoEdit;
   }
   private editHorario() {
     this.afs.doc(`users/${this.uid}`).update({

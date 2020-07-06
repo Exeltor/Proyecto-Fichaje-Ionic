@@ -76,8 +76,11 @@ export class IncompletosPage implements OnInit {
       for (let i = 0; i < workers.length; i++) {
         const ref = this.storage.ref(`profile/${workers[i].uid}`);
         workers[i].photoUrl = ref.getDownloadURL().toPromise();
-        if(workers[i].nombre == null || workers[i].telefono == null ||workers[i].DNI == null ||
-          workers[i].empresa == null || workers[i].horario == null ){
+        if(workers[i].nombre == null || 
+          workers[i].telefono == null ||
+          workers[i].DNI == null ||
+          workers[i].horario == null 
+          ){
           this.listaWorkers.push(workers[i]);
         }
        
