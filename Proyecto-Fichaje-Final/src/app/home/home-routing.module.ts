@@ -36,6 +36,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: "incompletos",
+        children: [
+          {
+            path: "",
+            loadChildren: "./incompletos/incompletos.module#IncompletosPageModule",
+            canActivate: [AdminGuard]
+          }
+        ]
+      },
+      {
         path: "trabajadores",
         children: [
           {
@@ -57,7 +67,8 @@ const routes: Routes = [
     redirectTo: '/home/tabs/profile',
     pathMatch: 'full'
   },
-  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' }
+  { path: 'uinfo', loadChildren: './trabajadores/uinfo/uinfo.module#UinfoPageModule' },
+  { path: 'uinfo', loadChildren: './incompletos/uinfo/uinfo.module#UinfoPageModule' }
 ];
 
 @NgModule({
