@@ -12,7 +12,7 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content style="background-color: red;">
     <ion-grid style="background-color: red;">
         <ion-row>
             <ion-col size-lg="6" offset-lg="3">
@@ -32,8 +32,13 @@
                                 <ion-label
                                     (click)="presentModal(user.uid, user.nombre, user.empresa, user.horario, user.DNI, user.telefono)">
                                     <h2>{{ user.nombre }}</h2>
-                                    <p style="color: red;">DNI: {{ user.DNI }}</p>
+                                    <p style="color: red;" *ngIf=" user.nombre == null " >Falta Nombre</p>
+                                    <p style="color: red;" *ngIf=" user.DNI == null " >Falta DNI</p>
+                                    <p style="color: red;" *ngIf=" user.telefono == null " >Falta Telefono</p>
+                                    <p style="color: red;" *ngIf=" user.empresa == null " >Falta Empresa</p>
+                                    <p style="color: red;" *ngIf=" user.horario == null " >Falta Horario</p>
                                 </ion-label>
+
                             </ion-item>
                             <ion-item-options>
                                 <ion-item-option color="danger" (click)="borrarUsuario(user.uid)">
